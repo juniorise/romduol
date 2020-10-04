@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  font_awesome_flutter: ^8.8.1
+  #font_awesome_flutter: ^8.8.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -47,12 +47,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/activities/
     - assets/graphics/
     - assets/home/
     - assets/places/
     - assets/provinces/
-
+    - assets/activities/kompot/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -69,8 +68,18 @@ flutter:
     - family: Kantumruy
       fonts:
         - asset: fonts/Kantumruy-Light.ttf
+          weight: 300
         - asset: fonts/Kantumruy-Regular.ttf
+          weight: 400
         - asset: fonts/Kantumruy-Bold.ttf
+          weight: 700
+    - family: Open Sans
+      fonts:
+        - asset: fonts/OpenSans-Light.ttf
+          weight: 300
+        - asset: fonts/OpenSans-Regular.ttf
+          weight: 400
+        - asset: fonts/OpenSans-Bold.ttf
           weight: 700
   #
   # For details regarding fonts from package dependencies,

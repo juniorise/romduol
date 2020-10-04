@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/screens.dart';
+import 'package:romduol/configs/palette.dart';
+import 'package:romduol/screens/home/home.dart';
 
 void main() {
   runApp(
