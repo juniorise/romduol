@@ -1,17 +1,12 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/province.dart';
 import 'package:romduol/screens/widget/location.dart';
-import 'dart:math' as math;
 
 class HomePage extends StatefulWidget {
-  final PageController pageController;
-  final bool isOpen;
-  const HomePage(
-      {Key key, @required this.pageController, @required this.isOpen})
+  final AnimationController animationController;
+
+  const HomePage({Key key, @required this.animationController})
       : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
@@ -22,47 +17,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
-    return Consumer<PageViewNotifier>(
-      builder: (context, notifier, child) {
-        return IgnorePointer(
-          ignoring: !(notifier.page > 0),
-          child: Transform.translate(
-            offset: Offset(math.min(width * 0.7, width - notifier.offset), 0),
-            child: Stack(
-              children: [
-                child,
-                IgnorePointer(
-                  child: Container(
-                    color: Colors.black.withOpacity(
-                      1 - math.max(0.75, notifier.page),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: buildAppBar(context),
-        extendBodyBehindAppBar: true,
-        drawer: Drawer(
-          child: ListView(
-            dragStartBehavior: DragStartBehavior.down,
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                height: 81,
-                color: Palette.sky,
-                child: Row(
-                  children: [],
-                ),
-              ),
-            ],
-          ),
-        ),
-        body: ListView(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: buildAppBar(context),
+      extendBodyBehindAppBar: true,
+      body: IgnorePointer(
+        ignoring: widget.animationController.status == AnimationStatus.completed,
+        child: ListView(
           children: [
             //HELLO TITLE
             hello(width),
@@ -484,11 +445,12 @@ class _HomePageState extends State<HomePage> {
       leading: IconButton(
         icon: Icon(Icons.menu),
         onPressed: () {
-          widget.pageController.animateToPage(
-            0,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOutQuad,
-          );
+          if (widget.animationController.status == AnimationStatus.completed) {
+            widget.animationController.reverse();
+          } else if (widget.animationController.status ==
+              AnimationStatus.dismissed) {
+            widget.animationController.forward();
+          }
         },
       ),
       actions: [
