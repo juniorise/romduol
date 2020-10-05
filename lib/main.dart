@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/screens/home/home.dart';
+import 'package:romduol/screens/myapp.dart';
 
 void main() {
   runApp(
@@ -10,13 +10,24 @@ void main() {
         backgroundColor: Palette.background,
         primaryColor: Palette.appbar,
         canvasColor: Palette.background,
-        errorColor: Palette.red,
-        splashColor: Palette.white20,
+        errorColor: Palette.sky,
+        splashColor: Palette.white20.withOpacity(0),
+        primaryTextTheme: TextTheme(
+          headline6: TextStyle(
+            color: Palette.sky,
+            fontSize: 16,
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          centerTitle: false,
+          elevation: 0.0,
+          iconTheme: IconThemeData(color: Palette.sky),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => Home(),
+        '/': (context) => MyApp(),
         '/Splash': (context) => SplashScreen(),
       },
     ),

@@ -1,29 +1,49 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/screens/province.dart';
+import 'package:romduol/screens/widget/location.dart';
+// import 'package:provider/provider.dart';
 
-class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  MyApp({Key key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _MyAppState createState() => _MyAppState();
 }
 
-class _HomeState extends State<Home> {
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.asset(
-          'assets/home/background.jpg',
-          fit: BoxFit.cover,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: buildAppBar(context),
+      extendBodyBehindAppBar: true,
+      drawer: Drawer(
+        child: ListView(
+          dragStartBehavior: DragStartBehavior.down,
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 81,
+              color: Palette.sky,
+              child: Row(
+                children: [],
+              ),
+            ),
+          ],
         ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: buildAppBar(),
-          body: ListView(
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/home/background.jpg',
+            fit: BoxFit.cover,
+          ),
+          ListView(
             children: [
               //HELLO TITLE
               hello(width),
@@ -49,7 +69,14 @@ class _HomeState extends State<Home> {
                           province: "ខេត្តកំពត",
                           location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
                           imagelocation: "assets/provinces/kompot.png",
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Province(),
+                              ),
+                            );
+                          },
                           context: context,
                         ),
                         SizedBox(width: 10),
@@ -162,8 +189,8 @@ class _HomeState extends State<Home> {
               )
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -261,22 +288,7 @@ class _HomeState extends State<Home> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Wrap(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Palette.red,
-                            size: 16,
-                          ),
-                          Text(
-                            location,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Palette.text.withOpacity(0.8),
-                            ),
-                          )
-                        ],
-                      ),
+                      LocationText(location: location),
                       Container(
                         padding: EdgeInsets.symmetric(
                           vertical: 0,
@@ -401,7 +413,10 @@ class _HomeState extends State<Home> {
             SizedBox(height: 5.0),
             Text(
               province,
-              style: TextStyle(fontSize: 14, color: Palette.text, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Palette.text,
+                  fontWeight: FontWeight.w400),
             ),
             Text(
               location,
@@ -415,15 +430,25 @@ class _HomeState extends State<Home> {
   }
 
   Container hello(double width) {
+    String name = "Sok";
     return Container(
       width: width,
       height: 100.0,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "សួរស្តី​ Sok",
-            style: TextStyle(fontSize: 18, color: Colors.white),
+          RichText(
+            text: TextSpan(
+                style: TextStyle(fontFamily: "Kantumruy", fontSize: 18),
+                children: [
+                  TextSpan(
+                    text: "សួរស្តី​ ",
+                    style: TextStyle(fontFamily: "Kantumruy"),
+                  ),
+                  TextSpan(
+                      text: name, style: TextStyle(fontFamily: "Open Sans")),
+                ]),
           ),
           Text(
             "តើអ្នកចង់ទៅដំណើរកំសាន្តឯណាដែរ?",
@@ -434,37 +459,15 @@ class _HomeState extends State<Home> {
     );
   }
 
-  AppBar buildAppBar() {
+  AppBar buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0.0,
-      backgroundColor: Palette.white80,
-      automaticallyImplyLeading: false,
+      backgroundColor: Palette.white90,
       titleSpacing: 0.0,
-      title: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Palette.sky,
-              size: 24,
-            ),
-            onPressed: () {},
-          ),
-          Text(
-            "រុករក",
-            style: TextStyle(fontSize: 16, color: Palette.sky),
-            textAlign: TextAlign.start,
-          ),
-        ],
-      ),
+      title: Text("រុករក", textAlign: TextAlign.start),
       actions: [
         IconButton(
-          icon: Icon(
-            Icons.notifications,
-            color: Palette.sky,
-            size: 24,
-          ),
+          icon: Icon(Icons.notifications),
           onPressed: () {},
         )
       ],

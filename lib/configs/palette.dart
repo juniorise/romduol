@@ -29,6 +29,7 @@ class Palette {
 
   static const Color text = Color(0xFF686868);
   static const Color bggrey = Color(0xFFA6A6A6);
+  static const Color bg = Color(0xFFF8F8F8);
 
   static const Color sky90 = Color.fromRGBO(66, 165, 245, .9);
   static const Color sky80 = Color.fromRGBO(66, 165, 245, .8);
