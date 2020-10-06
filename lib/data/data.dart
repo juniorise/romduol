@@ -1,25 +1,47 @@
 import 'package:romduol/models/models.dart';
 
-List<CardModal> places = [
-  CardModal(
+List<ProvinceModel> provinces = [
+  ProvinceModel(
+    province: "ខេត្តកំពត",
+    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    imagelocation: "assets/provinces/kompot.png",
+  ),
+  ProvinceModel(
+    province: "ខេត្តកោះកុង",
+    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    imagelocation: "assets/provinces/kohkong.png",
+  ),
+  ProvinceModel(
+    province: "ខេត្តព្រះសីហនុ",
+    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    imagelocation: "assets/provinces/sihanouk.png",
+  ),
+  ProvinceModel(
+    province: "ខេត្តកែប",
+    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    imagelocation: "assets/provinces/kep.png",
+  )
+];
+List<CardModel> places = [
+  CardModel(
     title: "រង្វង់មូលធុរេន",
     location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
     imageLocation: "assets/provinces/kep.png",
     id: "turen",
   ),
-  CardModal(
+  CardModel(
     title: "រង្វង់មូលធុរេន",
     location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
     imageLocation: "assets/provinces/kep.png",
     id: "turen",
   ),
-  CardModal(
+  CardModel(
     title: "រង្វង់មូលធុរេន",
     location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
     imageLocation: "assets/provinces/kep.png",
     id: "turen",
   ),
-  CardModal(
+  CardModel(
     title: "រង្វង់មូលធុរេន",
     location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
     imageLocation: "assets/provinces/kep.png",
@@ -27,8 +49,8 @@ List<CardModal> places = [
   ),
 ];
 
-List<CardModal> accomodations = [
-  CardModal(
+List<CardModel> accomodations = [
+  CardModel(
     title: "រង្វង់មូលធុរេន",
     location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
     imageLocation: "assets/provinces/kep.png",
@@ -36,7 +58,7 @@ List<CardModal> accomodations = [
     price: "15\$ - 25\$",
     ratestar: 4.5,
   ),
-  CardModal(
+  CardModel(
     title: "រង្វង់មូលធុរេន",
     location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
     imageLocation: "assets/provinces/kep.png",
@@ -46,8 +68,8 @@ List<CardModal> accomodations = [
   ),
 ];
 
-List<Package> packages = [
-  Package(
+List<PackageModel> packages = [
+  PackageModel(
     imagelocation: "assets/provinces/kompot.png",
     total: 25,
     booked: 8,
@@ -56,7 +78,7 @@ List<Package> packages = [
     date: "10-11 កញ្ញា 2021",
     price: 25,
   ),
-  Package(
+  PackageModel(
     imagelocation: "assets/activities/kompot/kohrong.png",
     total: 35,
     booked: 16,
@@ -65,7 +87,7 @@ List<Package> packages = [
     date: "18-21 កញ្ញា 2021",
     price: 35,
   ),
-  Package(
+  PackageModel(
     imagelocation: "assets/activities/kompot/mountain.png",
     total: 40,
     booked: 15,
@@ -74,7 +96,7 @@ List<Package> packages = [
     date: "30-2 តុលា 2021",
     price: 15,
   ),
-  Package(
+  PackageModel(
     imagelocation: "assets/activities/kompot/bostong.png",
     total: 25,
     booked: 18,

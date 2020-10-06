@@ -30,7 +30,7 @@ class _ProvinceState extends State<Province>
     _pageController.addListener(pageControllerListener);
   }
 
-  List<bool> isAnimated = [false, false, false, false];
+  List<bool> isAnimated = [false, true, true, true];
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -48,10 +48,11 @@ class _ProvinceState extends State<Province>
           title: isSearching ? _buildSearchField() : buildTitle(),
           bottom: PreferredSize(
             child: AnimatedTabBar(
-                pageController: _pageController,
-                currentPage: currentPage,
-                scrollController: _scrollController,
-                onTap: (index) => removeAnimated(index)),
+              pageController: _pageController,
+              currentPage: currentPage,
+              scrollController: _scrollController,
+              onTap: (index) => removeAnimated(index),
+            ),
             preferredSize: Size.fromHeight(50),
           ),
         ),

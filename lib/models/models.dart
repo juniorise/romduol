@@ -1,8 +1,16 @@
-class CardModal {
+class ProvinceModel {
+  final String province;
+  final String location;
+  final String imagelocation;
+
+  ProvinceModel({this.province, this.location, this.imagelocation});
+}
+
+class CardModel {
   final String title, location, imageLocation, price, id;
   final double ratestar;
 
-  CardModal({
+  CardModel({
     this.ratestar,
     this.price,
     this.title,
@@ -12,7 +20,7 @@ class CardModal {
   });
 }
 
-class Package {
+class PackageModel {
   final String imagelocation;
   final int total;
   final int booked;
@@ -21,7 +29,7 @@ class Package {
   final String date;
   final int price;
 
-  Package({
+  PackageModel({
     this.imagelocation,
     this.total,
     this.booked,

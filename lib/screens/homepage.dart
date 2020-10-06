@@ -1,3 +1,4 @@
+import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/data/data.dart';
@@ -36,53 +37,42 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildProvinceCard(
-                          context: context,
-                          province: "ខេត្តកំពត",
-                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                          imagelocation: "assets/provinces/kompot.png",
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Province(
-                                province: "កំពត",
+                    Container(
+                      height: 300,
+                      width: width,
+                      child: LiveGrid.options(
+                        physics: NeverScrollableScrollPhysics(),
+                        options: options,
+                        addAutomaticKeepAlives: false,
+                        itemBuilder: (context, index, animation) {
+                          ProvinceModel data = provinces[index];
+                          return FadeTransition(
+                            opacity: Tween<double>(
+                              begin: 0,
+                              end: 1,
+                            ).animate(animation),
+                            child: buildProvinceCard(
+                              context: context,
+                              province: data.province,
+                              location: data.location,
+                              imagelocation: data.imagelocation,
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Province(
+                                    province: data.province,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        buildProvinceCard(
-                          context: context,
-                          province: "ខេត្តកោះកុង",
-                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                          imagelocation: "assets/provinces/kohkong.png",
-                          onPressed: () {},
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildProvinceCard(
-                          context: context,
-                          province: "ខេត្តព្រះសីហនុ",
-                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                          imagelocation: "assets/provinces/sihanouk.png",
-                          onPressed: () {},
-                        ),
-                        SizedBox(width: 10),
-                        buildProvinceCard(
-                          context: context,
-                          province: "ខេត្តកែប",
-                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                          imagelocation: "assets/provinces/kep.png",
-                          onPressed: () {},
-                        )
-                      ],
+                          );
+                        },
+                        itemCount: 4,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 1.1),
+                      ),
                     ),
                   ],
                 ),
@@ -101,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                     sectionTitle("ចូលរួមជាមួយពួកយើង"),
                     Column(
                       children: [
-                        for (Package data in packages)
+                        for (PackageModel data in packages)
                           packageCard(
                             width: width,
                             imagelocation: data.imagelocation,
@@ -124,6 +114,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  final options = LiveOptions(
+    // Start animation after (default zero)
+    delay: Duration(seconds: 0),
+
+    // Show each item through (default 250)
+    showItemInterval: Duration(milliseconds: 200),
+
+    // Animation duration (default 250)
+    showItemDuration: Duration(milliseconds: 500),
+
+    // Animations starts at 0.05 visible
+    // item fraction in sight (default 0.025)
+    visibleFraction: 0.05,
+
+    // Repeat the animation of the appearance
+    // when scrolling in the opposite direction (default false)
+    // To get the effect as in a showcase for ListView, set true
+    reAnimateOnVisibility: true,
+  );
   Column packageCard({
     double width,
     String imagelocation,

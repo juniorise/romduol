@@ -21,8 +21,10 @@ class _MyAppState extends State<MyApp> {
       boxShadow: [BoxShadow(offset: Offset(0, 0))],
       key: _innerDrawerKey,
       onTapClose: true,
-      backgroundDecoration:
-          BoxDecoration(border: Border.all(width: 0), color: Palette.bg),
+      backgroundDecoration: BoxDecoration(
+        border: Border.all(width: 0),
+        color: Palette.bg,
+      ),
       leftChild: HiddenDrawer(),
       scaffold: HomePage(
         onTab: () => _innerDrawerKey.currentState.toggle(),
