@@ -15,7 +15,7 @@ void main() {
         primaryTextTheme: TextTheme(
           headline6: TextStyle(
             color: Palette.sky,
-            fontSize: 16,
+            fontSize: 14,
           ),
         ),
         appBarTheme: AppBarTheme(

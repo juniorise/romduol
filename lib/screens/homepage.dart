@@ -4,10 +4,9 @@ import 'package:romduol/screens/province.dart';
 import 'package:romduol/screens/widget/location.dart';
 
 class HomePage extends StatefulWidget {
-  final AnimationController animationController;
+  final Function onTab;
 
-  const HomePage({Key key, @required this.animationController})
-      : super(key: key);
+  const HomePage({Key key, this.onTab}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -18,155 +17,166 @@ class _HomePageState extends State<HomePage> {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: buildAppBar(context),
       extendBodyBehindAppBar: true,
-      body: IgnorePointer(
-        ignoring: widget.animationController.status == AnimationStatus.completed,
-        child: ListView(
-          children: [
-            //HELLO TITLE
-            hello(width),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            "assets/home/background.jpg",
+            fit: BoxFit.cover,
+          ),
+          ListView(
+            children: [
+              //HELLO TITLE
+              hello(width),
 
-            //PROVINCES
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              color: Colors.white,
-              width: width,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: sectionTitle(
-                        width: width, title: "សូមជ្រើសរើសខេតណាមួយនៃតំបន់ឆ្នេរ"),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildProvinceCard(
-                        province: "ខេត្តកំពត",
-                        location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                        imagelocation: "assets/provinces/kompot.png",
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Province(),
-                            ),
-                          );
-                        },
-                        context: context,
+              //PROVINCES
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                color: Colors.white,
+                width: width,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 5),
+                      child: sectionTitle(
+                        width: width,
+                        title: "សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ",
                       ),
-                      SizedBox(width: 10),
-                      buildProvinceCard(
-                        province: "ខេត្តកោះកុង",
-                        location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                        imagelocation: "assets/provinces/kohkong.png",
-                        onPressed: () {},
-                        context: context,
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildProvinceCard(
-                        province: "ខេត្តព្រះសីហនុ",
-                        location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                        imagelocation: "assets/provinces/sihanouk.png",
-                        onPressed: () {},
-                        context: context,
-                      ),
-                      SizedBox(width: 10),
-                      buildProvinceCard(
-                        province: "ខេត្តកែប",
-                        location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-                        imagelocation: "assets/provinces/kep.png",
-                        onPressed: () {},
-                        context: context,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20.0),
-
-            //ECO TRAVEL PACKAGE
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(15),
-              width: width,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: posterCard(width),
-                  ),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: sectionTitle(
-                      width: width,
-                      title: "ចូលរួមជាមួយពួកយើង",
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Column(
-                    children: [
-                      packageCard(
-                        width: width,
-                        imagelocation: "assets/provinces/kompot.png",
-                        total: 25,
-                        booked: 8,
-                        title: "ភ្នំបូកគោបោះតង់2ថ្ងៃ1យប់",
-                        location: "ខេត្តកំពត",
-                        date: "10-11 កញ្ញា 2021",
-                        price: 25,
-                      ),
-                      Divider(),
-                      packageCard(
-                        width: width,
-                        imagelocation: "assets/activities/kompot/kohrong.png",
-                        total: 35,
-                        booked: 16,
-                        title: "ដំណើរកំសាន្តទៅកាន់កោះរុង3ថ្ងៃ",
-                        location: "កោះកុង",
-                        date: "18-21 កញ្ញា 2021",
-                        price: 35,
-                      ),
-                      Divider(),
-                      packageCard(
-                        width: width,
-                        imagelocation: "assets/activities/kompot/mountain.png",
-                        total: 40,
-                        booked: 15,
-                        title: "ដំណើរកំសាន្តដើរព្រៃនៅកំពត",
-                        location: "ខេត្តកំពត",
-                        date: "30-2 តុលា 2021",
-                        price: 15,
-                      ),
-                      Divider(),
-                      packageCard(
-                        width: width,
-                        imagelocation: "assets/activities/kompot/bostong.png",
-                        total: 25,
-                        booked: 18,
-                        title: "ភ្នំបូកគោបោះតង់2ថ្ងៃ1យប់",
-                        location: "ខេត្តព្រះសីហនុ",
-                        date: "10-11 តុលា 2021",
-                        price: 25,
-                      ),
-                      Divider(),
-                    ],
-                  )
-                ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildProvinceCard(
+                          province: "ខេត្តកំពត",
+                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+                          imagelocation: "assets/provinces/kompot.png",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Province(
+                                  province: "កំពត",
+                                ),
+                              ),
+                            );
+                          },
+                          context: context,
+                        ),
+                        SizedBox(width: 10),
+                        buildProvinceCard(
+                          province: "ខេត្តកោះកុង",
+                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+                          imagelocation: "assets/provinces/kohkong.png",
+                          onPressed: () {},
+                          context: context,
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildProvinceCard(
+                          province: "ខេត្តព្រះសីហនុ",
+                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+                          imagelocation: "assets/provinces/sihanouk.png",
+                          onPressed: () {},
+                          context: context,
+                        ),
+                        SizedBox(width: 10),
+                        buildProvinceCard(
+                          province: "ខេត្តកែប",
+                          location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+                          imagelocation: "assets/provinces/kep.png",
+                          onPressed: () {},
+                          context: context,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
+              SizedBox(height: 20.0),
+
+              //ECO TRAVEL PACKAGE
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(15),
+                width: width,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: posterCard(width),
+                    ),
+                    SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5.0, vertical: 5),
+                      child: sectionTitle(
+                        width: width,
+                        title: "ចូលរួមជាមួយពួកយើង",
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        packageCard(
+                          width: width,
+                          imagelocation: "assets/provinces/kompot.png",
+                          total: 25,
+                          booked: 8,
+                          title: "ភ្នំបូកគោបោះតង់2ថ្ងៃ1យប់",
+                          location: "ខេត្តកំពត",
+                          date: "10-11 កញ្ញា 2021",
+                          price: 25,
+                        ),
+                        Divider(),
+                        packageCard(
+                          width: width,
+                          imagelocation: "assets/activities/kompot/kohrong.png",
+                          total: 35,
+                          booked: 16,
+                          title: "ដំណើរកំសាន្តទៅកាន់កោះរុង3ថ្ងៃ",
+                          location: "កោះកុង",
+                          date: "18-21 កញ្ញា 2021",
+                          price: 35,
+                        ),
+                        Divider(),
+                        packageCard(
+                          width: width,
+                          imagelocation:
+                              "assets/activities/kompot/mountain.png",
+                          total: 40,
+                          booked: 15,
+                          title: "ដំណើរកំសាន្តដើរព្រៃនៅកំពត",
+                          location: "ខេត្តកំពត",
+                          date: "30-2 តុលា 2021",
+                          price: 15,
+                        ),
+                        Divider(),
+                        packageCard(
+                          width: width,
+                          imagelocation: "assets/activities/kompot/bostong.png",
+                          total: 25,
+                          booked: 18,
+                          title: "ភ្នំបូកគោបោះតង់2ថ្ងៃ1យប់",
+                          location: "ខេត្តព្រះសីហនុ",
+                          date: "10-11 តុលា 2021",
+                          price: 25,
+                        ),
+                        Divider(),
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -212,6 +222,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           color: Palette.sky,
                           fontWeight: FontWeight.normal,
+                          fontFamily: "Kantumruy",
                         ),
                         children: [
                           TextSpan(
@@ -220,7 +231,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           TextSpan(
                             text: "/$total នាក់",
-                            style: TextStyle(fontSize: 12),
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
                           )
                         ],
                       ),
@@ -361,7 +374,7 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         title,
         textAlign: TextAlign.start,
-        style: TextStyle(fontSize: 16, color: Palette.text),
+        style: TextStyle(fontSize: 14, color: Palette.text),
       ),
     );
   }
@@ -417,19 +430,18 @@ class _HomePageState extends State<HomePage> {
         children: [
           RichText(
             text: TextSpan(
-                style: TextStyle(fontFamily: "Kantumruy", fontSize: 18),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: "Kantumruy",
+                ),
                 children: [
-                  TextSpan(
-                    text: "សួរស្តី​ ",
-                    style: TextStyle(fontFamily: "Kantumruy"),
-                  ),
-                  TextSpan(
-                      text: name, style: TextStyle(fontFamily: "Open Sans")),
+                  TextSpan(text: "សួរស្តី​ "),
+                  TextSpan(text: name),
                 ]),
           ),
           Text(
             "តើអ្នកចង់ទៅដំណើរកំសាន្តឯណាដែរ?",
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(fontSize: 14, color: Colors.white),
           ),
         ],
       ),
@@ -443,15 +455,11 @@ class _HomePageState extends State<HomePage> {
       titleSpacing: 0.0,
       title: Text("រុករក", textAlign: TextAlign.start),
       leading: IconButton(
-        icon: Icon(Icons.menu),
-        onPressed: () {
-          if (widget.animationController.status == AnimationStatus.completed) {
-            widget.animationController.reverse();
-          } else if (widget.animationController.status ==
-              AnimationStatus.dismissed) {
-            widget.animationController.forward();
-          }
-        },
+        icon: Icon(
+          Icons.menu,
+          size: 24,
+        ),
+        onPressed: widget.onTab,
       ),
       actions: [
         IconButton(
