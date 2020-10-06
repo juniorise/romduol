@@ -6,9 +6,14 @@ class AnimatedTabBar extends StatefulWidget {
   final PageController pageController;
   final int currentPage;
   final ScrollController scrollController;
+  final Function onTap;
 
   const AnimatedTabBar(
-      {Key key, this.pageController, this.currentPage, this.scrollController})
+      {Key key,
+      this.pageController,
+      this.currentPage,
+      this.scrollController,
+      this.onTap})
       : super(key: key);
 
   @override
@@ -49,6 +54,7 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
       _tabItem.add(
         GestureDetector(
           onTap: () {
+            widget.onTap(i);
             setState(() {
               widget.scrollController.animateTo(
                 68.4 * i,

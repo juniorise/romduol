@@ -4,8 +4,10 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/widget/cardOnProvince.dart';
 
 class AnimatedLists extends StatefulWidget {
-  const AnimatedLists({Key key, this.data}) : super(key: key);
+  const AnimatedLists({Key key, this.data, this.isAnimated = false})
+      : super(key: key);
   final List<dynamic> data;
+  final bool isAnimated;
   @override
   _AnimatedListsState createState() => _AnimatedListsState();
 }
@@ -21,32 +23,25 @@ class _AnimatedListsState extends State<AnimatedLists> {
       width: width,
       height: height,
       child: LiveList.options(
-        addAutomaticKeepAlives: false,
+        primary: true,
         itemBuilder: (
           BuildContext context,
           int index,
           Animation<double> animation,
         ) {
+          dynamic data = widget.data[index];
           return FadeTransition(
             opacity: Tween<double>(
-              begin: 0,
+              begin: widget.isAnimated ? 1 : 0,
               end: 1,
             ).animate(animation),
-
-            // And slide transition
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: Offset(0, 0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: CardOnProvince(
-                title: widget.data[index].title,
-                location: widget.data[index].location,
-                imageLocation: widget.data[index].imageLocation,
-                id: widget.data[index].id,
-                ratestar: widget.data[index].ratestar != null ? widget.data[index].ratestar : null,
-                price: widget.data[index].price != null ? widget.data[index].price : null,
-              ),
+            child: CardOnProvince(
+              title: data.title,
+              location: data.location,
+              imageLocation: data.imageLocation,
+              id: data.id,
+              ratestar: data.ratestar,
+              price: data.price,
             ),
           );
         },
