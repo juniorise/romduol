@@ -60,28 +60,30 @@ class HiddenDrawer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sothea",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: "Kantumruy",
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Sothea",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: "Kantumruy",
+                          ),
                         ),
-                      ),
-                      Text(
-                        "test@testing.com",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: "Kantumruy",
-                          fontWeight: FontWeight.w300,
+                        Text(
+                          "test@testing.com",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: "Kantumruy",
+                            fontWeight: FontWeight.w300,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(width: 10),
                 ],

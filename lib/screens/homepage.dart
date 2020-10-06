@@ -401,22 +401,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  AppBar buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0.0,
-      backgroundColor: Palette.white90,
-      titleSpacing: 0.0,
-      title: Text("រុករក", textAlign: TextAlign.start),
-      leading: IconButton(
-        icon: Icon(Icons.menu, size: 24),
-        onPressed: widget.onTab,
+  PreferredSize buildAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(48),
+      child: AppBar(
+        elevation: 0.0,
+        backgroundColor: Palette.white90,
+        titleSpacing: 0.0,
+        title: Text("រុករក", textAlign: TextAlign.start),
+        leading: IconButton(
+          icon: Icon(Icons.menu, size: 24),
+          onPressed: widget.onTab,
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {},
+          )
+        ],
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.notifications),
-          onPressed: () {},
-        )
-      ],
     );
   }
 }

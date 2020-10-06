@@ -36,24 +36,27 @@ class _ProvinceState extends State<Province>
     return ChangeNotifierProvider(
       create: (e) => PageViewNotifier(_pageController),
       child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0.0,
-          elevation: 2.0,
-          actions: [
-            IconButton(
-              icon: Icon(isSearching ? Icons.clear : Icons.search),
-              onPressed: onSearchPressed,
-            )
-          ],
-          title: isSearching ? _buildSearchField() : buildTitle(),
-          bottom: PreferredSize(
-            child: AnimatedTabBar(
-              pageController: _pageController,
-              currentPage: currentPage,
-              scrollController: _scrollController,
-              onTap: (index) => removeAnimated(index),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(48 + 50.0),
+          child: AppBar(
+            titleSpacing: 0.0,
+            elevation: 2.0,
+            actions: [
+              IconButton(
+                icon: Icon(isSearching ? Icons.clear : Icons.search),
+                onPressed: onSearchPressed,
+              )
+            ],
+            title: isSearching ? _buildSearchField() : buildTitle(),
+            bottom: PreferredSize(
+              child: AnimatedTabBar(
+                pageController: _pageController,
+                currentPage: currentPage,
+                scrollController: _scrollController,
+                onTap: (index) => removeAnimated(index),
+              ),
+              preferredSize: Size.fromHeight(50),
             ),
-            preferredSize: Size.fromHeight(50),
           ),
         ),
         body: PageView(
