@@ -127,7 +127,7 @@ class _ProvinceState extends State<Province>
     return TextField(
       autofocus: true,
       decoration: InputDecoration(
-        hintText: 'ស្វែងរកក្នុងខេត្ត${widget.province}...',
+        hintText: 'ស្វែងរកក្នុង${widget.province}...',
         border: InputBorder.none,
         hintStyle: const TextStyle(color: Palette.text, fontSize: 14),
       ),
@@ -145,7 +145,7 @@ class _ProvinceState extends State<Province>
         child: Container(
           width: double.infinity,
           child: Text(
-            "ស្វែងរកក្នុងខេត្ត${widget.province}...",
+            "ស្វែងរកក្នុង${widget.province}...",
             style: TextStyle(fontSize: 14, color: Palette.sky),
             textAlign: TextAlign.start,
           ),

@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> {
                       child: LiveGrid.options(
                         physics: NeverScrollableScrollPhysics(),
                         options: options,
-                        addAutomaticKeepAlives: false,
                         itemBuilder: (context, index, animation) {
                           ProvinceModel data = provinces[index];
                           return FadeTransition(
@@ -69,9 +68,10 @@ class _HomePageState extends State<HomePage> {
                         },
                         itemCount: 4,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            childAspectRatio: 1.1),
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: 1.1,
+                        ),
                       ),
                     ),
                   ],
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
     delay: Duration(seconds: 0),
 
     // Show each item through (default 250)
-    showItemInterval: Duration(milliseconds: 200),
+    showItemInterval: Duration(milliseconds: 100),
 
     // Animation duration (default 250)
     showItemDuration: Duration(milliseconds: 500),
@@ -133,6 +133,7 @@ class _HomePageState extends State<HomePage> {
     // To get the effect as in a showcase for ListView, set true
     reAnimateOnVisibility: true,
   );
+
   Column packageCard({
     double width,
     String imagelocation,
