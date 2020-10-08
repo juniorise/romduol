@@ -1,9 +1,9 @@
 class ProvinceModel {
   final String province;
-  final String location;
+  final int views;
   final String imagelocation;
 
-  ProvinceModel({this.province, this.location, this.imagelocation});
+  ProvinceModel({this.province, this.views, this.imagelocation});
 }
 
 class CardModel {

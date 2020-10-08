@@ -83,14 +83,14 @@ class _ProvinceState extends State<Province>
             FadeInOut(
               index: 2,
               child: AnimatedLists(
-                data: places,
+                data: activities,
                 isAnimated: isAnimated[2],
               ),
             ),
             FadeInOut(
               index: 3,
               child: AnimatedLists(
-                data: places,
+                data: foods,
                 isAnimated: isAnimated[3],
               ),
             ),

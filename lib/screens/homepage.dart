@@ -5,6 +5,7 @@ import 'package:romduol/data/data.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/province.dart';
 import 'package:romduol/screens/widget/location.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   final Function onTab;
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
                     Container(
-                      height: 300,
+                      height: 295,
                       width: width,
                       child: LiveGrid.options(
                         physics: NeverScrollableScrollPhysics(),
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                             child: buildProvinceCard(
                               context: context,
                               province: data.province,
-                              location: data.location,
+                              views: data.views,
                               imagelocation: data.imagelocation,
                               onPressed: () => Navigator.push(
                                 context,
@@ -70,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
-                          childAspectRatio: 1.1,
+                          childAspectRatio: 16 / 14.5,
                         ),
                       ),
                     ),
@@ -89,21 +90,34 @@ class _HomePageState extends State<HomePage> {
                     posterCard(width),
                     SizedBox(height: 5),
                     sectionTitle("ចូលរួមជាមួយពួកយើង"),
-                    Column(
-                      children: [
-                        for (PackageModel data in packages)
-                          packageCard(
-                            width: width,
-                            imagelocation: data.imagelocation,
-                            total: data.total,
-                            booked: data.booked,
-                            title: data.title,
-                            location: data.location,
-                            date: data.date,
-                            price: data.price,
-                          )
-                      ],
-                    )
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('packages')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return Center(child: CircularProgressIndicator());
+
+                        if (snapshot.hasError)
+                          return Center(child: Text("Error connection"));
+                        return Column(
+                          children: [
+                            for (int i = 0; i < snapshot.data.docs.length; i++)
+                              packageCard(
+                                width: width,
+                                imagelocation: snapshot.data.docs[i]
+                                    ['imagelocation'],
+                                total: snapshot.data.docs[i]['total'],
+                                booked: snapshot.data.docs[i]['booked'],
+                                title: snapshot.data.docs[i]['title'],
+                                location: snapshot.data.docs[i]['location'],
+                                date: snapshot.data.docs[i]['date'],
+                                price: snapshot.data.docs[i]['price'],
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                   ],
                 ),
               )
@@ -158,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                 Stack(
                   //left side - image + booked/total people join
                   children: [
-                    Image.asset(
+                    Image.network(
                       imagelocation,
                       width: 110,
                       height: 60,
@@ -270,10 +284,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: Image.asset(
-              "assets/activities/kompot/bostong.png",
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset("assets/home/package_poster.png", fit: BoxFit.cover),
           ),
           FlatButton(
             onPressed: () {},
@@ -333,7 +344,7 @@ class _HomePageState extends State<HomePage> {
 
   FlatButton buildProvinceCard({
     String province,
-    String location,
+    int views,
     Function onPressed,
     String imagelocation,
     BuildContext context,
@@ -363,10 +374,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Text(
-              location,
+              "${views.toString()} នាក់ចូលមើលក្នុងខែនេះ",
               style: TextStyle(
                 fontSize: 12,
-                color: Palette.text.withOpacity(0.6),
+                color: Palette.text.withOpacity(0.8),
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],

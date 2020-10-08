@@ -1,73 +1,32 @@
 import 'package:romduol/models/models.dart';
 
+/////////////////////////
+/// PROVINCE
 List<ProvinceModel> provinces = [
   ProvinceModel(
     province: "ខេត្តកំពត",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    views: 10,
     imagelocation: "assets/provinces/kompot.png",
   ),
   ProvinceModel(
     province: "ខេត្តកោះកុង",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    views: 10,
     imagelocation: "assets/provinces/kohkong.png",
   ),
   ProvinceModel(
     province: "ខេត្តព្រះសីហនុ",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    views: 10,
     imagelocation: "assets/provinces/sihanouk.png",
   ),
   ProvinceModel(
     province: "ខេត្តកែប",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
+    views: 10,
     imagelocation: "assets/provinces/kep.png",
   )
 ];
-List<CardModel> places = [
-  CardModel(
-    title: "រង្វង់មូលធុរេន",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-    imageLocation: "assets/provinces/kep.png",
-    id: "turen",
-  ),
-  CardModel(
-    title: "រង្វង់មូលធុរេន",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-    imageLocation: "assets/provinces/kep.png",
-    id: "turen",
-  ),
-  CardModel(
-    title: "រង្វង់មូលធុរេន",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-    imageLocation: "assets/provinces/kep.png",
-    id: "turen",
-  ),
-  CardModel(
-    title: "រង្វង់មូលធុរេន",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-    imageLocation: "assets/provinces/kep.png",
-    id: "turen",
-  ),
-];
 
-List<CardModel> accomodations = [
-  CardModel(
-    title: "រង្វង់មូលធុរេន",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-    imageLocation: "assets/provinces/kep.png",
-    id: "turen",
-    price: "15\$ - 25\$",
-    ratestar: 4.5,
-  ),
-  CardModel(
-    title: "រង្វង់មូលធុរេន",
-    location: "ទីតាំងស្ថិតនៅក្នុងខេត្តកំពត",
-    imageLocation: "assets/provinces/kep.png",
-    id: "turen",
-    price: "15\$ - 25\$",
-    ratestar: 4.5,
-  ),
-];
-
+/////////////////////////
+/// PACKAGE DATA
 List<PackageModel> packages = [
   PackageModel(
     imagelocation: "assets/provinces/kompot.png",
@@ -105,4 +64,106 @@ List<PackageModel> packages = [
     date: "10-11 តុលា 2021",
     price: 25,
   )
+];
+
+/////////////////////////
+/// PLACES DATA
+List<CardModel> places = [
+  CardModel(
+    title: "រង្វង់មូលធុរេន",
+    location: "4គីឡូម៉ែត្រពីក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "place_roundedturen",
+  ),
+  CardModel(
+    title: "ស្ថាបត្យកម្មបារាំងចំណាស់-ភ្នំបូកគោ",
+    location: "4គីឡូម៉ែត្រពីក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "place_franceachitect",
+  ),
+  CardModel(
+    title: "ឧទ្យានព្រែកចាក",
+    location: "4គីឡូម៉ែត្រពីក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "place_prekjak",
+  ),
+];
+
+/////////////////////////
+/// ACCOMODATIONS DATA
+List<CardModel> accomodations = [
+  CardModel(
+    title: "Ganesha ផ្ទះសំណាក់អេកូ",
+    location: "4គីឡូម៉ែត្រពីក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "acc_genesha",
+    price: "15\$ - 25\$",
+    ratestar: 4.5,
+  ),
+  CardModel(
+    title: "Eden ភូមិអេកូ",
+    location: "ជាប់មាត់ព្រែកកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "acc_eden",
+    price: "15\$ - 25\$",
+    ratestar: 4.5,
+  ),
+  CardModel(
+    title: "Ramo រីសត",
+    location: "2.3គីឡូម៉ែត្រពីរង្វង់មូលធូរេន",
+    imageLocation: "assets/provinces/kep.png",
+    id: "acc_ramo",
+    price: "15\$ - 25\$",
+    ratestar: 4.5,
+  ),
+];
+
+/////////////////////////
+/// ACTITIVIES DATA
+List<CardModel> activities = [
+  CardModel(
+    title: "ជិះកង់មើលទេសភាពនៅក្នុងតំបន់ទេសចរណ៍",
+    location: "4គីឡូម៉ែត្រពីក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "act_biking",
+    price: "\$3 ក្នុងកង់",
+    ratestar: 4.5,
+  ),
+  CardModel(
+    title: "ជិះទូកស្រូបយកខ្យល់បូរិសុទ្ធ",
+    location: "4គីឡូម៉ែត្រពីក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "act_boating",
+    price: "\$3 ក្នុងម្នាក់",
+    ratestar: 4.5,
+  ),
+];
+
+/////////////////////////
+/// ACTITIVIES DATA
+List<CardModel> foods = [
+  CardModel(
+    title: "Epic Arts Cafe",
+    location: "កំពង់កណ្ដាល, កំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "res_epicartcafe",
+    price: "15\$ - 25\$",
+    ratestar: 4.5,
+  ),
+  CardModel(
+    title: "ផ្ទះបៃតង",
+    location: "ក្បែរមាត់ព្រែកកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "res_greenhouse",
+    price: "15\$ - 25\$",
+    ratestar: 4.5,
+  ),
+  CardModel(
+    title: "Tertulia",
+    location: "កណ្ដាលក្រុងកំពត",
+    imageLocation: "assets/provinces/kep.png",
+    id: "res_tertulia",
+    price: "15\$ - 25\$",
+    ratestar: 4.5,
+  ),
 ];

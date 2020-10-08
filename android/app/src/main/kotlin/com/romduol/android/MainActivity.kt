@@ -1,4 +1,4 @@
-package com.romduol.romduol
+package com.romduol.android
 
 import io.flutter.embedding.android.FlutterActivity
 
