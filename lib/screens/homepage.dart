@@ -1,11 +1,11 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/data/data.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/province.dart';
 import 'package:romduol/screens/widget/location.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   final Function onTab;
@@ -17,6 +17,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final List<PackageModel> packages =
+        Provider.of<List<PackageModel>>(context) ?? [];
+
+    // Backup().autoBackupProvince();
+    // Backup().autoBackupPackages();
+
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: buildAppBar(context),
@@ -39,8 +45,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
                     Container(
-                      height: 295,
-                      width: width,
+                      height: 300,
                       child: LiveGrid.options(
                         physics: NeverScrollableScrollPhysics(),
                         options: options,
@@ -88,38 +93,42 @@ class _HomePageState extends State<HomePage> {
                     posterCard(width),
                     SizedBox(height: 5),
                     sectionTitle("ចូលរួមជាមួយពួកយើង"),
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('packages')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData ||
-                            snapshot.hasError ||
-                            snapshot.data.docs.isEmpty)
-                          return Center(
-                            heightFactor: 2,
-                            child: CircularProgressIndicator(),
-                          );
-
-                        return Column(
-                          children: [
-                            for (int i = 0; i < snapshot.data.docs.length; i++)
-                              packageCard(
-                                  width: width,
-                                  imagelocation: snapshot.data.docs[i]
-                                      ['imagelocation'],
-                                  total: snapshot.data.docs[i]['total'],
-                                  booked: snapshot.data.docs[i]['booked'],
-                                  title: snapshot.data.docs[i]['title'],
-                                  location: snapshot.data.docs[i]['location'],
-                                  date: snapshot.data.docs[i]['date'],
-                                  price: snapshot.data.docs[i]['price'],
-                                  onPressed: () {
-                                    print("OK");
-                                  }),
-                          ],
-                        );
-                      },
+                    Wrap(
+                      children: [
+                        packages.length != null
+                            ? LiveList.options(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                options: options,
+                                itemCount: packages.length,
+                                itemBuilder: (context, i, animation) {
+                                  return FadeTransition(
+                                    opacity: Tween<double>(
+                                      begin: 0,
+                                      end: 1,
+                                    ).animate(animation),
+                                    child: packageCard(
+                                      width: width,
+                                      imagelocation: packages[i].imagelocation,
+                                      total: packages[i].total,
+                                      booked: packages[i].booked,
+                                      title: packages[i].title,
+                                      location: packages[i].location,
+                                      date: packages[i].date,
+                                      price: packages[i].price,
+                                      onPressed: () {
+                                        Navigator.pushReplacementNamed(
+                                            context, '/');
+                                      },
+                                    ),
+                                  );
+                                },
+                              )
+                            : Center(
+                                heightFactor: 2,
+                                child: CircularProgressIndicator(),
+                              ),
+                      ],
                     )
                   ],
                 ),
@@ -132,38 +141,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   final options = LiveOptions(
-    // Start animation after (default zero)
-    delay: Duration(seconds: 0),
-
-    // Show each item through (default 250)
     showItemInterval: Duration(milliseconds: 100),
-
-    // Animation duration (default 250)
     showItemDuration: Duration(milliseconds: 500),
-
-    // Animations starts at 0.05 visible
-    // item fraction in sight (default 0.025)
     visibleFraction: 0.05,
-
-    // Repeat the animation of the appearance
-    // when scrolling in the opposite direction (default false)
-    // To get the effect as in a showcase for ListView, set true
     reAnimateOnVisibility: true,
   );
 
-  Column packageCard(
-      {double width,
-      String imagelocation,
-      int total,
-      int booked,
-      String title,
-      String location,
-      String date,
-      int price,
-      Function onPressed}) {
+  Column packageCard({
+    double width,
+    String imagelocation,
+    int total,
+    int booked,
+    String title,
+    String location,
+    String date,
+    int price,
+    Function onPressed,
+  }) {
     return Column(
       children: [
         Container(
+          height: null,
           //package container
           width: width,
           child: FlatButton(
@@ -473,12 +471,12 @@ class _HomePageState extends State<HomePage> {
 
   PreferredSize buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(48),
+      preferredSize: const Size.fromHeight(48),
       child: AppBar(
         elevation: 0.0,
         backgroundColor: Palette.white90,
         titleSpacing: 0.0,
-        title: Text("រុករក", textAlign: TextAlign.start),
+        title: const Text("រំដួល", textAlign: TextAlign.start),
         leading: IconButton(
           icon: Icon(Icons.menu, size: 24),
           onPressed: widget.onTab,

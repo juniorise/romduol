@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/data/data.dart';
+import 'package:romduol/data/kompot.dart';
 import 'package:romduol/screens/widget/animatedtabbar.dart';
 import 'package:romduol/screens/widget/fadeList.dart';
 import 'package:romduol/screens/widget/fadeinout.dart';
@@ -69,28 +69,28 @@ class _ProvinceState extends State<Province>
             FadeInOut(
               index: 0,
               child: AnimatedLists(
-                data: places,
+                data: KompotDatabase().places(),
                 isAnimated: isAnimated[0],
               ),
             ),
             FadeInOut(
               index: 1,
               child: AnimatedLists(
-                data: accomodations,
+                data: KompotDatabase().accomodations(),
                 isAnimated: isAnimated[1],
               ),
             ),
             FadeInOut(
               index: 2,
               child: AnimatedLists(
-                data: activities,
+                data: KompotDatabase().activities(),
                 isAnimated: isAnimated[2],
               ),
             ),
             FadeInOut(
               index: 3,
               child: AnimatedLists(
-                data: foods,
+                data: KompotDatabase().foods(),
                 isAnimated: isAnimated[3],
               ),
             ),

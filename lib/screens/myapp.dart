@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
+import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/homepage.dart';
 import 'package:romduol/screens/widget/drawerListTile.dart';
+import 'package:romduol/services/database.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key key}) : super(key: key);
@@ -26,8 +29,13 @@ class _MyAppState extends State<MyApp> {
         color: Palette.bg,
       ),
       leftChild: HiddenDrawer(),
-      scaffold: HomePage(
-        onTab: () => _innerDrawerKey.currentState.toggle(),
+      scaffold: StreamProvider<List<PackageModel>>.value(
+        value: Database().packagesData,
+        builder: (context, snapshot) {
+          return HomePage(
+            onTab: () => _innerDrawerKey.currentState.toggle(),
+          );
+        },
       ),
     );
   }

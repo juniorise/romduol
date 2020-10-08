@@ -28,6 +28,7 @@ class PackageModel {
   final String location;
   final String date;
   final int price;
+  final String id;
 
   PackageModel({
     this.imagelocation,
@@ -37,5 +38,6 @@ class PackageModel {
     this.location,
     this.date,
     this.price,
+    this.id,
   });
 }
