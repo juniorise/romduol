@@ -78,9 +78,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20.0),
-
-              //ECO TRAVEL PACKAGE
+              SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
               Container(
                 color: Colors.white,
                 padding: EdgeInsets.all(15),
@@ -95,32 +93,37 @@ class _HomePageState extends State<HomePage> {
                           .collection('packages')
                           .snapshots(),
                       builder: (context, snapshot) {
-                        if (!snapshot.hasData)
-                          return Center(child: CircularProgressIndicator());
+                        if (!snapshot.hasData ||
+                            snapshot.hasError ||
+                            snapshot.data.docs.isEmpty)
+                          return Center(
+                            heightFactor: 2,
+                            child: CircularProgressIndicator(),
+                          );
 
-                        if (snapshot.hasError)
-                          return Center(child: Text("Error connection"));
                         return Column(
                           children: [
                             for (int i = 0; i < snapshot.data.docs.length; i++)
                               packageCard(
-                                width: width,
-                                imagelocation: snapshot.data.docs[i]
-                                    ['imagelocation'],
-                                total: snapshot.data.docs[i]['total'],
-                                booked: snapshot.data.docs[i]['booked'],
-                                title: snapshot.data.docs[i]['title'],
-                                location: snapshot.data.docs[i]['location'],
-                                date: snapshot.data.docs[i]['date'],
-                                price: snapshot.data.docs[i]['price'],
-                              ),
+                                  width: width,
+                                  imagelocation: snapshot.data.docs[i]
+                                      ['imagelocation'],
+                                  total: snapshot.data.docs[i]['total'],
+                                  booked: snapshot.data.docs[i]['booked'],
+                                  title: snapshot.data.docs[i]['title'],
+                                  location: snapshot.data.docs[i]['location'],
+                                  date: snapshot.data.docs[i]['date'],
+                                  price: snapshot.data.docs[i]['price'],
+                                  onPressed: () {
+                                    print("OK");
+                                  }),
                           ],
                         );
                       },
-                    ),
+                    )
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ],
@@ -148,16 +151,16 @@ class _HomePageState extends State<HomePage> {
     reAnimateOnVisibility: true,
   );
 
-  Column packageCard({
-    double width,
-    String imagelocation,
-    int total,
-    int booked,
-    String title,
-    String location,
-    String date,
-    int price,
-  }) {
+  Column packageCard(
+      {double width,
+      String imagelocation,
+      int total,
+      int booked,
+      String title,
+      String location,
+      String date,
+      int price,
+      Function onPressed}) {
     return Column(
       children: [
         Container(
@@ -172,11 +175,65 @@ class _HomePageState extends State<HomePage> {
                 Stack(
                   //left side - image + booked/total people join
                   children: [
-                    Image.network(
-                      imagelocation,
+                    Container(
                       width: 110,
                       height: 60,
-                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      child: Image.network(
+                        imagelocation,
+                        width: 110,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        frameBuilder: (
+                          BuildContext context,
+                          Widget child,
+                          int frame,
+                          bool wasSynchronouslyLoaded,
+                        ) {
+                          return wasSynchronouslyLoaded
+                              ? child
+                              : AnimatedOpacity(
+                                  child: child,
+                                  opacity: frame == null ? 0 : 1,
+                                  duration: const Duration(seconds: 1),
+                                  curve: Curves.easeIn,
+                                );
+                        },
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace stackTrace) {
+                          print(exception);
+                          return Container(
+                            alignment: Alignment.topLeft,
+                            padding: EdgeInsets.only(bottom: 40),
+                            child: FlatButton(
+                              onPressed: onPressed,
+                              child: Text(
+                                'Failed to load',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontFamily: 'Open Sans',
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return Container(
+                            width: 15,
+                            height: 15,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3.0,
+                              value: progress.expectedTotalBytes != null
+                                  ? progress.cumulativeBytesLoaded /
+                                      progress.expectedTotalBytes
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     Positioned(
                       bottom: 5,
@@ -284,7 +341,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: Image.asset("assets/home/package_poster.png", fit: BoxFit.cover),
+            child: Image.asset("assets/home/package_poster.png",
+                fit: BoxFit.cover),
           ),
           FlatButton(
             onPressed: () {},
