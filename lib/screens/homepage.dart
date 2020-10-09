@@ -5,7 +5,8 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/data/data.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/province.dart';
-import 'package:romduol/screens/widget/location.dart';
+import 'package:romduol/widget/location.dart';
+import 'package:romduol/widget/networkImage.dart';
 
 class HomePage extends StatefulWidget {
   final Function onTab;
@@ -177,60 +178,9 @@ class _HomePageState extends State<HomePage> {
                       width: 110,
                       height: 60,
                       alignment: Alignment.center,
-                      child: Image.network(
-                        imagelocation,
-                        width: 110,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        frameBuilder: (
-                          BuildContext context,
-                          Widget child,
-                          int frame,
-                          bool wasSynchronouslyLoaded,
-                        ) {
-                          return wasSynchronouslyLoaded
-                              ? child
-                              : AnimatedOpacity(
-                                  child: child,
-                                  opacity: frame == null ? 0 : 1,
-                                  duration: const Duration(seconds: 1),
-                                  curve: Curves.easeIn,
-                                );
-                        },
-                        errorBuilder: (BuildContext context, Object exception,
-                            StackTrace stackTrace) {
-                          print(exception);
-                          return Container(
-                            alignment: Alignment.topLeft,
-                            padding: EdgeInsets.only(bottom: 40),
-                            child: FlatButton(
-                              onPressed: onPressed,
-                              child: Text(
-                                'Failed to load',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontFamily: 'Open Sans',
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return Container(
-                            width: 15,
-                            height: 15,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3.0,
-                              value: progress.expectedTotalBytes != null
-                                  ? progress.cumulativeBytesLoaded /
-                                      progress.expectedTotalBytes
-                                  : null,
-                            ),
-                          );
-                        },
+                      child: NetworkImageLoader(
+                        onPressed: onPressed,
+                        imagelocation: imagelocation,
                       ),
                     ),
                     Positioned(

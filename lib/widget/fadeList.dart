@@ -1,7 +1,7 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/screens/widget/cardOnProvince.dart';
+import 'package:romduol/widget/cardOnProvince.dart';
 
 class AnimatedLists extends StatefulWidget {
   const AnimatedLists({Key key, this.data, this.isAnimated = false})
@@ -52,13 +52,8 @@ class _AnimatedListsState extends State<AnimatedLists> {
   }
 
   final options = LiveOptions(
-    // Start animation after (default zero)
     delay: Duration(seconds: 0),
-
-    // Show each item through (default 250)
     showItemInterval: Duration(milliseconds: 200),
-
-    // Animation duration (default 250)
     showItemDuration: Duration(milliseconds: 400),
   );
 }

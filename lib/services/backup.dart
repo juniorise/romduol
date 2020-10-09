@@ -34,8 +34,8 @@ class Backup {
     for (int i = 0; i < accomodations.length; i++) {
       await province
           .doc('accomodations')
-          .collection('${accomodations[i].id}')
-          .doc('default_data')
+          .collection('default_data')
+          .doc('${accomodations[i].id}')
           .set(
         {
           "title": "${accomodations[i].title}",
@@ -52,8 +52,8 @@ class Backup {
     for (int i = 0; i < activities.length; i++) {
       await province
           .doc('activities')
-          .collection('${activities[i].id}')
-          .doc('default_data')
+          .collection('default_data')
+          .doc('${activities[i].id}')
           .set(
         {
           "title": "${activities[i].title}",
@@ -70,8 +70,8 @@ class Backup {
     for (int i = 0; i < foods.length; i++) {
       await province
           .doc('foods')
-          .collection('${foods[i].id}')
-          .doc('default_data')
+          .collection('default_data')
+          .doc('${foods[i].id}')
           .set(
         {
           "title": "${foods[i].title}",
@@ -88,8 +88,8 @@ class Backup {
     for (int i = 0; i < places.length; i++) {
       province
           .doc('places')
-          .collection('${places[i].id}')
-          .doc('default_data')
+          .collection('default_data')
+          .doc('${places[i].id}')
           .set(
         {
           "title": "${places[i].title}",

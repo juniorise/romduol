@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/screens/widget/location.dart';
-import 'package:romduol/screens/widget/star_rating.dart';
+import 'package:romduol/widget/location.dart';
+import 'package:romduol/widget/networkImage.dart';
+import 'package:romduol/widget/star_rating.dart';
 
 class CardOnProvince extends StatelessWidget {
   final String title, location, imageLocation, price, id;
@@ -28,10 +29,10 @@ class CardOnProvince extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black87.withOpacity(0.5),
+            color: Colors.black87.withOpacity(0.2),
             blurRadius: 10.0,
             spreadRadius: -20,
-            offset: Offset(0, 15),
+            offset: Offset(0, 25),
           )
         ],
       ),
@@ -39,11 +40,11 @@ class CardOnProvince extends StatelessWidget {
         children: [
           Stack(
             children: [
-              Image.asset(
-                imageLocation,
+              NetworkImageLoader(
+                onPressed: () {},
                 width: width - 15 - 15,
                 height: 90,
-                fit: BoxFit.cover,
+                imagelocation: imageLocation,
               ),
               price != null
                   ? Positioned(

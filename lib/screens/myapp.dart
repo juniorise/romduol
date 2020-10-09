@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/homepage.dart';
-import 'package:romduol/screens/widget/drawerListTile.dart';
+import 'package:romduol/widget/drawerListTile.dart';
 import 'package:romduol/services/database.dart';
 
 class MyApp extends StatefulWidget {

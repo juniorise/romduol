@@ -3,10 +3,11 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/data/kompot.dart';
-import 'package:romduol/screens/widget/animatedtabbar.dart';
-import 'package:romduol/screens/widget/fadeList.dart';
-import 'package:romduol/screens/widget/fadeinout.dart';
+import 'package:romduol/models/models.dart';
+import 'package:romduol/widget/animatedtabbar.dart';
+import 'package:romduol/widget/fadeList.dart';
+import 'package:romduol/widget/fadeinout.dart';
+import 'package:romduol/services/database.dart';
 
 class Province extends StatefulWidget {
   final String province;
@@ -15,8 +16,7 @@ class Province extends StatefulWidget {
   _ProvinceState createState() => _ProvinceState();
 }
 
-class _ProvinceState extends State<Province>
-    with SingleTickerProviderStateMixin {
+class _ProvinceState extends State<Province> with TickerProviderStateMixin {
   PageController _pageController;
   ScrollController _scrollController;
   bool isSearching = false;
@@ -33,81 +33,69 @@ class _ProvinceState extends State<Province>
   List<bool> isAnimated = [false, true, true, true];
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (e) => PageViewNotifier(_pageController),
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(48 + 50.0),
-          child: AppBar(
-            titleSpacing: 0.0,
-            elevation: 2.0,
-            actions: [
-              IconButton(
-                icon: Icon(isSearching ? Icons.clear : Icons.search),
-                onPressed: onSearchPressed,
-              )
-            ],
-            title: isSearching ? _buildSearchField() : buildTitle(),
-            bottom: PreferredSize(
-              child: AnimatedTabBar(
-                pageController: _pageController,
-                currentPage: currentPage,
-                scrollController: _scrollController,
-                onTap: (index) => removeAnimated(index),
+    return StreamProvider<List<List<CardModel>>>.value(
+      value: Database().kompotData,
+      builder: (context, snapshot) {
+        final List<List<CardModel>> pagesCard =
+            Provider.of<List<List<CardModel>>>(context) ?? [[]];
+
+        return ChangeNotifierProvider(
+          create: (e) => PageViewNotifier(_pageController),
+          child: Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(48 + 50.0),
+              child: AppBar(
+                titleSpacing: 0.0,
+                elevation: 2.0,
+                actions: [
+                  IconButton(
+                    icon: Icon(isSearching ? Icons.clear : Icons.search),
+                    onPressed: onSearchPressed,
+                  )
+                ],
+                title: isSearching ? _buildSearchField() : buildTitle(),
+                bottom: PreferredSize(
+                  child: AnimatedTabBar(
+                    pageController: _pageController,
+                    currentPage: currentPage,
+                    scrollController: _scrollController,
+                    onTap: (index) => removeAnimated(index),
+                  ),
+                  preferredSize: Size.fromHeight(50),
+                ),
               ),
-              preferredSize: Size.fromHeight(50),
+            ),
+            body: PageView(
+              controller: _pageController,
+              onPageChanged: (page) {
+                itsAnimated(currentPage);
+                setState(() => currentPage = page);
+              },
+              children: <Widget>[
+                for (int i = 0; i < pagesCard.length; i++)
+                  FadeInOut(
+                    index: i,
+                    child: AnimatedLists(
+                      data: pagesCard[i],
+                      isAnimated: isAnimated[i],
+                    ),
+                  ),
+              ],
             ),
           ),
-        ),
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (page) {
-            itsAnimated(currentPage);
-            setState(() => currentPage = page);
-          },
-          children: <Widget>[
-            FadeInOut(
-              index: 0,
-              child: AnimatedLists(
-                data: KompotDatabase().places(),
-                isAnimated: isAnimated[0],
-              ),
-            ),
-            FadeInOut(
-              index: 1,
-              child: AnimatedLists(
-                data: KompotDatabase().accomodations(),
-                isAnimated: isAnimated[1],
-              ),
-            ),
-            FadeInOut(
-              index: 2,
-              child: AnimatedLists(
-                data: KompotDatabase().activities(),
-                isAnimated: isAnimated[2],
-              ),
-            ),
-            FadeInOut(
-              index: 3,
-              child: AnimatedLists(
-                data: KompotDatabase().foods(),
-                isAnimated: isAnimated[3],
-              ),
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   void itsAnimated(int index) {
     setState(() => isAnimated[index] = true);
-    print("Page[${index.toString()}] is animated [${isAnimated[index]}]");
+    // print("Page[${index.toString()}] is animated [${isAnimated[index]}]");
   }
 
   void removeAnimated(int index) {
     setState(() => isAnimated[index] = false);
-    print("Page[${index.toString()}] is not animated [${isAnimated[index]}]");
+    // print("Page[${index.toString()}] is not animated [${isAnimated[index]}]");
   }
 
   @override
@@ -121,6 +109,7 @@ class _ProvinceState extends State<Province>
   void pageControllerListener() {
     if (_pageController.position.isScrollingNotifier.value) {
       _scrollController.jumpTo(
+        //1 page view = 0.19 scroll view
         _pageController.offset * (0.19),
       );
     }
