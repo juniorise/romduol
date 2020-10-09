@@ -28,7 +28,7 @@ class Backup {
     final province = _kompots;
     final accomodations = KompotDatabase().accomodations();
     final activities = KompotDatabase().activities();
-    final foods = KompotDatabase().foods();
+    final restaurants = KompotDatabase().restaurants();
     final places = KompotDatabase().places();
 
     for (int i = 0; i < accomodations.length; i++) {
@@ -45,6 +45,7 @@ class Backup {
           "id": "${accomodations[i].id}",
           "price": "${accomodations[i].price}",
           "ratestar": accomodations[i].ratestar,
+          "ratetotal": accomodations[i].ratetotal,
         },
       );
     }
@@ -63,24 +64,26 @@ class Backup {
           "id": "${activities[i].id}",
           "price": "${activities[i].price}",
           "ratestar": activities[i].ratestar,
+          "ratetotal": activities[i].ratetotal,
         },
       );
     }
 
-    for (int i = 0; i < foods.length; i++) {
+    for (int i = 0; i < restaurants.length; i++) {
       await province
-          .doc('foods')
+          .doc('restaurants')
           .collection('default_data')
-          .doc('${foods[i].id}')
+          .doc('${restaurants[i].id}')
           .set(
         {
-          "title": "${foods[i].title}",
-          "location": "${foods[i].location}",
+          "title": "${restaurants[i].title}",
+          "location": "${restaurants[i].location}",
           "imageLocation":
               "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/packages%2Ftour_3day_kohrong.png?alt=media&token=80bb8cbb-f8ed-4893-b56d-99d9a19f7ae0",
-          "id": "${foods[i].id}",
-          "price": "${foods[i].price}",
-          "ratestar": foods[i].ratestar,
+          "id": "${restaurants[i].id}",
+          "price": "${restaurants[i].price}",
+          "ratestar": restaurants[i].ratestar,
+          "ratetotal": restaurants[i].ratetotal,
         },
       );
     }

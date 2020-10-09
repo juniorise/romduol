@@ -5,7 +5,7 @@ import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/widget/animatedtabbar.dart';
-import 'package:romduol/widget/fadeList.dart';
+import 'package:romduol/widget/animatedList.dart';
 import 'package:romduol/widget/fadeinout.dart';
 import 'package:romduol/services/database.dart';
 
@@ -30,11 +30,22 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
     _pageController.addListener(pageControllerListener);
   }
 
+  Stream<List<List<CardModel>>> _checkProvince() {
+    Stream<List<List<CardModel>>> _province;
+
+    if (widget.province == "ខេត្តកំពត") _province = Database().kompotData;
+    if (widget.province == "ខេត្តកោះកុង") _province = Database().kebData;
+    if (widget.province == "ខេត្តព្រះសីហនុ") _province = Database().kohkongData;
+    if (widget.province == "ខេត្តកែប") _province = Database().sihaknoukData;
+
+    return _province;
+  }
+
   List<bool> isAnimated = [false, true, true, true];
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<List<CardModel>>>.value(
-      value: Database().kompotData,
+      value: _checkProvince(),
       builder: (context, snapshot) {
         final List<List<CardModel>> pagesCard =
             Provider.of<List<List<CardModel>>>(context) ?? [[]];
@@ -43,7 +54,7 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
           create: (e) => PageViewNotifier(_pageController),
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(48 + 50.0),
+              preferredSize: Size.fromHeight(48.0 + 46.0),
               child: AppBar(
                 titleSpacing: 0.0,
                 elevation: 2.0,
@@ -61,11 +72,12 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
                     scrollController: _scrollController,
                     onTap: (index) => removeAnimated(index),
                   ),
-                  preferredSize: Size.fromHeight(50),
+                  preferredSize: Size.fromHeight(46),
                 ),
               ),
             ),
             body: PageView(
+              physics: BouncingScrollPhysics(),
               controller: _pageController,
               onPageChanged: (page) {
                 itsAnimated(currentPage);
@@ -123,10 +135,7 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
         border: InputBorder.none,
         hintStyle: const TextStyle(color: Palette.text, fontSize: 14),
       ),
-      style: const TextStyle(
-        color: Palette.text,
-        fontSize: 14.0,
-      ),
+      style: const TextStyle(color: Palette.text, fontSize: 14.0),
     );
   }
 

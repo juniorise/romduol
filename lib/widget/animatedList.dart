@@ -6,6 +6,7 @@ import 'package:romduol/widget/cardOnProvince.dart';
 class AnimatedLists extends StatefulWidget {
   const AnimatedLists({Key key, this.data, this.isAnimated = false})
       : super(key: key);
+
   final List<dynamic> data;
   final bool isAnimated;
   @override
@@ -23,6 +24,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
       width: width,
       height: height,
       child: LiveList.options(
+        physics: const AlwaysScrollableScrollPhysics(),
         primary: true,
         itemBuilder: (
           BuildContext context,
@@ -42,6 +44,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
               id: data.id,
               ratestar: data.ratestar,
               price: data.price,
+              ratetotal: data.ratetotal,
             ),
           );
         },

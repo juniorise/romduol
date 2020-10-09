@@ -35,6 +35,7 @@ class KompotDatabase {
         id: "acc_genesha",
         price: "15\$ - 25\$",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
       CardModel(
         title: "Eden ភូមិអេកូ",
@@ -43,6 +44,7 @@ class KompotDatabase {
         id: "acc_eden",
         price: "15\$ - 25\$",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
       CardModel(
         title: "Ramo រីសត",
@@ -51,6 +53,7 @@ class KompotDatabase {
         id: "acc_ramo",
         price: "15\$ - 25\$",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
     ];
     return _accomodations;
@@ -66,6 +69,7 @@ class KompotDatabase {
         id: "act_biking",
         price: "\$3 ក្នុងកង់",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
       CardModel(
         title: "ជិះទូកស្រូបយកខ្យល់បូរិសុទ្ធ",
@@ -74,15 +78,14 @@ class KompotDatabase {
         id: "act_boating",
         price: "\$3 ក្នុងម្នាក់",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
     ];
     return _activities;
   }
 
-  List<CardModel> foods() {
-/////////////////////////
-    /// ACTITIVIES DATA
-    List<CardModel> _foods = [
+  List<CardModel> restaurants() {
+    List<CardModel> _restaurants = [
       CardModel(
         title: "Epic Arts Cafe",
         location: "កំពង់កណ្ដាល, កំពត",
@@ -90,6 +93,7 @@ class KompotDatabase {
         id: "res_epicartcafe",
         price: "15\$ - 25\$",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
       CardModel(
         title: "ផ្ទះបៃតង",
@@ -98,6 +102,7 @@ class KompotDatabase {
         id: "res_greenhouse",
         price: "15\$ - 25\$",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
       CardModel(
         title: "Tertulia",
@@ -106,8 +111,9 @@ class KompotDatabase {
         id: "res_tertulia",
         price: "15\$ - 25\$",
         ratestar: 4.5,
+        ratetotal: 50,
       ),
     ];
-    return _foods;
+    return _restaurants;
   }
 }

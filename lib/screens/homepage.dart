@@ -1,12 +1,16 @@
+import 'dart:math';
 import 'package:auto_animated/auto_animated.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/data/data.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
+import 'package:romduol/widget/pageroutetransition.dart';
 
 class HomePage extends StatefulWidget {
   final Function onTab;
@@ -32,109 +36,132 @@ class _HomePageState extends State<HomePage> {
         fit: StackFit.expand,
         children: [
           Image.asset("assets/home/background.jpg", fit: BoxFit.cover),
-          ListView(
-            children: [
-              //HELLO TITLE
-              hello(width),
+          RefreshIndicator(
+            onRefresh: () => Navigator.pushReplacement(
+              context,
+              PageRouteTransition(
+                child: MyApp(),
+                duration: Duration(milliseconds: 500),
+              ),
+            ),
+            child: ListView(
+              children: [
+                //HELLO TITLE
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('questions')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData)
+                        snapshot.data.docs.forEach((element) {
+                          if (!question.contains(element['question']))
+                            question.add(element['question']);
+                        });
+                      return hello(width, question);
+                    }),
 
-              //PROVINCES
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                color: Colors.white,
-                width: width,
-                child: Column(
-                  children: [
-                    sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
-                    Container(
-                      height: 300,
-                      child: LiveGrid.options(
-                        physics: NeverScrollableScrollPhysics(),
-                        options: options,
-                        itemBuilder: (context, index, animation) {
-                          ProvinceModel data = provinces[index];
-                          return FadeTransition(
-                            opacity: Tween<double>(
-                              begin: 0,
-                              end: 1,
-                            ).animate(animation),
-                            child: buildProvinceCard(
-                              context: context,
-                              province: data.province,
-                              views: data.views,
-                              imagelocation: data.imagelocation,
-                              onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Province(
-                                    province: data.province,
+                //PROVINCES
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  color: Colors.white,
+                  width: width,
+                  child: Column(
+                    children: [
+                      sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
+                      Container(
+                        height: 300,
+                        child: LiveGrid.options(
+                          physics: NeverScrollableScrollPhysics(),
+                          options: options,
+                          itemBuilder: (context, index, animation) {
+                            ProvinceModel data = provinces[index];
+                            return FadeTransition(
+                              opacity: Tween<double>(
+                                begin: 0,
+                                end: 1,
+                              ).animate(animation),
+                              child: buildProvinceCard(
+                                context: context,
+                                province: data.province,
+                                views: data.views,
+                                imagelocation: data.imagelocation,
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Province(
+                                      province: data.province,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                        itemCount: 4,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          childAspectRatio: 16 / 14.5,
+                            );
+                          },
+                          itemCount: 4,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 16 / 14.5,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
-              Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(15),
-                width: width,
-                child: Column(
-                  children: [
-                    posterCard(width),
-                    SizedBox(height: 5),
-                    sectionTitle("ចូលរួមជាមួយពួកយើង"),
-                    Wrap(
-                      children: [
-                        packages.length != null
-                            ? LiveList.options(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                options: options,
-                                itemCount: packages.length,
-                                itemBuilder: (context, i, animation) {
-                                  return FadeTransition(
-                                    opacity: Tween<double>(
-                                      begin: 0,
-                                      end: 1,
-                                    ).animate(animation),
-                                    child: packageCard(
-                                      width: width,
-                                      imagelocation: packages[i].imagelocation,
-                                      total: packages[i].total,
-                                      booked: packages[i].booked,
-                                      title: packages[i].title,
-                                      location: packages[i].location,
-                                      date: packages[i].date,
-                                      price: packages[i].price,
-                                      onPressed: () {
-                                        Navigator.pushReplacementNamed(
-                                            context, '/');
-                                      },
-                                    ),
-                                  );
-                                },
-                              )
-                            : Center(
-                                heightFactor: 2,
-                                child: CircularProgressIndicator(),
-                              ),
-                      ],
-                    )
-                  ],
+                SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
+                Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.all(15),
+                  width: width,
+                  child: Column(
+                    children: [
+                      posterCard(width),
+                      SizedBox(height: 5),
+                      sectionTitle("ចូលរួមជាមួយពួកយើង"),
+                      Wrap(
+                        children: [
+                          packages.length != null
+                              ? LiveList.options(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  options: options,
+                                  itemCount: packages.length,
+                                  itemBuilder: (context, i, animation) {
+                                    return FadeTransition(
+                                      opacity: Tween<double>(
+                                        begin: 0,
+                                        end: 1,
+                                      ).animate(animation),
+                                      child: packageCard(
+                                        width: width,
+                                        imagelocation:
+                                            packages[i].imagelocation,
+                                        total: packages[i].total,
+                                        booked: packages[i].booked,
+                                        title: packages[i].title,
+                                        location: packages[i].location,
+                                        date: packages[i].date,
+                                        price: packages[i].price,
+                                        onPressed: () =>
+                                            Navigator.pushReplacementNamed(
+                                          context,
+                                          '/',
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Center(
+                                  heightFactor: 2,
+                                  child: CircularProgressIndicator(),
+                                ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -393,8 +420,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container hello(double width) {
+  Container hello(double width, List<String> question) {
     String name = "Sok";
+    int index = Random().nextInt(question.length).toInt();
+    print(index);
     return Container(
       width: width,
       height: 100.0,
@@ -411,7 +440,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Text(
-            "តើអ្នកចង់ទៅដំណើរកំសាន្តឯណាដែរ?",
+            question[index],
             style: TextStyle(fontSize: 14, color: Colors.white),
           ),
         ],

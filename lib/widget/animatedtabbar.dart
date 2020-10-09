@@ -13,7 +13,7 @@ class AnimatedTabBar extends StatefulWidget {
       this.pageController,
       this.currentPage,
       this.scrollController,
-      this.onTap})
+      this.onTap,})
       : super(key: key);
 
   @override
@@ -36,8 +36,9 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
     return Container(
       width: width,
       height: 38,
-      margin: const EdgeInsets.only(bottom: 10.0),
+      margin: const EdgeInsets.only(bottom: 8.0),
       child: ListView(
+        physics: BouncingScrollPhysics(),
         shrinkWrap: true,
         dragStartBehavior: DragStartBehavior.down,
         controller: widget.scrollController,
@@ -52,30 +53,33 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
     for (int i = 0; i < _tabBarNames.length; i++) {
       bool _isSelected = i == widget.currentPage;
       _tabItem.add(
-        GestureDetector(
-          onTap: () {
-            widget.onTap(i);
-            setState(() {
-              widget.scrollController.animateTo(
-                68.4 * i,
-                duration: Duration(milliseconds: 200),
-                curve: Curves.ease,
-              );
-              widget.pageController.jumpToPage(i);
-            });
-          },
-          child: AnimatedContainer(
-            width: 130,
-            duration: Duration(milliseconds: 150),
-            margin: EdgeInsets.only(
-              left: i == 0 ? 10 : 5,
-              right: i == _tabBarNames.length - 1 ? 10 : 5,
-            ),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
+        AnimatedContainer(
+          width: 130,
+          duration: Duration(milliseconds: 150),
+          margin: EdgeInsets.only(
+            left: i == 0 ? 10 : 5,
+            right: i == _tabBarNames.length - 1 ? 10 : 5,
+          ),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.3),
+          ),
+          child: FlatButton(
+            minWidth: 130,
+            onPressed: () {
+              widget.onTap(i);
+              setState(() {
+                widget.scrollController.animateTo(
+                  68.4 * i,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                );
+                widget.pageController.jumpToPage(i);
+              });
+            },
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
-              color:
-                  _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.3),
             ),
             child: Text(
               _tabBarNames[i],

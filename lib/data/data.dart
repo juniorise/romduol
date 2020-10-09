@@ -1,5 +1,7 @@
 import 'package:romduol/models/models.dart';
 
+List<String> question = ["តើអ្នកចង់ទៅដំណើរកំសាន្តឯណាដែរ?"];
+
 /// PROVINCE
 List<ProvinceModel> provinces = [
   ProvinceModel(

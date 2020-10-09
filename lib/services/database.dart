@@ -4,7 +4,6 @@ import 'package:romduol/models/models.dart';
 class Database {
   static FirebaseFirestore instance = FirebaseFirestore.instance;
   final CollectionReference packages = instance.collection('packages');
-  final CollectionReference kompot = instance.collection('kompot');
 
   Stream<List<PackageModel>> get packagesData {
     return packages.snapshots().map((snapshot) {
@@ -22,35 +21,55 @@ class Database {
     });
   }
 
-  List<List<CardModel>> provinceFromSnapshot(String province) {
-    List<String> pages = ['places', 'accomodations', 'activities', 'foods'];
-    List<List<CardModel>> pagesCard = [[], [], [], []];
+  List<List<CardModel>> _provinceFromSnapshot(String province) {
+    List<String> _pages = ['places', 'accomodations', 'activities', 'restaurants'];
+    List<List<CardModel>> _pagesCard = [[], [], [], []];
 
-    for (int i = 0; i < pages.length; i++) {
-      String page = pages[i];
+    for (int i = 0; i < _pages.length; i++) {
+      String _page = _pages[i];
       instance
           .collection('$province')
-          .doc(page)
+          .doc(_page)
           .collection('default_data')
           .snapshots()
           .forEach((element) {
         element.docs.forEach((element) {
-          pagesCard[i].add(CardModel(
+          _pagesCard[i].add(CardModel(
             title: element.data()['title'] ?? "No title provided.",
             location: element.data()['location'] ?? "No location provided.",
             imageLocation: element.data()['imageLocation'] ?? null,
             id: element.data()['id'] ?? "No id provided.",
             price: element.data()['price'] ?? null,
             ratestar: element.data()['ratestar'] ?? null,
+            ratetotal: element.data()['ratetotal'] ?? null,
           ));
         });
       });
     }
-    return pagesCard;
+    return _pagesCard;
   }
 
   Stream<List<List<CardModel>>> get kompotData {
-    List<List<CardModel>> pagesCard = provinceFromSnapshot('kompot');
-    return instance.collection('kompot').snapshots().map((_) => pagesCard);
+    print('kompotData');
+    List<List<CardModel>> _pagesCard = _provinceFromSnapshot('kompot');
+    return instance.collection('kompot').snapshots().map((_) => _pagesCard);
+  }
+
+  Stream<List<List<CardModel>>> get kohkongData {
+    print('kohkongData');
+    List<List<CardModel>> _pagesCard = _provinceFromSnapshot('kohkong');
+    return instance.collection('kohkong').snapshots().map((_) => _pagesCard);
+  }
+
+  Stream<List<List<CardModel>>> get kebData {
+    print('kebData');
+    List<List<CardModel>> _pagesCard = _provinceFromSnapshot('keb');
+    return instance.collection('keb').snapshots().map((_) => _pagesCard);
+  }
+
+  Stream<List<List<CardModel>>> get sihaknoukData {
+    print('sihaknoukData');
+    List<List<CardModel>> _pagesCard = _provinceFromSnapshot('sihanouk');
+    return instance.collection('sihanouk').snapshots().map((_) => _pagesCard);
   }
 }

@@ -9,8 +9,10 @@ class ProvinceModel {
 class CardModel {
   final String title, location, imageLocation, price, id;
   final double ratestar;
+  final int ratetotal;
 
   CardModel({
+    this.ratetotal,
     this.ratestar,
     this.price,
     this.title,

@@ -7,6 +7,7 @@ import 'package:romduol/widget/star_rating.dart';
 class CardOnProvince extends StatelessWidget {
   final String title, location, imageLocation, price, id;
   final double ratestar;
+  final int ratetotal;
 
   const CardOnProvince({
     Key key,
@@ -15,7 +16,7 @@ class CardOnProvince extends StatelessWidget {
     @required this.imageLocation,
     @required this.id,
     this.price,
-    this.ratestar,
+    this.ratestar, this.ratetotal,
   }) : super(key: key);
 
   @override
@@ -87,14 +88,14 @@ class CardOnProvince extends StatelessWidget {
                                 StarRating(rating: ratestar),
                                 SizedBox(width: 5),
                                 Text(
-                                  "4",
+                                  ratestar.toString(),
                                   style: TextStyle(
                                     color: Palette.text,
                                     fontSize: 14,
                                   ),
                                 ),
                                 Text(
-                                  "(50)",
+                                  "($ratetotal)",
                                   style: TextStyle(
                                     color: Palette.bggrey,
                                     fontSize: 12,
