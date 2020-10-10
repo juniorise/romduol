@@ -40,8 +40,7 @@ class Backup {
         {
           "title": "${accomodations[i].title}",
           "location": "${accomodations[i].location}",
-          "imageLocation":
-              "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/packages%2Ftour_3day_kohrong.png?alt=media&token=80bb8cbb-f8ed-4893-b56d-99d9a19f7ae0",
+          "imageLocation": "${restaurants[i].imageLocation}",
           "id": "${accomodations[i].id}",
           "price": "${accomodations[i].price}",
           "ratestar": accomodations[i].ratestar,
@@ -59,8 +58,7 @@ class Backup {
         {
           "title": "${activities[i].title}",
           "location": "${activities[i].location}",
-          "imageLocation":
-              "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/packages%2Ftour_3day_kohrong.png?alt=media&token=80bb8cbb-f8ed-4893-b56d-99d9a19f7ae0",
+          "imageLocation": "${activities[i].imageLocation}",
           "id": "${activities[i].id}",
           "price": "${activities[i].price}",
           "ratestar": activities[i].ratestar,
@@ -78,8 +76,7 @@ class Backup {
         {
           "title": "${restaurants[i].title}",
           "location": "${restaurants[i].location}",
-          "imageLocation":
-              "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/packages%2Ftour_3day_kohrong.png?alt=media&token=80bb8cbb-f8ed-4893-b56d-99d9a19f7ae0",
+          "imageLocation": "${restaurants[i].imageLocation}",
           "id": "${restaurants[i].id}",
           "price": "${restaurants[i].price}",
           "ratestar": restaurants[i].ratestar,
@@ -97,8 +94,7 @@ class Backup {
         {
           "title": "${places[i].title}",
           "location": "${places[i].location}",
-          "imageLocation":
-              "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/packages%2Ftour_3day_kohrong.png?alt=media&token=80bb8cbb-f8ed-4893-b56d-99d9a19f7ae0",
+          "imageLocation": "${restaurants[i].imageLocation}",
           "id": "${places[i].id}",
         },
       );
