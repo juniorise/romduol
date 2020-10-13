@@ -34,9 +34,9 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
     Stream<List<List<CardModel>>> _province;
 
     if (widget.province == "ខេត្តកំពត") _province = Database().kompotData;
-    if (widget.province == "ខេត្តកោះកុង") _province = Database().kebData;
-    if (widget.province == "ខេត្តព្រះសីហនុ") _province = Database().kohkongData;
-    if (widget.province == "ខេត្តកែប") _province = Database().sihaknoukData;
+    if (widget.province == "ខេត្តកោះកុង") _province = Database().kohkongData;
+    if (widget.province == "ខេត្តព្រះសីហនុ") _province = Database().sihaknoukData;
+    if (widget.province == "ខេត្តកែប") _province = Database().kebData;
 
     return _province;
   }

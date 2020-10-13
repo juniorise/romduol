@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ProvinceModel {
   final String province;
   final int views;
@@ -41,5 +43,20 @@ class PackageModel {
     this.date,
     this.price,
     this.id,
+  });
+}
+
+class CommentModel {
+  final String name, comment, imgProfile;
+  final double ratestar;
+  final int like, dislike;
+
+  CommentModel({
+    @required this.name,
+    @required this.comment,
+    @required this.imgProfile,
+    @required this.ratestar,
+    @required this.like,
+    @required this.dislike,
   });
 }

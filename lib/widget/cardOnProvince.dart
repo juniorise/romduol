@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/screens/detail_template.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
@@ -16,7 +17,8 @@ class CardOnProvince extends StatelessWidget {
     @required this.imageLocation,
     @required this.id,
     this.price,
-    this.ratestar, this.ratetotal,
+    this.ratestar,
+    this.ratetotal,
   }) : super(key: key);
 
   @override
@@ -110,7 +112,14 @@ class CardOnProvince extends StatelessWidget {
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailTemplate(),
+                              ),
+                            );
+                          },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),
                           label: Text(
                             price == null ? "អានបន្ថែម" : "ព័ត៏មានបន្ថែម",

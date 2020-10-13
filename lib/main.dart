@@ -28,11 +28,7 @@ void main() async {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => MyApp(),
-        '/Splash': (context) => SplashScreen(),
-      },
+      home: MyApp(),
     ),
   );
 }

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/data/data.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province.dart';
 import 'package:romduol/widget/location.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar: buildAppBar(context, "រំដួល"),
       extendBodyBehindAppBar: true,
       body: Stack(
         fit: StackFit.expand,
@@ -48,17 +49,20 @@ class _HomePageState extends State<HomePage> {
               children: [
                 //HELLO TITLE
                 StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('questions')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData)
-                        snapshot.data.docs.forEach((element) {
+                  stream: FirebaseFirestore.instance
+                      .collection('questions')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData)
+                      snapshot.data.docs.forEach(
+                        (element) {
                           if (!question.contains(element['question']))
                             question.add(element['question']);
-                        });
-                      return hello(width, question);
-                    }),
+                        },
+                      );
+                    return hello(width, question);
+                  },
+                ),
 
                 //PROVINCES
                 Container(
@@ -142,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                                         location: packages[i].location,
                                         date: packages[i].date,
                                         price: packages[i].price,
-                                        onPressed: () =>
+                                        onErrorPressed: () =>
                                             Navigator.pushReplacementNamed(
                                           context,
                                           '/',
@@ -184,7 +188,7 @@ class _HomePageState extends State<HomePage> {
     String location,
     String date,
     int price,
-    Function onPressed,
+    Function onErrorPressed,
   }) {
     return Column(
       children: [
@@ -193,7 +197,14 @@ class _HomePageState extends State<HomePage> {
           //package container
           width: width,
           child: FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PackageDetail(),
+                ),
+              );
+            },
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -206,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                       height: 60,
                       alignment: Alignment.center,
                       child: NetworkImageLoader(
-                        onPressed: onPressed,
+                        onPressed: onErrorPressed,
                         imagelocation: imagelocation,
                       ),
                     ),
@@ -448,14 +459,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  PreferredSize buildAppBar(BuildContext context) {
+  PreferredSize buildAppBar(BuildContext context, String title) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(48),
       child: AppBar(
         elevation: 0.0,
         backgroundColor: Palette.white90,
         titleSpacing: 0.0,
-        title: const Text("រំដួល", textAlign: TextAlign.start),
+        title: Text(title, textAlign: TextAlign.start),
         leading: IconButton(
           icon: Icon(Icons.menu, size: 24),
           onPressed: widget.onTab,
