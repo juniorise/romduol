@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/google_map.dart';
 import 'package:romduol/widget/location.dart';
+import 'package:romduol/widget/star_rating.dart';
 
-class DetaiProfile extends StatelessWidget {
-  const DetaiProfile({
+class DetailProfile extends StatelessWidget {
+  const DetailProfile({
     Key key,
     @required this.width,
-    this.price, @required this.title, @required this.location, @required this.onBookPressed,
+    this.price,
+    @required this.title,
+    @required this.location,
+    @required this.onBookPressed,
+    this.rate,
+    this.ratetotal,
   }) : super(key: key);
 
   final double width;
@@ -15,42 +21,62 @@ class DetaiProfile extends StatelessWidget {
   final String title;
   final String location;
   final Function onBookPressed;
+  final double rate;
+  final double ratetotal;
 
   @override
   Widget build(BuildContext context) {
     bool isHasPrice = price != null;
+
+    double heightTOTAL = 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10;
     return Container(
-      height: 20.0 + 20 + 14 + 16 + 15 + 48 + 17,
+      height: rate != null ? heightTOTAL + 45 : heightTOTAL,
       width: width,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black87.withOpacity(0.2),
-            blurRadius: 10.0,
-            spreadRadius: -20,
-            offset: Offset(0, 25),
-          )
-        ],
-        color: Colors.white,
-      ),
-      padding: EdgeInsets.all(20.0),
+      decoration: buildBoxDecoration(),
+      padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
+              Flexible(
+                child: Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
                 ),
               ),
               isHasPrice ? Text('$price\$') : SizedBox(),
             ],
           ),
           LocationText(location: location),
-          SizedBox(height: 15.0),
+          SizedBox(height: 8.0),
+          rate != null
+              ? Row(
+                  children: [
+                    StarRating(rating: rate),
+                    SizedBox(width: 5),
+                    Text(
+                      rate.toString(),
+                      style: TextStyle(
+                        color: Palette.text,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      "($ratetotal)",
+                      style: TextStyle(
+                        color: Palette.bggrey,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
+                )
+              : SizedBox(),
+          SizedBox(height: 7.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -142,6 +168,19 @@ class DetaiProfile extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  BoxDecoration buildBoxDecoration() {
+    return BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black87.withOpacity(0.2),
+          blurRadius: 1.0,
+          offset: Offset(0, 0),
+        )
+      ],
+      color: Colors.white,
     );
   }
 }

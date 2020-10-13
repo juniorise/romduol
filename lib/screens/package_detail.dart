@@ -3,6 +3,7 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
+import 'package:romduol/widget/sliver_card_delegate.dart';
 
 class PackageDetail extends StatefulWidget {
   const PackageDetail({Key key}) : super(key: key);
@@ -51,7 +52,7 @@ class _PackageDetailState extends State<PackageDetail> {
             toolbarHeight: 48,
             elevation: 1.0,
             forceElevated: true,
-            expandedHeight: 150.0 + 150 - 27 + 50,
+            expandedHeight: 150.0 - 27 + 50,
             backgroundColor: Palette.sky,
             pinned: true,
             iconTheme: IconThemeData(color: Colors.white),
@@ -81,15 +82,21 @@ class _PackageDetailState extends State<PackageDetail> {
                       ],
                     ),
                   ),
-                  DetaiProfile(
-                    title: "ភ្នំបូកគោបោះតង់",
-                    width: width,
-                    price: 25,
-                    location: "ខេត្តកំពត",
-                    onBookPressed: () {},
-                  ),
                 ],
               ),
+            ),
+          ),
+          SliverPersistentHeader(
+            floating: true,
+            delegate: SliverCardDelegate(
+              child: DetailProfile(
+                title: "ភ្នំបូកគោបោះតង់",
+                width: width,
+                price: 25,
+                location: "ខេត្តកំពត",
+                onBookPressed: () {},
+              ),
+              height: 20.0 + 20 + 14 + 16 + 15 + 48 + 17,
             ),
           ),
           SliverList(
