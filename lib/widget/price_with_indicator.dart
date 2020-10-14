@@ -36,12 +36,12 @@ class TextWithIndicator extends StatelessWidget {
                   )
                 : SizedBox(),
             Container(
-              width: (10.0 + 5) * imageList.length,
+              width: (10.0 + 5) * (imageList.length + 1),
               height: 10,
               alignment: Alignment.centerRight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: imageList.length,
+                itemCount: imageList.length + 1,
                 itemBuilder: (context, index) {
                   return Container(
                     width: 10,

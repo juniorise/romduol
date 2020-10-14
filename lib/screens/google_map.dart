@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GoogleMapTemplate extends StatefulWidget {
-  GoogleMapTemplate({Key key}) : super(key: key);
-
+  GoogleMapTemplate({Key key, this.maplocation, this.buslocation})
+      : super(key: key);
+  final GeoPoint maplocation, buslocation;
   @override
   _GoogleMapTemplateState createState() => _GoogleMapTemplateState();
 }
@@ -13,7 +15,7 @@ class GoogleMapTemplate extends StatefulWidget {
 class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
   GoogleMapController _googleMapController;
   LatLng _yourLocation;
-  LatLng _destination;
+  LatLng _maplocation, _buslocation;
   bool isOpenPermission = false;
   MapType _currentMapType = MapType.normal;
   final Set<Marker> _markers = {};
@@ -47,18 +49,21 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
 
   void checkYourPosition() async {
     _yourLocation = await _getCurrentLocation();
-    if (_yourLocation != _destination) {
-      addCircle(_yourLocation);
+    if (_yourLocation != _maplocation) {
       moveCameraTo(_yourLocation);
     }
   }
 
   @override
   void initState() {
-    _destination = _yourLocation = const LatLng(11.562450, 104.916010);
-    addMarker(location: _destination, title: "Destination");
-    moveCameraTo(_destination);
-    addCircle(_destination);
+    _maplocation = _yourLocation =
+        LatLng(widget.maplocation.latitude, widget.maplocation.longitude);
+    _buslocation =
+        LatLng(widget.buslocation.latitude, widget.buslocation.longitude) ??
+            null;
+
+    addMarker(location: _maplocation, title: "Destination");
+    addCircle(_maplocation);
     super.initState();
   }
 
@@ -79,7 +84,7 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
               () => _googleMapController = controller,
             ),
             initialCameraPosition: CameraPosition(
-              target: _destination,
+              target: _maplocation,
               zoom: 11.0,
             ),
           ),
@@ -88,11 +93,14 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
             right: 12,
             child: buttonCard(
               icon: Icons.location_pin,
-              onPressed: () => moveCameraTo(_destination),
+              onPressed: () {
+                addCircle(_maplocation);
+                moveCameraTo(_maplocation);
+              },
             ),
           ),
           Positioned(
-            top: 12.0 * (1 + 4),
+            top: 12.0 * (1 + 4 * 1),
             right: 12,
             child: buttonCard(
               icon: Icons.gps_fixed,
@@ -100,7 +108,7 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
             ),
           ),
           Positioned(
-            top: 12.0 * (5 + 4),
+            top: 12.0 * (1 + 4 * 2),
             right: 12,
             child: buttonCard(
               icon: Icons.map,
@@ -113,7 +121,25 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
                 });
               },
             ),
-          )
+          ),
+          widget.buslocation != null
+              ? Positioned(
+                  top: 12.0 * (1 + 4 * 3),
+                  right: 12,
+                  child: buttonCard(
+                    icon: Icons.bus_alert,
+                    onPressed: () {
+                      addMarker(
+                        location: _buslocation,
+                        title: "Bus location",
+                        snippet: "Open Google Map for direction to bus stop",
+                      );
+                      moveCameraTo(_buslocation);
+                      addCircle(_buslocation);
+                    },
+                  ),
+                )
+              : SizedBox()
         ],
       ),
     );
@@ -149,18 +175,16 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
   }
 
   void addCircle(LatLng location) {
-    circles = Set.from(
-      [
-        Circle(
-          circleId: CircleId(location.toString()),
-          radius: 500,
-          center: _yourLocation,
-          strokeColor: Palette.sky,
-          fillColor: Palette.sky.withOpacity(0.3),
-          strokeWidth: 1,
-        ),
-      ],
+    Circle circle = Circle(
+      circleId: CircleId(location.toString()),
+      radius: 500,
+      center: location,
+      strokeColor: Palette.sky,
+      fillColor: Palette.sky.withOpacity(0.3),
+      strokeWidth: 1,
     );
+
+    if (!circles.contains(circle)) circles.add(circle);
   }
 
   void addCircles() async {
@@ -168,7 +192,7 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
   }
 
   void addMarker(
-      {LatLng location, String title, String snippet, bool isDes = false}) {
+      {LatLng location, String title, String snippet}) {
     setState(
       () {
         _markers.add(

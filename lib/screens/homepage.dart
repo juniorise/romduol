@@ -9,6 +9,7 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province.dart';
+// import 'package:romduol/services/backup.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     // Backup().autoBackupPackages();
 
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: buildAppBar(context, "រំដួល"),
       extendBodyBehindAppBar: true,
@@ -138,18 +140,15 @@ class _HomePageState extends State<HomePage> {
                                       ).animate(animation),
                                       child: packageCard(
                                         width: width,
-                                        imagelocation:
-                                            packages[i].imagelocation,
-                                        total: packages[i].total,
-                                        booked: packages[i].booked,
-                                        title: packages[i].title,
-                                        location: packages[i].location,
-                                        date: packages[i].date,
-                                        price: packages[i].price,
+                                        package: packages[i],
                                         onErrorPressed: () =>
-                                            Navigator.pushReplacementNamed(
+                                            Navigator.pushReplacement(
                                           context,
-                                          '/',
+                                          PageRouteTransition(
+                                            child: MyApp(),
+                                            duration:
+                                                Duration(milliseconds: 500),
+                                          ),
                                         ),
                                       ),
                                     );
@@ -181,13 +180,7 @@ class _HomePageState extends State<HomePage> {
 
   Column packageCard({
     double width,
-    String imagelocation,
-    int total,
-    int booked,
-    String title,
-    String location,
-    String date,
-    int price,
+    PackageModel package,
     Function onErrorPressed,
   }) {
     return Column(
@@ -201,7 +194,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PackageDetail(),
+                  builder: (context) => PackageDetail(package: package),
                 ),
               );
             },
@@ -216,9 +209,12 @@ class _HomePageState extends State<HomePage> {
                       width: 110,
                       height: 60,
                       alignment: Alignment.center,
-                      child: NetworkImageLoader(
-                        onPressed: onErrorPressed,
-                        imagelocation: imagelocation,
+                      child: Hero(
+                        tag: "thumnail" + package.thumbnail,
+                        child: NetworkImageLoader(
+                          onPressed: onErrorPressed,
+                          imagelocation: package.thumbnail,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -238,11 +234,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                             children: [
                               TextSpan(
-                                text: "$booked",
+                                text: "${package.bookedspace}",
                                 style: TextStyle(fontSize: 14),
                               ),
                               TextSpan(
-                                text: "/$total នាក់",
+                                text: "/${package.totalspace} នាក់",
                                 style: TextStyle(
                                   fontSize: 12,
                                 ),
@@ -268,16 +264,16 @@ class _HomePageState extends State<HomePage> {
                         //first row - title + price
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: width - 110 - 40 - 10 - 25,
+                          Flexible(
                             child: Text(
-                              title,
+                              package.title,
+                              overflow: TextOverflow.ellipsis,
                               style:
                                   TextStyle(fontSize: 14, color: Palette.text),
                             ),
                           ),
                           Text(
-                            "$price\$",
+                            "${package.price.toInt()}\$",
                             style: TextStyle(
                               fontSize: 14,
                               color: Palette.sky,
@@ -291,7 +287,7 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          LocationText(location: location),
+                          LocationText(location: package.location),
                           Container(
                             padding: EdgeInsets.symmetric(
                               vertical: 0,
@@ -299,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             color: Palette.text.withOpacity(0.1),
                             child: Text(
-                              date,
+                              package.date,
                               style:
                                   TextStyle(fontSize: 12, color: Palette.text),
                             ),

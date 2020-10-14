@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/detail_template.dart';
@@ -6,19 +7,23 @@ import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
 
 class CardOnProvince extends StatelessWidget {
-  final String title, location, imageLocation, price, id;
-  final double ratestar;
+  final String title, location, thumbnail, opentime, id;
   final int ratetotal;
+  final double rating, pricefrom, pricetotal;
+  final GeoPoint maplocation;
 
   const CardOnProvince({
     Key key,
     @required this.title,
     @required this.location,
-    @required this.imageLocation,
+    @required this.thumbnail,
+    this.opentime,
     @required this.id,
-    this.price,
-    this.ratestar,
     this.ratetotal,
+    this.rating,
+    this.pricefrom,
+    this.pricetotal,
+    this.maplocation,
   }) : super(key: key);
 
   @override
@@ -47,9 +52,9 @@ class CardOnProvince extends StatelessWidget {
                 onPressed: () {},
                 width: width - 15 - 15,
                 height: 90,
-                imagelocation: imageLocation,
+                imagelocation: thumbnail,
               ),
-              price != null
+              pricefrom != null
                   ? Positioned(
                       top: 10,
                       left: 0,
@@ -60,7 +65,7 @@ class CardOnProvince extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
-                          "ចាប់ពី​ $price",
+                          "ចាប់ពី​ ${pricefrom.toInt()}\$ - ${pricetotal.toInt()}\$",
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
                       ),
@@ -84,13 +89,13 @@ class CardOnProvince extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ratestar != null
+                      rating != null
                           ? Row(
                               children: [
-                                StarRating(rating: ratestar),
+                                StarRating(rating: rating),
                                 SizedBox(width: 5),
                                 Text(
-                                  ratestar.toString(),
+                                  rating.toString(),
                                   style: TextStyle(
                                     color: Palette.text,
                                     fontSize: 14,
@@ -107,7 +112,7 @@ class CardOnProvince extends StatelessWidget {
                             )
                           : SizedBox(),
                       Container(
-                        width: price == null ? 104 : 104.0 + 17,
+                        width: pricefrom == null ? 104 : 104.0 + 17,
                         child: FlatButton.icon(
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
@@ -122,7 +127,7 @@ class CardOnProvince extends StatelessWidget {
                           },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),
                           label: Text(
-                            price == null ? "អានបន្ថែម" : "ព័ត៏មានបន្ថែម",
+                            pricefrom == null ? "អានបន្ថែម" : "ព័ត៏មានបន្ថែម",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,

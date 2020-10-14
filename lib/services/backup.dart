@@ -12,13 +12,15 @@ class Backup {
       await _packages.doc('${packages[i].id}').set(
         {
           'id': '${packages[i].id}',
-          'booked': packages[i].booked,
+          'bookedspace': packages[i].bookedspace,
           'date': "${packages[i].date}",
-          'imagelocation': "${packages[i].imagelocation}",
+          'thumbnail': "${packages[i].thumbnail}",
           'location': "${packages[i].location}",
+          'buslocation': packages[i].buslocation,
+          'maplocation': packages[i].maplocation,
           'price': packages[i].price,
           'title': "${packages[i].title}",
-          'total': packages[i].total,
+          'totalspace': packages[i].totalspace,
         },
       );
     }
@@ -40,11 +42,13 @@ class Backup {
         {
           "title": "${accomodations[i].title}",
           "location": "${accomodations[i].location}",
-          "imageLocation": "${restaurants[i].imageLocation}",
+          "thumbnail": "${restaurants[i].thumbnail}",
           "id": "${accomodations[i].id}",
-          "price": "${accomodations[i].price}",
-          "ratestar": accomodations[i].ratestar,
+          "pricefrom": accomodations[i].pricefrom,
+          "pricetotal": accomodations[i].pricetotal,
+          "rating": accomodations[i].rating,
           "ratetotal": accomodations[i].ratetotal,
+          "maplocation": accomodations[i].maplocation
         },
       );
     }
@@ -58,11 +62,13 @@ class Backup {
         {
           "title": "${activities[i].title}",
           "location": "${activities[i].location}",
-          "imageLocation": "${activities[i].imageLocation}",
+          "thumbnail": "${activities[i].thumbnail}",
           "id": "${activities[i].id}",
-          "price": "${activities[i].price}",
-          "ratestar": activities[i].ratestar,
+          "pricefrom": accomodations[i].pricefrom,
+          "pricetotal": accomodations[i].pricetotal,
+          "rating": accomodations[i].rating,
           "ratetotal": activities[i].ratetotal,
+          "maplocation": accomodations[i].maplocation
         },
       );
     }
@@ -76,11 +82,13 @@ class Backup {
         {
           "title": "${restaurants[i].title}",
           "location": "${restaurants[i].location}",
-          "imageLocation": "${restaurants[i].imageLocation}",
+          "thumbnail": "${restaurants[i].thumbnail}",
           "id": "${restaurants[i].id}",
-          "price": "${restaurants[i].price}",
-          "ratestar": restaurants[i].ratestar,
+          "pricefrom": accomodations[i].pricefrom,
+          "pricetotal": accomodations[i].pricetotal,
+          "rating": accomodations[i].rating,
           "ratetotal": restaurants[i].ratetotal,
+          "maplocation": accomodations[i].maplocation
         },
       );
     }
@@ -94,8 +102,9 @@ class Backup {
         {
           "title": "${places[i].title}",
           "location": "${places[i].location}",
-          "imageLocation": "${restaurants[i].imageLocation}",
+          "thumbnail": "${restaurants[i].thumbnail}",
           "id": "${places[i].id}",
+          "maplocation": accomodations[i].maplocation
         },
       );
     }

@@ -43,7 +43,7 @@ class CommentPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(35),
                   child: Image.asset(
-                    comments[index].imgProfile,
+                    comments[index].profileimg,
                     width: 35,
                     height: 35,
                     fit: BoxFit.cover,
@@ -68,7 +68,7 @@ class CommentPage extends StatelessWidget {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        StarRating(rating: comments[index].ratestar)
+                        StarRating(rating: comments[index].rating.toDouble())
                       ],
                     ),
                     Text(

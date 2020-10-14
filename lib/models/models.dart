@@ -1,62 +1,96 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProvinceModel {
   final String province;
   final int views;
   final String imagelocation;
 
-  ProvinceModel({this.province, this.views, this.imagelocation});
+  ProvinceModel({
+    this.province,
+    this.views,
+    this.imagelocation,
+  });
+}
+
+class ArticleModal {
+  final String header, paragraph, question;
+
+  ArticleModal({this.header, this.paragraph, this.question});
 }
 
 class CardModel {
-  final String title, location, imageLocation, price, id;
-  final double ratestar;
-  final int ratetotal;
+  final String title, location, thumbnail, opentime, id;
+  final ratetotal;
+  final double rating, pricefrom, pricetotal;
+  final GeoPoint maplocation;
 
   CardModel({
-    this.ratetotal,
-    this.ratestar,
-    this.price,
+    this.pricefrom,
+    this.pricetotal,
+    this.id,
     this.title,
     this.location,
-    this.imageLocation,
-    this.id,
+    this.ratetotal,
+    this.rating,
+    this.opentime,
+    this.maplocation,
+    this.thumbnail,
   });
 }
 
 class PackageModel {
-  final String imagelocation;
-  final int total;
-  final int booked;
-  final String title;
-  final String location;
-  final String date;
-  final int price;
-  final String id;
+  final String title, location, thumbnail, date, id, refpath;
+  final GeoPoint maplocation, buslocation;
+  final int bookedspace, totalspace;
+  final double price;
 
   PackageModel({
-    this.imagelocation,
-    this.total,
-    this.booked,
+    this.id,
     this.title,
     this.location,
+    this.thumbnail,
     this.date,
+    this.maplocation,
+    this.buslocation,
+    this.bookedspace,
+    this.totalspace,
     this.price,
-    this.id,
+    this.refpath,
+  });
+}
+
+class Article {
+  final String header, paragraph;
+  Article({
+    this.header,
+    this.paragraph,
+  });
+}
+
+class FoodMenu {
+  final String thumbnail, title;
+  final double price;
+
+  FoodMenu({
+    this.thumbnail,
+    this.title,
+    this.price,
   });
 }
 
 class CommentModel {
-  final String name, comment, imgProfile;
-  final double ratestar;
-  final int like, dislike;
+  final String name, uid, comment, profileimg;
+  final int rating, useful, useless;
+  final Timestamp date;
 
   CommentModel({
-    @required this.name,
-    @required this.comment,
-    @required this.imgProfile,
-    @required this.ratestar,
-    @required this.like,
-    @required this.dislike,
+    this.name,
+    this.uid,
+    this.comment,
+    this.profileimg,
+    this.rating,
+    this.useful,
+    this.useless,
+    this.date,
   });
 }

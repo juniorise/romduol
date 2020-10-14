@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/google_map.dart';
@@ -14,8 +15,11 @@ class DetailProfile extends StatelessWidget {
     @required this.onBookPressed,
     this.rate,
     this.ratetotal,
+    this.maplocation,
+    this.buslocation,
   }) : super(key: key);
 
+  final GeoPoint maplocation, buslocation;
   final double width;
   final int price;
   final String title;
@@ -94,10 +98,15 @@ class DetailProfile extends StatelessWidget {
                   height: 48,
                   highlightColor: Palette.sky.withOpacity(0.2),
                   onPressed: () {
+                    print("HEHEHE");
+                    print(maplocation.longitude + maplocation.latitude);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GoogleMapTemplate(),
+                        builder: (context) => GoogleMapTemplate(
+                          maplocation: maplocation,
+                          buslocation: buslocation,
+                        ),
                       ),
                     );
                   },

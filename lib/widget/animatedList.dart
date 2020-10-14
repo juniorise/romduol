@@ -1,13 +1,14 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/models/models.dart';
 import 'package:romduol/widget/cardOnProvince.dart';
 
 class AnimatedLists extends StatefulWidget {
   const AnimatedLists({Key key, this.data, this.isAnimated = false})
       : super(key: key);
 
-  final List<dynamic> data;
+  final List<CardModel> data;
   final bool isAnimated;
   @override
   _AnimatedListsState createState() => _AnimatedListsState();
@@ -31,7 +32,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
           int index,
           Animation<double> animation,
         ) {
-          dynamic data = widget.data[index];
+          CardModel data = widget.data[index];
           return FadeTransition(
             opacity: Tween<double>(
               begin: widget.isAnimated ? 1 : 0,
@@ -40,11 +41,13 @@ class _AnimatedListsState extends State<AnimatedLists> {
             child: CardOnProvince(
               title: data.title,
               location: data.location,
-              imageLocation: data.imageLocation,
+              thumbnail: data.thumbnail,
               id: data.id,
-              ratestar: data.ratestar,
-              price: data.price,
+              rating: data.rating,
               ratetotal: data.ratetotal,
+              pricefrom: data.pricefrom,
+              pricetotal: data.pricetotal,
+              maplocation: data.maplocation,
             ),
           );
         },

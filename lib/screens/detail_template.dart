@@ -29,64 +29,64 @@ List<CommentModel> comments = [
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/profile.png",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
   CommentModel(
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/profile.png",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
   CommentModel(
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/profile.png",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
   CommentModel(
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/background.jpg",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
   CommentModel(
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/profile.png",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
   CommentModel(
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/profile.png",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
   CommentModel(
     name: "Sok Chan",
     comment:
         "If you love nature, this place is for you, I love both environment and their service.",
-    imgProfile: "assets/home/background.jpg",
-    ratestar: 4.5,
-    like: 100,
-    dislike: 2,
+    profileimg: "assets/home/profile.png",
+    rating: 4,
+    useful: 100,
+    useless: 2,
   ),
 ];
 
@@ -187,7 +187,6 @@ class _DetailTemplateState extends State<DetailTemplate> {
                 rate: 3.0,
                 ratetotal: rateTOTAL,
                 price: 25,
-                
               ),
               height: rateTOTAL == null
                   ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10

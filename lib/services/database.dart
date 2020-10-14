@@ -8,21 +8,42 @@ class Database {
   Stream<List<PackageModel>> get packagesData {
     return packages.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
+        print(doc.reference.path);
         return PackageModel(
-          imagelocation: doc.data()['imagelocation'],
-          total: doc.data()['total'],
-          booked: doc.data()['booked'],
+          thumbnail: doc.data()['thumbnail'],
+          totalspace: doc.data()['totalspace'],
+          bookedspace: doc.data()['bookedspace'],
           title: doc.data()['title'],
           location: doc.data()['location'],
           date: doc.data()['date'],
           price: doc.data()['price'],
+          refpath: doc.reference.path,
+          maplocation: doc.data()['maplocation'],
+          buslocation: doc.data()['buslocation'],
         );
       }).toList();
     });
   }
 
+  Stream<List<Article>> article(String refpath) {
+    return instance
+        .doc(refpath)
+        .collection("article")
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((e) {
+        return Article(header: e['header'], paragraph: e['paragraph']);
+      }).toList();
+    });
+  }
+
   List<List<CardModel>> _provinceFromSnapshot(String province) {
-    List<String> _pages = ['places', 'accomodations', 'activities', 'restaurants'];
+    List<String> _pages = [
+      'places',
+      'accomodations',
+      'activities',
+      'restaurants'
+    ];
     List<List<CardModel>> _pagesCard = [[], [], [], []];
 
     for (int i = 0; i < _pages.length; i++) {
@@ -37,15 +58,18 @@ class Database {
           _pagesCard[i].add(CardModel(
             title: element.data()['title'] ?? "No title provided.",
             location: element.data()['location'] ?? "No location provided.",
-            imageLocation: element.data()['imageLocation'] ?? null,
+            thumbnail: element.data()['thumbnail'] ?? null,
             id: element.data()['id'] ?? "No id provided.",
-            price: element.data()['price'] ?? null,
-            ratestar: element.data()['ratestar'] ?? null,
+            pricefrom: element.data()['pricefrom'] ?? null,
+            pricetotal: element.data()['pricetotal'] ?? null,
+            rating: element.data()['rating'] ?? null,
             ratetotal: element.data()['ratetotal'] ?? null,
+            maplocation: element.data()['maplocation'] ?? null,
           ));
         });
       });
     }
+
     return _pagesCard;
   }
 
