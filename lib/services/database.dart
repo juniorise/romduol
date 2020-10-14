@@ -25,18 +25,6 @@ class Database {
     });
   }
 
-  Stream<List<ArticleModal>> article(String refpath) {
-    return instance
-        .doc(refpath)
-        .collection("article")
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((e) {
-        return ArticleModal(header: e['header'], paragraph: e['paragraph']);
-      }).toList();
-    });
-  }
-
   List<List<CardModel>> _provinceFromSnapshot(String province) {
     List<String> _pages = [
       'places',
@@ -65,6 +53,7 @@ class Database {
             rating: element.data()['rating'] ?? null,
             ratetotal: element.data()['ratetotal'] ?? null,
             maplocation: element.data()['maplocation'] ?? null,
+            refpath: element.reference.path,
           ));
         });
       });

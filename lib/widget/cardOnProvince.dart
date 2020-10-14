@@ -1,30 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/detail_template.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
 
 class CardOnProvince extends StatelessWidget {
-  final String title, location, thumbnail, opentime, id;
-  final int ratetotal;
-  final double rating, pricefrom, pricetotal;
-  final GeoPoint maplocation;
+  final CardModel data;
 
-  const CardOnProvince({
-    Key key,
-    @required this.title,
-    @required this.location,
-    @required this.thumbnail,
-    this.opentime,
-    @required this.id,
-    this.ratetotal,
-    this.rating,
-    this.pricefrom,
-    this.pricetotal,
-    this.maplocation,
-  }) : super(key: key);
+  const CardOnProvince({Key key, @required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +33,16 @@ class CardOnProvince extends StatelessWidget {
         children: [
           Stack(
             children: [
-              NetworkImageLoader(
-                onPressed: () {},
-                width: width - 15 - 15,
-                height: 90,
-                imagelocation: thumbnail,
+              Hero(
+                tag: "thumnail" + data.thumbnail,
+                child: NetworkImageLoader(
+                  onPressed: () {},
+                  width: width - 15 - 15,
+                  height: 90,
+                  imagelocation: data.thumbnail,
+                ),
               ),
-              pricefrom != null
+              data.pricefrom != null
                   ? Positioned(
                       top: 10,
                       left: 0,
@@ -65,7 +53,7 @@ class CardOnProvince extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
-                          "ចាប់ពី​ ${pricefrom.toInt()}\$ - ${pricetotal.toInt()}\$",
+                          khNum("ចាប់ពី​ ${data.pricefrom.toInt()}\$ - ${data.pricetotal.toInt()}\$"),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
                       ),
@@ -80,8 +68,8 @@ class CardOnProvince extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title),
-                LocationText(location: location),
+                Text(data.title),
+                LocationText(location: data.location),
                 Container(
                   height: 32,
                   alignment: Alignment.bottomRight,
@@ -89,20 +77,20 @@ class CardOnProvince extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      rating != null
+                      data.rating != null
                           ? Row(
                               children: [
-                                StarRating(rating: rating),
+                                StarRating(rating: data.rating),
                                 SizedBox(width: 5),
                                 Text(
-                                  rating.toString(),
+                                  khNum(data.rating.toString()),
                                   style: TextStyle(
                                     color: Palette.text,
                                     fontSize: 14,
                                   ),
                                 ),
                                 Text(
-                                  "($ratetotal)",
+                                  "(" + khNum(data.ratetotal.toString()) + ")",
                                   style: TextStyle(
                                     color: Palette.bggrey,
                                     fontSize: 12,
@@ -112,7 +100,7 @@ class CardOnProvince extends StatelessWidget {
                             )
                           : SizedBox(),
                       Container(
-                        width: pricefrom == null ? 104 : 104.0 + 17,
+                        width: data.pricefrom == null ? 104 : 104.0 + 17,
                         child: FlatButton.icon(
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
@@ -121,13 +109,16 @@ class CardOnProvince extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailTemplate(),
+                                builder: (context) =>
+                                    DetailTemplate(data: data),
                               ),
                             );
                           },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),
                           label: Text(
-                            pricefrom == null ? "អានបន្ថែម" : "ព័ត៏មានបន្ថែម",
+                            data.pricefrom == null
+                                ? "អានបន្ថែម"
+                                : "ព័ត៏មានបន្ថែម",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,

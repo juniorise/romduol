@@ -38,17 +38,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
               begin: widget.isAnimated ? 1 : 0,
               end: 1,
             ).animate(animation),
-            child: CardOnProvince(
-              title: data.title,
-              location: data.location,
-              thumbnail: data.thumbnail,
-              id: data.id,
-              rating: data.rating,
-              ratetotal: data.ratetotal,
-              pricefrom: data.pricefrom,
-              pricetotal: data.pricetotal,
-              maplocation: data.maplocation,
-            ),
+            child: CardOnProvince(data: data),
           );
         },
         itemCount: widget.data.length,

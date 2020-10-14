@@ -97,11 +97,12 @@ class _PackageDetailState extends State<PackageDetail> {
               child: DetailProfile(
                 title: widget.package.title,
                 width: width,
-                price: 25,
+                pricefrom: 25,
                 location: widget.package.location,
                 onBookPressed: () {},
                 maplocation: widget.package.maplocation,
                 buslocation: widget.package.buslocation,
+                isBookAble: true,
               ),
               height: 20.0 + 20 + 14 + 16 + 15 + 48 + 17,
             ),
@@ -229,7 +230,6 @@ class _PackageDetailState extends State<PackageDetail> {
                             "Term of Service | Privacy",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: "Open Sans",
                               color: Palette.text,
                               fontSize: 12,
                             ),
@@ -253,14 +253,14 @@ class _PackageDetailState extends State<PackageDetail> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          (i + 1).toString() + ". " + faq[i].question,
+          khNum((i + 1).toString() + ". " + faq[i].question),
           style: TextStyle(
             fontSize: 14,
-            color: Palette.bgdark.withOpacity(1),
+            color: Palette.bgdark.withOpacity(0.8),
           ),
         ),
         Text(
-          faq[i].paragraph,
+          khNum(faq[i].paragraph),
           style: TextStyle(
             fontSize: 13,
             color: Palette.text,
@@ -280,7 +280,7 @@ class _PackageDetailState extends State<PackageDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    article[i].header,
+                    khNum(article[i].header),
                     style: TextStyle(
                       fontSize: 14,
                       color: Palette.sky,
@@ -291,7 +291,7 @@ class _PackageDetailState extends State<PackageDetail> {
               )
             : SizedBox(),
         Text(
-          article[i].paragraph,
+          khNum(article[i].paragraph),
           style: TextStyle(
             fontSize: 13,
             color: Palette.text,

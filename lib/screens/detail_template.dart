@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -97,8 +98,8 @@ List<CommentModel> comments = [
 ///
 ///
 class DetailTemplate extends StatefulWidget {
-  const DetailTemplate({Key key}) : super(key: key);
-
+  const DetailTemplate({Key key, this.data}) : super(key: key);
+  final CardModel data;
   @override
   _DetailTemplateState createState() => _DetailTemplateState();
 }
@@ -156,21 +157,49 @@ class _DetailTemplateState extends State<DetailTemplate> {
               background: Container(
                 width: width,
                 height: 150 + 48.0,
-                child: Stack(
-                  children: [
-                    ImageViewer(
-                      pageController: _imageController,
-                      imageList: imageList,
-                      width: width,
-                      currentImage: currentImage,
-                      onPageChanged: (index) =>
-                          setState(() => currentImage = index),
-                    ),
-                    TextWithIndicator(
-                      currentImage: currentImage,
-                      imageList: imageList,
-                    ),
-                  ],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .doc(widget.data.refpath)
+                      .collection("images")
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    List<String> images = List();
+                    if (!snapshot.hasData) {
+                      return Container(
+                        child: Center(
+                          child: Text("No data found"),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      snapshot.data.docs.forEach((element) {
+                        try {
+                          images.add(element['image']);
+                        } catch (e) {
+                          print(e);
+                        }
+                      });
+                      return Stack(
+                        children: [
+                          ImageViewer(
+                            thumnail: widget.data.thumbnail,
+                            pageController: _imageController,
+                            imageList: images,
+                            width: width,
+                            currentImage: currentImage,
+                            onPageChanged: (index) =>
+                                setState(() => currentImage = index),
+                          ),// flutter clean && git add . && git commit -m "added function to convert from english number to khmer number." && git push origin master
+                          TextWithIndicator(
+                            currentImage: currentImage,
+                            imageList: images,
+                            pricefrom: widget.data.pricefrom,
+                            pricetotal: widget.data.pricetotal,
+                          ),
+                        ],
+                      );
+                    } else
+                      return Center(child: CircularProgressIndicator());
+                  },
                 ),
               ),
             ),
@@ -179,16 +208,18 @@ class _DetailTemplateState extends State<DetailTemplate> {
             floating: true,
             delegate: SliverCardDelegate(
               child: DetailProfile(
-                title:
-                    "ភ្នំបូកគោបោះតង់សរសេរលេងលេងលេងលេងលេលងេលេងលេងលេងលេងេលេងលេង",
+                title: widget.data.title,
                 width: width,
-                location: "ខេត្តកំពត",
+                location: widget.data.location,
                 onBookPressed: () {},
-                rate: 3.0,
-                ratetotal: rateTOTAL,
-                price: 25,
+                rate: widget.data.rating,
+                ratetotal: widget.data.ratetotal,
+                isBookAble: widget.data.pricefrom != null ||
+                        widget.data.pricetotal != null
+                    ? true
+                    : false,
               ),
-              height: rateTOTAL == null
+              height: widget.data.ratetotal == null
                   ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
                   : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
             ),
@@ -213,7 +244,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                               Column(
                                 children: [
                                   Text(
-                                    articleList[i],
+                                    khNum(articleList[i]),
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: Palette.text,
@@ -290,7 +321,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                         splashColor: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "មតិយោបល់ (${comments.length})",
+                          "មតិយោបល់ (${khNum(comments.length.toString())})",
                           style: TextStyle(color: Palette.sky),
                           textAlign: TextAlign.left,
                         ),
@@ -316,24 +347,6 @@ class _DetailTemplateState extends State<DetailTemplate> {
         )
       ],
       color: Colors.white,
-    );
-  }
-
-  Column article(String title, String describe) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 15.0),
-        Text(
-          title,
-          style: TextStyle(fontSize: 14, color: Palette.sky),
-        ),
-        Divider(),
-        Text(
-          describe,
-          style: TextStyle(fontSize: 13, color: Palette.text),
-        ),
-      ],
     );
   }
 

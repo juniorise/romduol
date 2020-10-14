@@ -9,7 +9,8 @@ class DetailProfile extends StatelessWidget {
   const DetailProfile({
     Key key,
     @required this.width,
-    this.price,
+    this.pricefrom,
+    this.pricetotal,
     @required this.title,
     @required this.location,
     @required this.onBookPressed,
@@ -17,20 +18,22 @@ class DetailProfile extends StatelessWidget {
     this.ratetotal,
     this.maplocation,
     this.buslocation,
+    this.isBookAble = false,
   }) : super(key: key);
 
   final GeoPoint maplocation, buslocation;
   final double width;
-  final int price;
+  final double pricefrom, pricetotal;
   final String title;
   final String location;
   final Function onBookPressed;
   final double rate;
-  final double ratetotal;
+  final int ratetotal;
+  final bool isBookAble;
 
   @override
   Widget build(BuildContext context) {
-    bool isHasPrice = price != null;
+    bool isShowPrice = pricefrom != null;
 
     double heightTOTAL = 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10;
     return Container(
@@ -48,12 +51,12 @@ class DetailProfile extends StatelessWidget {
                 child: Text(
                   title,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
-              isHasPrice ? Text('$price\$') : SizedBox(),
+              isShowPrice
+                  ? Text(khNum("${khNum(pricefrom.toString())}\$"))
+                  : SizedBox(),
             ],
           ),
           LocationText(location: location),
@@ -64,14 +67,14 @@ class DetailProfile extends StatelessWidget {
                     StarRating(rating: rate),
                     SizedBox(width: 5),
                     Text(
-                      rate.toString(),
+                      khNum(rate.toString()),
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 14,
                       ),
                     ),
                     Text(
-                      "($ratetotal)",
+                      "(${khNum(ratetotal.toString())})",
                       style: TextStyle(
                         color: Palette.bggrey,
                         fontSize: 12,
@@ -98,7 +101,6 @@ class DetailProfile extends StatelessWidget {
                   height: 48,
                   highlightColor: Palette.sky.withOpacity(0.2),
                   onPressed: () {
-                    print("HEHEHE");
                     print(maplocation.longitude + maplocation.latitude);
                     Navigator.push(
                       context,
@@ -133,7 +135,7 @@ class DetailProfile extends StatelessWidget {
                   ),
                 ),
               ),
-              isHasPrice
+              isBookAble
                   ? Container(
                       height: 48,
                       alignment: Alignment.center,

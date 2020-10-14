@@ -9,7 +9,6 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province.dart';
-// import 'package:romduol/services/backup.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
@@ -73,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                   width: width,
                   child: Column(
                     children: [
-                      sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
+                      sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរបាន"),
                       Container(
                         height: 300,
                         child: LiveGrid.options(
@@ -229,19 +228,16 @@ class _HomePageState extends State<HomePage> {
                           text: TextSpan(
                             style: TextStyle(
                               color: Palette.sky,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: "Kantumruy",
+                              fontFamily: "Kantumruy"
                             ),
                             children: [
                               TextSpan(
-                                text: "${package.bookedspace}",
-                                style: TextStyle(fontSize: 14),
+                                text: "${khNum(package.bookedspace.toString())}",
+                                style: TextStyle(fontSize: 13),
                               ),
                               TextSpan(
-                                text: "/${package.totalspace} នាក់",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
+                                text: "/${khNum(package.totalspace.toString())} នាក់",
+                                style: TextStyle(fontSize: 11),
                               )
                             ],
                           ),
@@ -273,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           Text(
-                            "${package.price.toInt()}\$",
+                            "${khNum(package.price.toInt().toString())}\$",
                             style: TextStyle(
                               fontSize: 14,
                               color: Palette.sky,
@@ -288,16 +284,20 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           LocationText(location: package.location),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 5,
-                            ),
-                            color: Palette.text.withOpacity(0.1),
-                            child: Text(
-                              package.date,
-                              style:
-                                  TextStyle(fontSize: 12, color: Palette.text),
+                          SizedBox(width: 5),
+                          Flexible(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 0,
+                                horizontal: 5,
+                              ),
+                              color: Palette.text.withOpacity(0.1),
+                              child: Text(
+                                khNum(package.date),
+                                overflow: TextOverflow.ellipsis,
+                                style:
+                                    TextStyle(fontSize: 12, color: Palette.text),
+                              ),
                             ),
                           )
                         ],
@@ -410,15 +410,13 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 fontSize: 14,
                 color: Palette.text,
-                fontWeight: FontWeight.w400,
               ),
             ),
             Text(
-              "${views.toString()} នាក់ចូលមើលក្នុងខែនេះ",
+              "${khNum(views.toString())} នាក់ចូលមើលក្នុងខែនេះ",
               style: TextStyle(
                 fontSize: 12,
                 color: Palette.text.withOpacity(0.8),
-                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -442,7 +440,6 @@ class _HomePageState extends State<HomePage> {
             "សួរស្តី​ $name",
             style: TextStyle(
               fontSize: 16,
-              fontFamily: "Kantumruy",
               color: Colors.white,
             ),
           ),

@@ -64,27 +64,16 @@ class CommentPage extends StatelessWidget {
                         Text(
                           comments[index].name,
                           textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                          ),
                         ),
                         StarRating(rating: comments[index].rating.toDouble())
                       ],
                     ),
                     Text(
-                      "1month ago",
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w300,
-                      ),
+                      "1 month ago",
+                      style: TextStyle(fontSize: 11),
                     ),
                     SizedBox(height: 5),
-                    Text(
-                      comments[index].comment,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
+                    Text(comments[index].comment),
                     SizedBox(height: 5),
                   ],
                 ),

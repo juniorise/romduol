@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final GlobalKey<InnerDrawerState> _innerDrawerKey =
       GlobalKey<InnerDrawerState>();
-  
+
   @override
   Widget build(BuildContext context) {
     return InnerDrawer(
@@ -78,7 +78,6 @@ class HiddenDrawer extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            fontFamily: "Kantumruy",
                           ),
                         ),
                         Text(
@@ -86,7 +85,6 @@ class HiddenDrawer extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            fontFamily: "Kantumruy",
                             fontWeight: FontWeight.w300,
                           ),
                         ),
@@ -110,10 +108,7 @@ class HiddenDrawer extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: Text(
                   "v1.2",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: "Kantumruy",
-                  ),
+                  style: TextStyle(color: Palette.sky),
                 ),
               ),
             )

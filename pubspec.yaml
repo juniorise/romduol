@@ -84,6 +84,17 @@ flutter:
           weight: 400
         - asset: fonts/OpenSans-Bold.ttf
           weight: 700
+    - family: Hanuman
+      fonts:
+        - asset: fonts/hanuman/Hanuman-Regular.ttf
+          weight: 400
+        - asset: fonts/hanuman/Hanuman-Bold.ttf
+          weight: 700
+    - family: Siemreap
+      fonts:
+        - asset: fonts/Siemreap-Regular.ttf
+          weight: 400
+          
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

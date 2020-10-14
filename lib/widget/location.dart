@@ -16,7 +16,7 @@ class LocationText extends StatelessWidget {
           size: 16,
         ),
         Text(
-          location,
+          khNum(location),
           style: TextStyle(
             fontSize: 12,
             color: Palette.text.withOpacity(0.8),

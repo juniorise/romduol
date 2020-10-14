@@ -19,8 +19,8 @@ class ArticleModal {
 }
 
 class CardModel {
-  final String title, location, thumbnail, opentime, id;
-  final ratetotal;
+  final String title, location, thumbnail, opentime, id, refpath;
+  final int ratetotal;
   final double rating, pricefrom, pricetotal;
   final GeoPoint maplocation;
 
@@ -35,6 +35,7 @@ class CardModel {
     this.opentime,
     this.maplocation,
     this.thumbnail,
+    this.refpath,
   });
 }
 

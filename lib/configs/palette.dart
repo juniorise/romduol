@@ -1,5 +1,16 @@
 import 'package:flutter/material.dart';
 
+String khNum(String input) {
+  const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const farsi = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+
+  for (int i = 0; i < english.length; i++) {
+    input = input.replaceAll(english[i], farsi[i]);
+  }
+
+  return input;
+}
+
 class Palette {
   static Map<int, Color> color = {
     50: Color.fromRGBO(136, 14, 79, .1),

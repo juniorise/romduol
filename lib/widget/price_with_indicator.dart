@@ -7,14 +7,25 @@ class TextWithIndicator extends StatelessWidget {
     @required this.imageList,
     @required this.currentImage,
     this.text,
+    this.pricefrom,
+    this.pricetotal,
   }) : super(key: key);
 
   final List<String> imageList;
   final int currentImage;
   final String text;
+  final double pricefrom, pricetotal;
 
   @override
   Widget build(BuildContext context) {
+    String price;
+    if (pricetotal != null && pricefrom != null) {
+      price = pricetotal != null && pricefrom != null
+          ? "ចាប់ពី ${khNum(pricefrom.toInt().toString())}\$ - ${khNum(pricetotal.toInt().toString())}\$"
+          : pricetotal != null && pricefrom == null
+              ? "ចាប់ពី ${khNum(pricefrom.toInt().toString())}\$"
+              : "${khNum(pricetotal.toInt().toString())}\$";
+    }
     return Positioned(
       right: 20,
       left: 0,
@@ -30,11 +41,23 @@ class TextWithIndicator extends StatelessWidget {
                     color: Palette.sky.withOpacity(0.8),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                     child: Text(
-                      text,
+                      khNum(text),
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   )
-                : SizedBox(),
+                : pricefrom != null || pricetotal != null
+                    ? Container(
+                        height: 36,
+                        alignment: Alignment.center,
+                        color: Palette.sky.withOpacity(0.8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                        child: Text(
+                          price,
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
+                      )
+                    : SizedBox(),
             Container(
               width: (10.0 + 5) * (imageList.length + 1),
               height: 10,
