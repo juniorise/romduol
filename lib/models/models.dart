@@ -59,14 +59,6 @@ class PackageModel {
   });
 }
 
-class Article {
-  final String header, paragraph;
-  Article({
-    this.header,
-    this.paragraph,
-  });
-}
-
 class FoodMenu {
   final String thumbnail, title;
   final double price;

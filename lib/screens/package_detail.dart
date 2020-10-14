@@ -117,146 +117,111 @@ class _PackageDetailState extends State<PackageDetail> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .doc(widget.package.refpath)
-                            .collection("article")
-                            .orderBy('index')
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          List<ArticleModal> article = List();
-                          ArticleModal faq;
-                          if (snapshot.hasData) {
-                            snapshot.data.docs.forEach((element) {
-                              try {
-                                if (element.id == 'faq') {
-                                  faq = ArticleModal(
-                                    header: element.exists
-                                        ? element['header']
-                                        : null,
-                                    question: element['question'] ?? null,
-                                    paragraph: element['paragraph'] ?? null,
+                      Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: buildBoxDecoration(),
+                            child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .doc(widget.package.refpath)
+                                  .collection("article")
+                                  .orderBy('index')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                List<ArticleModal> article = List();
+                                if (snapshot.hasData) {
+                                  snapshot.data.docs.forEach((element) {
+                                    try {
+                                      article.add(ArticleModal(
+                                        header:
+                                            element.data()['header'] ?? null,
+                                        paragraph: element['paragraph'] ?? null,
+                                      ));
+                                    } catch (e) {
+                                      article.add(ArticleModal(
+                                        paragraph: element['paragraph'] ?? null,
+                                      ));
+                                    }
+                                  });
+
+                                  return Container(
+                                    width: width,
+                                    child: Wrap(
+                                      children: [
+                                        for (int i = 0; i < article.length; i++)
+                                          buildArticle(article, i),
+                                      ],
+                                    ),
                                   );
-                                } else {
-                                  article.add(ArticleModal(
-                                    header: element.exists
-                                        ? element['header']
-                                        : null,
-                                    paragraph: element['paragraph'] ?? null,
-                                  ));
+                                } else if (snapshot.hasError) {
+                                  print("NO DATA");
+                                  return noData();
                                 }
-                              } catch (e) {
-                                article.add(ArticleModal(
-                                  paragraph: element['paragraph'] ?? null,
-                                ));
-                              }
-                            });
-                            return Column(
+                                return loading();
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: buildBoxDecoration(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  decoration: buildBoxDecoration(),
-                                  child: Wrap(
-                                    children: [
-                                      for (int i = 0; i < article.length; i++)
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            article[i].header != null
-                                                ? Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        article[i].header,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Palette.sky,
-                                                        ),
-                                                      ),
-                                                      Divider()
-                                                    ],
-                                                  )
-                                                : SizedBox(),
-                                            Text(
-                                              article[i].paragraph,
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Palette.text,
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "សំណួរគេសួរញឹកញាប់ | FAQ",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Palette.sky,
+                                      ),
+                                    ),
+                                    Divider()
+                                  ],
                                 ),
-                                SizedBox(height: 10),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  decoration: buildBoxDecoration(),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .doc(widget.package.refpath)
+                                      .collection('faq')
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    List<ArticleModal> faq = [];
+                                    if (snapshot.hasData) {
+                                      snapshot.data.docs.forEach((element) {
+                                        try {
+                                          faq.add(
+                                            ArticleModal(
+                                              question: element['questions'],
+                                              paragraph: element['answer'],
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      });
+                                      return Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            faq.header,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Palette.sky,
-                                            ),
-                                          ),
-                                          Divider()
+                                          for (int i = 0; i < faq.length; i++)
+                                            buildFAQ(i, faq),
                                         ],
-                                      ),
-                                      Text(
-                                        faq.question,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color:
-                                              Palette.bgdark.withOpacity(0.8),
-                                        ),
-                                      ),
-                                      Text(
-                                        faq.paragraph,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Palette.text,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            );
-                          } else if (snapshot.hasError) {
-                            print("NO DATA");
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              decoration: buildBoxDecoration(),
-                              child: Text(
-                                "គ្មានទិន្នន័យ",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Palette.text,
+                                      );
+                                    } else if (snapshot.hasError)
+                                      return noData();
+                                    else
+                                      return loading();
+                                  },
                                 ),
-                              ),
-                            );
-                          }
-                          return Center(
-                              heightFactor: 2,
-                              child: CircularProgressIndicator());
-                        },
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                       Column(
                         children: [
@@ -283,13 +248,84 @@ class _PackageDetailState extends State<PackageDetail> {
     );
   }
 
-  final List<String> articleList = [
-    "ឧទ្យានជាតិព្រះមុនីវង្សភ្នំបូកគោឬឧទ្យានជាតិភ្នំបូកគោមានទីតាំងស្ថិតនៅក្នុងស្រុកទឹកឈូខេត្តកំពត។ ភ្នំបូកគោមានកម្ពស់ ១០៧៥ម៉ែត្រធៀបទៅនឹងនីវ៉ូទឹកសមុទ្រនិងមានចម្ងាយប្រមាណ ១១គីឡូម៉ែត្រពីក្រុងកំពតទៅកាន់ជើងភ្នំនិងចម្ងាយ ៣២គីឡូម៉ែត្រពីជើងភ្នំដល់កំពូលភ្នំ។ ភ្នំបូកគោត្រូវបានរកឃើញនៅឆ្នាំ១៩១៧ ដោយជនជាតិបារាំងនិងត្រូវបានអភិវឌ្ឍឲ្យទៅជារមណីយដ្ឋាននៅឆ្នាំ១៩២១ ក្នុងរជ្ជកាលព្រះបាទស៊ីសុវត្ថិ។",
-    "នៅអំឡុងពេលនោះភ្នំបូកគោគឺជាទីកន្លែងកម្សាន្តដ៏ល្បីល្បាញសម្រាប់អភិជនបារាំងនិងរាជវង្សានុវង្ស។ឧទ្យានជាតិភ្នំបូកគោគឺជាឧទ្យានមួយក្នុងចំណោមឧទ្យានជាតិដ៏ស្រស់ស្អាតរបស់ព្រះរាជាណាចក្រកម្ពុជា។ ភ្នំបូកគោល្បីឈ្មោះដោយសារតែអាកាសធាតុត្រជាក់ពេញមួយឆ្នាំនិងសម្រស់ព្រៃព្រឹក្សាធម្មជាតិដ៏ស្រស់បំព្រងល្អឯកគ្មានគូប្រដូចក្នុងតំបន់។ ",
-    "ពីលើកំពូលភ្នំភ្ញៀវទេសចរអាចគយគន់ទិដ្ឋភាពដ៏ពិចពិលរមិលមើលនៃទិដ្ឋភាពទីក្រុងកំពត ឆ្នេរសមុទ្រកែប ខេត្តព្រះសីហនុ និងកោះជាច្រើនដែលនៅខាងក្រោម។ ឧទ្យានជាតិភ្នំបូកគោ មានដើមឈើត្រូពិចដុះពាសពេញលើភ្នំ និងសត្វព្រៃជាច្រើនប្រភេទ ព្រមទាំងទឹកជ្រោះតូចធំដ៏ស្រស់ស្អាត ជាពិសេសគឺទឹកជ្រោះពពកវិលដ៏ល្បីល្បាញ។ ភ្នំបូកគោគឺជាទីកម្សាន្តធម្មជាតិដ៏សម្បូរបែបបំផុតមួយក្នុងព្រះរាជាណាចក្រកម្ពុជា មិនថាធម្មជាតិ អាកាសធាតុ ដំណើរកម្សាន្តរុករកឬសម្រាកលម្ហែនោះទេ សុទ្ធសឹងតែអាចធ្វើឲ្យភ្ញៀវទេសចរមានអារម្មណ៍រីករាយស្រស់ថ្លានិងអនុស្សាវរីយ៍បំភ្លេចមិនបាន។",
-    "ពីលើកំពូលភ្នំភ្ញៀវទេសចរអាចគយគន់ទិដ្ឋភាពដ៏ពិចពិលរមិលមើលនៃទិដ្ឋភាពទីក្រុងកំពត ឆ្នេរសមុទ្រកែប ខេត្តព្រះសីហនុ និងកោះជាច្រើនដែលនៅខាងក្រោម។ ឧទ្យានជាតិភ្នំបូកគោ មានដើមឈើត្រូពិចដុះពាសពេញលើភ្នំ និងសត្វព្រៃជាច្រើនប្រភេទ ព្រមទាំងទឹកជ្រោះតូចធំដ៏ស្រស់ស្អាត ជាពិសេសគឺទឹកជ្រោះពពកវិលដ៏ល្បីល្បាញ។ ភ្នំបូកគោគឺជាទីកម្សាន្តធម្មជាតិដ៏សម្បូរបែបបំផុតមួយក្នុងព្រះរាជាណាចក្រកម្ពុជា មិនថាធម្មជាតិ អាកាសធាតុ ដំណើរកម្សាន្តរុករកឬសម្រាកលម្ហែនោះទេ សុទ្ធសឹងតែអាចធ្វើឲ្យភ្ញៀវទេសចរមានអារម្មណ៍រីករាយស្រស់ថ្លានិងអនុស្សាវរីយ៍បំភ្លេចមិនបាន។",
-    "ពីលើកំពូលភ្នំភ្ញៀវទេសចរអាចគយគន់ទិដ្ឋភាពដ៏ពិចពិលរមិលមើលនៃទិដ្ឋភាពទីក្រុងកំពត ឆ្នេរសមុទ្រកែប ខេត្តព្រះសីហនុ និងកោះជាច្រើនដែលនៅខាងក្រោម។ ឧទ្យានជាតិភ្នំបូកគោ មានដើមឈើត្រូពិចដុះពាសពេញលើភ្នំ និងសត្វព្រៃជាច្រើនប្រភេទ ព្រមទាំងទឹកជ្រោះតូចធំដ៏ស្រស់ស្អាត ជាពិសេសគឺទឹកជ្រោះពពកវិលដ៏ល្បីល្បាញ។ ភ្នំបូកគោគឺជាទីកម្សាន្តធម្មជាតិដ៏សម្បូរបែបបំផុតមួយក្នុងព្រះរាជាណាចក្រកម្ពុជា មិនថាធម្មជាតិ អាកាសធាតុ ដំណើរកម្សាន្តរុករកឬសម្រាកលម្ហែនោះទេ សុទ្ធសឹងតែអាចធ្វើឲ្យភ្ញៀវទេសចរមានអារម្មណ៍រីករាយស្រស់ថ្លានិងអនុស្សាវរីយ៍បំភ្លេចមិនបាន។",
-  ];
+  Column buildFAQ(int i, List<ArticleModal> faq) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          (i + 1).toString() + ". " + faq[i].question,
+          style: TextStyle(
+            fontSize: 14,
+            color: Palette.bgdark.withOpacity(1),
+          ),
+        ),
+        Text(
+          faq[i].paragraph,
+          style: TextStyle(
+            fontSize: 13,
+            color: Palette.text,
+          ),
+        ),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Column buildArticle(List<ArticleModal> article, int i) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        article[i].header != null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    article[i].header,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Palette.sky,
+                    ),
+                  ),
+                  Divider()
+                ],
+              )
+            : SizedBox(),
+        Text(
+          article[i].paragraph,
+          style: TextStyle(
+            fontSize: 13,
+            color: Palette.text,
+          ),
+        ),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Center loading() {
+    return Center(
+      heightFactor: 1,
+      child: Container(
+        width: 30,
+        height: 30,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Container noData() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: buildBoxDecoration(),
+      child: Text(
+        "គ្មានទិន្នន័យ",
+        style: TextStyle(
+          fontSize: 13,
+          color: Palette.text,
+        ),
+      ),
+    );
+  }
 
   BoxDecoration buildBoxDecoration() {
     return BoxDecoration(
@@ -301,24 +337,6 @@ class _PackageDetailState extends State<PackageDetail> {
         )
       ],
       color: Colors.white,
-    );
-  }
-
-  Column article(String title, String describe) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 15.0),
-        Text(
-          title,
-          style: TextStyle(fontSize: 14, color: Palette.sky),
-        ),
-        Divider(),
-        Text(
-          describe,
-          style: TextStyle(fontSize: 13, color: Palette.text),
-        ),
-      ],
     );
   }
 

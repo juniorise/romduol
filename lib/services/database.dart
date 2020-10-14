@@ -25,14 +25,14 @@ class Database {
     });
   }
 
-  Stream<List<Article>> article(String refpath) {
+  Stream<List<ArticleModal>> article(String refpath) {
     return instance
         .doc(refpath)
         .collection("article")
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((e) {
-        return Article(header: e['header'], paragraph: e['paragraph']);
+        return ArticleModal(header: e['header'], paragraph: e['paragraph']);
       }).toList();
     });
   }
