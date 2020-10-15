@@ -1,5 +1,61 @@
 import 'package:flutter/material.dart';
 
+Center loading() {
+  return Center(
+    heightFactor: 1,
+    child: Container(
+      width: 30,
+      height: 30,
+      child: CircularProgressIndicator(),
+    ),
+  );
+}
+
+BoxDecoration buildBoxDecoration() {
+  return BoxDecoration(
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black87.withOpacity(0.1),
+        blurRadius: 1.0,
+        offset: Offset(0, 0),
+      )
+    ],
+    color: Colors.white,
+  );
+}
+
+Container noData() {
+  return Container(
+    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+    decoration: buildBoxDecoration(),
+    child: Text(
+      "គ្មានទិន្នន័យ",
+      style: TextStyle(
+        fontSize: 13,
+        color: Palette.text,
+      ),
+    ),
+  );
+}
+
+PreferredSize buildAppBar(BuildContext context, String title) {
+  return PreferredSize(
+    preferredSize: const Size.fromHeight(48),
+    child: AppBar(
+      elevation: 0.3,
+      backgroundColor: Colors.white,
+      titleSpacing: 0.0,
+      title: Text(title, textAlign: TextAlign.start),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.notifications),
+          onPressed: () {},
+        )
+      ],
+    ),
+  );
+}
+
 String khNum(String input) {
   const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   const farsi = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];

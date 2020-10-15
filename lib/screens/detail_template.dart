@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:romduol/configs/palette.dart';
@@ -7,23 +6,10 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/comment_page.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
+import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
 import 'package:romduol/widget/sliver_card_delegate.dart';
 import 'package:romduol/widget/star_rating.dart';
-
-List<String> imageList = [
-  "assets/provinces/sihanouk.png",
-  "assets/provinces/kep.png",
-  "assets/provinces/kohkong.png"
-];
-
-final List<String> articleList = [
-  "ឧទ្យានជាតិព្រះមុនីវង្សភ្នំបូកគោឬឧទ្យានជាតិភ្នំបូកគោមានទីតាំងស្ថិតនៅក្នុងស្រុកទឹកឈូខេត្តកំពត។ ភ្នំបូកគោមានកម្ពស់ ១០៧៥ម៉ែត្រធៀបទៅនឹងនីវ៉ូទឹកសមុទ្រនិងមានចម្ងាយប្រមាណ ១១គីឡូម៉ែត្រពីក្រុងកំពតទៅកាន់ជើងភ្នំនិងចម្ងាយ ៣២គីឡូម៉ែត្រពីជើងភ្នំដល់កំពូលភ្នំ។ ភ្នំបូកគោត្រូវបានរកឃើញនៅឆ្នាំ១៩១៧ ដោយជនជាតិបារាំងនិងត្រូវបានអភិវឌ្ឍឲ្យទៅជារមណីយដ្ឋាននៅឆ្នាំ១៩២១ ក្នុងរជ្ជកាលព្រះបាទស៊ីសុវត្ថិ។",
-  "នៅអំឡុងពេលនោះភ្នំបូកគោគឺជាទីកន្លែងកម្សាន្តដ៏ល្បីល្បាញសម្រាប់អភិជនបារាំងនិងរាជវង្សានុវង្ស។ឧទ្យានជាតិភ្នំបូកគោគឺជាឧទ្យានមួយក្នុងចំណោមឧទ្យានជាតិដ៏ស្រស់ស្អាតរបស់ព្រះរាជាណាចក្រកម្ពុជា។ ភ្នំបូកគោល្បីឈ្មោះដោយសារតែអាកាសធាតុត្រជាក់ពេញមួយឆ្នាំនិងសម្រស់ព្រៃព្រឹក្សាធម្មជាតិដ៏ស្រស់បំព្រងល្អឯកគ្មានគូប្រដូចក្នុងតំបន់។ ",
-  "ពីលើកំពូលភ្នំភ្ញៀវទេសចរអាចគយគន់ទិដ្ឋភាពដ៏ពិចពិលរមិលមើលនៃទិដ្ឋភាពទីក្រុងកំពត ឆ្នេរសមុទ្រកែប ខេត្តព្រះសីហនុ និងកោះជាច្រើនដែលនៅខាងក្រោម។ ឧទ្យានជាតិភ្នំបូកគោ មានដើមឈើត្រូពិចដុះពាសពេញលើភ្នំ និងសត្វព្រៃជាច្រើនប្រភេទ ព្រមទាំងទឹកជ្រោះតូចធំដ៏ស្រស់ស្អាត ជាពិសេសគឺទឹកជ្រោះពពកវិលដ៏ល្បីល្បាញ។ ភ្នំបូកគោគឺជាទីកម្សាន្តធម្មជាតិដ៏សម្បូរបែបបំផុតមួយក្នុងព្រះរាជាណាចក្រកម្ពុជា មិនថាធម្មជាតិ អាកាសធាតុ ដំណើរកម្សាន្តរុករកឬសម្រាកលម្ហែនោះទេ សុទ្ធសឹងតែអាចធ្វើឲ្យភ្ញៀវទេសចរមានអារម្មណ៍រីករាយស្រស់ថ្លានិងអនុស្សាវរីយ៍បំភ្លេចមិនបាន។",
-  "ពីលើកំពូលភ្នំភ្ញៀវទេសចរអាចគយគន់ទិដ្ឋភាពដ៏ពិចពិលរមិលមើលនៃទិដ្ឋភាពទីក្រុងកំពត ឆ្នេរសមុទ្រកែប ខេត្តព្រះសីហនុ និងកោះជាច្រើនដែលនៅខាងក្រោម។ ឧទ្យានជាតិភ្នំបូកគោ មានដើមឈើត្រូពិចដុះពាសពេញលើភ្នំ និងសត្វព្រៃជាច្រើនប្រភេទ ព្រមទាំងទឹកជ្រោះតូចធំដ៏ស្រស់ស្អាត ជាពិសេសគឺទឹកជ្រោះពពកវិលដ៏ល្បីល្បាញ។ ភ្នំបូកគោគឺជាទីកម្សាន្តធម្មជាតិដ៏សម្បូរបែបបំផុតមួយក្នុងព្រះរាជាណាចក្រកម្ពុជា មិនថាធម្មជាតិ អាកាសធាតុ ដំណើរកម្សាន្តរុករកឬសម្រាកលម្ហែនោះទេ សុទ្ធសឹងតែអាចធ្វើឲ្យភ្ញៀវទេសចរមានអារម្មណ៍រីករាយស្រស់ថ្លានិងអនុស្សាវរីយ៍បំភ្លេចមិនបាន។",
-  "ពីលើកំពូលភ្នំភ្ញៀវទេសចរអាចគយគន់ទិដ្ឋភាពដ៏ពិចពិលរមិលមើលនៃទិដ្ឋភាពទីក្រុងកំពត ឆ្នេរសមុទ្រកែប ខេត្តព្រះសីហនុ និងកោះជាច្រើនដែលនៅខាងក្រោម។ ឧទ្យានជាតិភ្នំបូកគោ មានដើមឈើត្រូពិចដុះពាសពេញលើភ្នំ និងសត្វព្រៃជាច្រើនប្រភេទ ព្រមទាំងទឹកជ្រោះតូចធំដ៏ស្រស់ស្អាត ជាពិសេសគឺទឹកជ្រោះពពកវិលដ៏ល្បីល្បាញ។ ភ្នំបូកគោគឺជាទីកម្សាន្តធម្មជាតិដ៏សម្បូរបែបបំផុតមួយក្នុងព្រះរាជាណាចក្រកម្ពុជា មិនថាធម្មជាតិ អាកាសធាតុ ដំណើរកម្សាន្តរុករកឬសម្រាកលម្ហែនោះទេ សុទ្ធសឹងតែអាចធ្វើឲ្យភ្ញៀវទេសចរមានអារម្មណ៍រីករាយស្រស់ថ្លានិងអនុស្សាវរីយ៍បំភ្លេចមិនបាន។",
-];
 
 List<CommentModel> comments = [
   CommentModel(
@@ -92,7 +78,6 @@ List<CommentModel> comments = [
 ];
 
 ///
-///
 ///NOTED:
 ///THIS PAGE START HERE
 ///
@@ -107,7 +92,6 @@ class DetailTemplate extends StatefulWidget {
 class _DetailTemplateState extends State<DetailTemplate> {
   int currentImage = 0;
   PageController _imageController = PageController(initialPage: 0);
-  ScrollController _scrollController;
   bool scrollEnabled = true;
   final bool isHasPrice = false;
 
@@ -115,24 +99,11 @@ class _DetailTemplateState extends State<DetailTemplate> {
   double rate = 0;
 
   double rateTOTAL = 10;
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
     super.dispose();
-    _scrollController = ScrollController();
-    _scrollController
-      ..addListener(
-        () {
-          print(_scrollController.offset);
-          if (_scrollController.offset == 0) {
-            print("FUNCTI");
-          }
-        },
-      );
+    _imageController.dispose();
   }
 
   @override
@@ -164,13 +135,9 @@ class _DetailTemplateState extends State<DetailTemplate> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     List<String> images = List();
-                    if (!snapshot.hasData) {
-                      return Container(
-                        child: Center(
-                          child: Text("No data found"),
-                        ),
-                      );
-                    } else if (snapshot.hasData) {
+                    if (!snapshot.hasData)
+                      return noData();
+                    else if (snapshot.hasData) {
                       snapshot.data.docs.forEach((element) {
                         try {
                           images.add(element['image']);
@@ -188,7 +155,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                             currentImage: currentImage,
                             onPageChanged: (index) =>
                                 setState(() => currentImage = index),
-                          ),// flutter clean && git add . && git commit -m "added function to convert from english number to khmer number." && git push origin master
+                          ), // flutter clean && git add . && git commit -m "added function to convert from english number to khmer number." && git push origin master
                           TextWithIndicator(
                             currentImage: currentImage,
                             imageList: images,
@@ -197,8 +164,8 @@ class _DetailTemplateState extends State<DetailTemplate> {
                           ),
                         ],
                       );
-                    } else
-                      return Center(child: CircularProgressIndicator());
+                    }
+                    return noData();
                   },
                 ),
               ),
@@ -218,6 +185,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                         widget.data.pricetotal != null
                     ? true
                     : false,
+                maplocation: widget.data.maplocation,
               ),
               height: widget.data.ratetotal == null
                   ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
@@ -233,28 +201,20 @@ class _DetailTemplateState extends State<DetailTemplate> {
                   constraints: BoxConstraints(minHeight: height - 75),
                   child: Column(
                     children: [
-                      SizedBox(height: 10),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: buildBoxDecoration(),
-                        child: Wrap(
-                          children: [
-                            for (int i = 0; i < articleList.length; i++)
-                              Column(
-                                children: [
-                                  Text(
-                                    khNum(articleList[i]),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Palette.text,
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                ],
-                              ),
-                          ],
-                        ),
+                      Column(
+                        children: [
+                          SizedBox(height: 10),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: buildBoxDecoration(),
+                            child: ArticleDetail(widget: widget, width: width),
+                          ),
+                          widget.data.refpath
+                                  .contains('restaurants/default_data/')
+                              ? FoodMenuDetail(path: widget.data.refpath)
+                              : SizedBox(),
+                        ],
                       ),
                       SizedBox(height: 10),
                       Container(
@@ -336,35 +296,178 @@ class _DetailTemplateState extends State<DetailTemplate> {
       ),
     );
   }
+}
 
-  BoxDecoration buildBoxDecoration() {
-    return BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black87.withOpacity(0.1),
-          blurRadius: 1.0,
-          offset: Offset(0, 0),
-        )
-      ],
-      color: Colors.white,
+class FoodMenuDetail extends StatelessWidget {
+  const FoodMenuDetail({Key key, this.path}) : super(key: key);
+
+  final String path;
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    return Container(
+      width: width,
+      margin: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: buildBoxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'បញ្ចី',
+            style: TextStyle(fontSize: 14),
+          ),
+          SizedBox(height: 10),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .doc(path)
+                .collection('foodmenu')
+                .snapshots(),
+            builder: (context, snapshot) {
+              List<FoodMenu> foods = List();
+              if (snapshot.hasData) {
+                snapshot.data.docs.forEach(
+                  (element) {
+                    foods.add(
+                      FoodMenu(
+                        title: element['title'],
+                        thumbnail: element['thumbnail'],
+                        price: element['price'].toString(),
+                      ),
+                    );
+                  },
+                );
+
+                return Container(
+                  height: foods.length / 2 * 190.0 + foods.length / 2 * 10,
+                  child: GridView.count(
+                    padding: EdgeInsets.zero,
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 20,
+                    childAspectRatio: 3 / 4,
+                    mainAxisSpacing: 20,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      for (int i = 0; i < foods.length; i++)
+                        Container(
+                          width: width / 2,
+                          padding: EdgeInsets.zero,
+                          margin: EdgeInsets.zero,
+                          decoration:
+                              buildBoxDecoration().copyWith(color: Palette.bg),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: width / 2,
+                                height: 105,
+                                child: NetworkImageLoader(
+                                  imagelocation: foods[i].thumbnail,
+                                  onPressed: () {},
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 10,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      foods[i].title,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: 5.0),
+                                    Text(
+                                      khNum(foods[i].price.toString()) + "\$",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Palette.sky,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
+                );
+              }
+              return loading();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ArticleDetail extends StatelessWidget {
+  const ArticleDetail({
+    Key key,
+    @required this.widget,
+    @required this.width,
+  }) : super(key: key);
+
+  final DetailTemplate widget;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .doc(widget.data.refpath)
+          .collection("articles")
+          .orderBy('index')
+          .snapshots(),
+      builder: (context, snapshot) {
+        List<ArticleModal> article = List();
+        if (snapshot.hasData) {
+          snapshot.data.docs.forEach((element) {
+            try {
+              article.add(ArticleModal(
+                header: element.data()['header'] ?? null,
+                paragraph: element['paragraph'] ?? null,
+              ));
+            } catch (e) {
+              article.add(ArticleModal(
+                paragraph: element['paragraph'] ?? null,
+              ));
+            }
+          });
+
+          return Container(
+            width: width,
+            child: Wrap(
+              children: [
+                for (int i = 0; i < article.length; i++)
+                  buildArticle(article[i].paragraph),
+              ],
+            ),
+          );
+        } else if (snapshot.hasError) return noData();
+        return loading();
+      },
     );
   }
 
-  PreferredSize buildAppBar(BuildContext context, String title) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(48),
-      child: AppBar(
-        elevation: 0.0,
-        backgroundColor: Palette.white90,
-        titleSpacing: 0.0,
-        title: Text(title, textAlign: TextAlign.start),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
-          )
-        ],
-      ),
+  Column buildArticle(String article) {
+    return Column(
+      children: [
+        Text(
+          khNum(article),
+          style: TextStyle(
+            fontSize: 13,
+            color: Palette.text,
+          ),
+        ),
+        SizedBox(height: 20),
+      ],
     );
   }
 }

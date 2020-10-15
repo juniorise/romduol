@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/data/data.dart';
@@ -9,9 +10,11 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province.dart';
+import 'package:romduol/widget/drawer.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   final Function onTab;
@@ -30,14 +33,37 @@ class _HomePageState extends State<HomePage> {
     // Backup().autoBackupPackages();
 
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: buildAppBar(context, "រំដួល"),
-      extendBodyBehindAppBar: true,
+      drawer: HomeDrawer(),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset("assets/home/background.jpg", fit: BoxFit.cover),
+          Positioned(
+            top: -80,
+            child: Column(
+              children: [
+                Container(
+                  height: height * 0.78,
+                  width: width,
+                  child: Image.asset(
+                    "assets/home/background.jpg",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  height: height * 0.22 + 80,
+                  width: width,
+                  child: Image.asset(
+                    "assets/home/background.jpg",
+                    fit: BoxFit.cover,
+                  ),
+                )
+              ],
+            ),
+          ),
           RefreshIndicator(
             onRefresh: () => Navigator.pushReplacement(
               context,
@@ -73,42 +99,64 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរបាន"),
-                      Container(
-                        height: 300,
-                        child: LiveGrid.options(
-                          physics: NeverScrollableScrollPhysics(),
-                          options: options,
-                          itemBuilder: (context, index, animation) {
-                            ProvinceModel data = provinces[index];
-                            return FadeTransition(
-                              opacity: Tween<double>(
-                                begin: 0,
-                                end: 1,
-                              ).animate(animation),
-                              child: buildProvinceCard(
-                                context: context,
-                                province: data.province,
-                                views: data.views,
-                                imagelocation: data.imagelocation,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Province(
-                                      province: data.province,
+                      Stack(
+                        children: [
+                          Container(
+                            height: width > 360 ? 160 : 300,
+                            child: LiveGrid.options(
+                              physics: NeverScrollableScrollPhysics(),
+                              options: options,
+                              itemBuilder: (context, index, animation) {
+                                ProvinceModel data = provinces[index];
+                                return FadeTransition(
+                                  opacity: Tween<double>(
+                                    begin: 0,
+                                    end: 1,
+                                  ).animate(animation),
+                                  child: buildProvinceCard(
+                                    context: context,
+                                    province: data.province,
+                                    views: data.views,
+                                    imagelocation: data.imagelocation,
+                                    onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Province(
+                                          province: data.province,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                );
+                              },
+                              itemCount: 4,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: width > 360 * 2 ? 4 : 2,
+                                crossAxisSpacing: 0,
+                                mainAxisSpacing: 0,
+                                childAspectRatio: 16 / 14.2,
                               ),
-                            );
-                          },
-                          itemCount: 4,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            childAspectRatio: 16 / 14.5,
+                            ),
                           ),
-                        ),
+                          width < 360 * 2
+                              ? Positioned.fill(
+                                  top: -7.5,
+                                  right: 0.2,
+                                  child: IgnorePointer(
+                                    child: Container(
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/graphics/provincedivider.svg',
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(),
+                        ],
                       ),
                     ],
                   ),
@@ -174,7 +222,7 @@ class _HomePageState extends State<HomePage> {
     showItemInterval: Duration(milliseconds: 100),
     showItemDuration: Duration(milliseconds: 500),
     visibleFraction: 0.05,
-    reAnimateOnVisibility: true,
+    reAnimateOnVisibility: false,
   );
 
   Column packageCard({
@@ -189,6 +237,8 @@ class _HomePageState extends State<HomePage> {
           //package container
           width: width,
           child: FlatButton(
+            highlightColor: Palette.text.withOpacity(0.05),
+            splashColor: Palette.bg,
             onPressed: () {
               Navigator.push(
                 context,
@@ -227,16 +277,16 @@ class _HomePageState extends State<HomePage> {
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: TextStyle(
-                              color: Palette.sky,
-                              fontFamily: "Kantumruy"
-                            ),
+                                color: Palette.sky, fontFamily: "Kantumruy"),
                             children: [
                               TextSpan(
-                                text: "${khNum(package.bookedspace.toString())}",
+                                text:
+                                    "${khNum(package.bookedspace.toString())}",
                                 style: TextStyle(fontSize: 13),
                               ),
                               TextSpan(
-                                text: "/${khNum(package.totalspace.toString())} នាក់",
+                                text:
+                                    "/${khNum(package.totalspace.toString())} នាក់",
                                 style: TextStyle(fontSize: 11),
                               )
                             ],
@@ -295,8 +345,8 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 khNum(package.date),
                                 overflow: TextOverflow.ellipsis,
-                                style:
-                                    TextStyle(fontSize: 12, color: Palette.text),
+                                style: TextStyle(
+                                    fontSize: 12, color: Palette.text),
                               ),
                             ),
                           )
@@ -327,6 +377,7 @@ class _HomePageState extends State<HomePage> {
                 fit: BoxFit.cover),
           ),
           FlatButton(
+            splashColor: Palette.bg.withOpacity(0.1),
             onPressed: () {},
             padding: EdgeInsets.zero,
             child: Container(
@@ -382,7 +433,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  FlatButton buildProvinceCard({
+  Container buildProvinceCard({
     String province,
     int views,
     Function onPressed,
@@ -390,19 +441,36 @@ class _HomePageState extends State<HomePage> {
     BuildContext context,
   }) {
     double width = MediaQuery.of(context).size.width;
-    return FlatButton(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      onPressed: onPressed,
-      child: Container(
-        width: (width - 60) / 2,
+    return Container(
+      margin: EdgeInsets.zero,
+      width: (width - 60) / 2,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Palette.text.withOpacity(0.1),
+            blurRadius: 0,
+            offset: Offset(-0.25, -0.25),
+          )
+        ],
+        color: Colors.white,
+      ),
+      child: FlatButton(
+        padding: EdgeInsets.fromLTRB(5, 8, 5, 0),
+        onPressed: onPressed,
+        highlightColor: Palette.text.withOpacity(0.05),
+        splashColor: Palette.bg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              imagelocation,
-              height: 80,
-              fit: BoxFit.cover,
-              width: (width - 60) / 2,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(1),
+              child: Image.asset(
+                imagelocation,
+                height: 80,
+                fit: BoxFit.cover,
+                width: (width - 60) / 2,
+              ),
             ),
             SizedBox(height: 5.0),
             Text(
@@ -447,28 +515,6 @@ class _HomePageState extends State<HomePage> {
             question[index],
             style: TextStyle(fontSize: 14, color: Colors.white),
           ),
-        ],
-      ),
-    );
-  }
-
-  PreferredSize buildAppBar(BuildContext context, String title) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(48),
-      child: AppBar(
-        elevation: 0.0,
-        backgroundColor: Palette.white90,
-        titleSpacing: 0.0,
-        title: Text(title, textAlign: TextAlign.start),
-        leading: IconButton(
-          icon: Icon(Icons.menu, size: 24),
-          onPressed: widget.onTab,
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
-          )
         ],
       ),
     );

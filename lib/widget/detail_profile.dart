@@ -106,8 +106,8 @@ class DetailProfile extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => GoogleMapTemplate(
-                          maplocation: maplocation,
-                          buslocation: buslocation,
+                          maplocation: maplocation ?? null,
+                          buslocation: buslocation ?? null,
                         ),
                       ),
                     );

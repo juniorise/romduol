@@ -14,12 +14,8 @@ void main() async {
         primaryColor: Palette.appbar,
         canvasColor: Palette.background,
         errorColor: Palette.sky,
-        splashColor: Palette.white20.withOpacity(0),
         primaryTextTheme: TextTheme(
-          headline6: TextStyle(
-            color: Palette.sky,
-            fontSize: 14,
-          ),
+          headline6: TextStyle(color: Palette.sky, fontSize: 14),
         ),
         appBarTheme: AppBarTheme(
           centerTitle: false,

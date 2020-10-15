@@ -51,13 +51,9 @@ class _PackageDetailState extends State<PackageDetail> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     List<String> images = List();
-                    if (!snapshot.hasData) {
-                      return Container(
-                        child: Center(
-                          child: Text("No data found"),
-                        ),
-                      );
-                    } else if (snapshot.hasData) {
+                    if (!snapshot.hasData)
+                      return noData();
+                    else if (snapshot.hasData) {
                       snapshot.data.docs.forEach((element) {
                         try {
                           images.add(element['image']);
@@ -85,7 +81,7 @@ class _PackageDetailState extends State<PackageDetail> {
                         ],
                       );
                     } else
-                      return Center(child: CircularProgressIndicator());
+                      return loading();
                   },
                 ),
               ),
@@ -156,10 +152,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                       ],
                                     ),
                                   );
-                                } else if (snapshot.hasError) {
-                                  print("NO DATA");
-                                  return noData();
-                                }
+                                } else if (snapshot.hasError) return noData();
+
                                 return loading();
                               },
                             ),
@@ -215,8 +209,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                       );
                                     } else if (snapshot.hasError)
                                       return noData();
-                                    else
-                                      return loading();
+
+                                    return loading();
                                   },
                                 ),
                               ],
@@ -299,62 +293,6 @@ class _PackageDetailState extends State<PackageDetail> {
         ),
         SizedBox(height: 10),
       ],
-    );
-  }
-
-  Center loading() {
-    return Center(
-      heightFactor: 1,
-      child: Container(
-        width: 30,
-        height: 30,
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  Container noData() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      decoration: buildBoxDecoration(),
-      child: Text(
-        "គ្មានទិន្នន័យ",
-        style: TextStyle(
-          fontSize: 13,
-          color: Palette.text,
-        ),
-      ),
-    );
-  }
-
-  BoxDecoration buildBoxDecoration() {
-    return BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black87.withOpacity(0.1),
-          blurRadius: 1.0,
-          offset: Offset(0, 0),
-        )
-      ],
-      color: Colors.white,
-    );
-  }
-
-  PreferredSize buildAppBar(BuildContext context, String title) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(48),
-      child: AppBar(
-        elevation: 0.0,
-        backgroundColor: Palette.white90,
-        titleSpacing: 0.0,
-        title: Text(title, textAlign: TextAlign.start),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
-          )
-        ],
-      ),
     );
   }
 }

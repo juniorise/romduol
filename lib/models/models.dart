@@ -62,7 +62,7 @@ class PackageModel {
 
 class FoodMenu {
   final String thumbnail, title;
-  final double price;
+  final String price;
 
   FoodMenu({
     this.thumbnail,

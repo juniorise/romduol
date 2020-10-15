@@ -60,13 +60,17 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
             left: i == 0 ? 10 : 5,
             right: i == _tabBarNames.length - 1 ? 10 : 5,
           ),
+          padding: EdgeInsets.zero,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
-            color: _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.3),
+            color: _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.2)
           ),
           child: FlatButton(
+            height: double.infinity,
             minWidth: 130,
+            splashColor: Palette.bggrey.withOpacity(0.2),
+            highlightColor: Palette.bggrey.withOpacity(0.1),
             onPressed: () {
               widget.onTap(i);
               setState(() {

@@ -53,7 +53,8 @@ class CardOnProvince extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
-                          khNum("ចាប់ពី​ ${data.pricefrom.toInt()}\$ - ${data.pricetotal.toInt()}\$"),
+                          khNum(
+                              "ចាប់ពី​ ${data.pricefrom.toInt()}\$ - ${data.pricetotal.toInt()}\$"),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
                       ),
@@ -102,6 +103,7 @@ class CardOnProvince extends StatelessWidget {
                       Container(
                         width: data.pricefrom == null ? 104 : 104.0 + 17,
                         child: FlatButton.icon(
+                          splashColor: Palette.white20,
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)),

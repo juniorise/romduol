@@ -57,7 +57,7 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
               preferredSize: Size.fromHeight(48.0 + 46.0),
               child: AppBar(
                 titleSpacing: 0.0,
-                elevation: 2.0,
+                elevation: 0.5,
                 actions: [
                   IconButton(
                     icon: Icon(isSearching ? Icons.clear : Icons.search),
