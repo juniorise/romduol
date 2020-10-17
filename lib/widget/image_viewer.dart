@@ -38,7 +38,7 @@ class ImageViewer extends StatelessWidget {
         ),
         for (int index = 1; index < imageList.length + 1; index++)
           buildImage(
-            index: index - 1,
+            index: index,
             child: NetworkImageLoader(
               imagelocation: imageList[index - 1],
               onPressed: () {},
@@ -60,7 +60,9 @@ class ImageViewer extends StatelessWidget {
               highlightColor: Colors.white.withOpacity(0.2),
               splashColor: Colors.black.withOpacity(0.2),
               onPressed: () {
-                if (index == imageList.length - 1) {
+                print(index);
+                print(imageList.length);
+                if (index == imageList.length) {
                   pageController.animateToPage(
                     0,
                     duration: Duration(milliseconds: 200),

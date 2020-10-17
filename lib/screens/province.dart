@@ -35,7 +35,8 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
 
     if (widget.province == "ខេត្តកំពត") _province = Database().kompotData;
     if (widget.province == "ខេត្តកោះកុង") _province = Database().kohkongData;
-    if (widget.province == "ខេត្តព្រះសីហនុ") _province = Database().sihaknoukData;
+    if (widget.province == "ខេត្តព្រះសីហនុ")
+      _province = Database().sihaknoukData;
     if (widget.province == "ខេត្តកែប") _province = Database().kebData;
 
     return _province;
@@ -120,6 +121,13 @@ class _ProvinceState extends State<Province> with TickerProviderStateMixin {
   //check if page view is scrolling => animate scroller controller
   void pageControllerListener() {
     if (_pageController.position.isScrollingNotifier.value) {
+      if (_scrollController.offset != currentPage * 68.4) {
+        _scrollController.animateTo(
+          //1 page view = 0.19 scroll view
+          currentPage * 68.4,
+          duration: Duration(milliseconds: 500), curve: Curves.easeInOut,
+        );
+      }
       _scrollController.jumpTo(
         //1 page view = 0.19 scroll view
         _pageController.offset * (0.19),

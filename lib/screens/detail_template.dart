@@ -153,8 +153,9 @@ class _DetailTemplateState extends State<DetailTemplate> {
                             imageList: images,
                             width: width,
                             currentImage: currentImage,
-                            onPageChanged: (index) =>
-                                setState(() => currentImage = index),
+                            onPageChanged: (index) => setState(
+                              () => currentImage = index,
+                            ),
                           ), // flutter clean && git add . && git commit -m "added function to convert from english number to khmer number." && git push origin master
                           TextWithIndicator(
                             currentImage: currentImage,

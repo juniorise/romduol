@@ -34,7 +34,7 @@ class DetailProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isShowPrice = pricefrom != null;
-
+    print(maplocation.latitude);
     double heightTOTAL = 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10;
     return Container(
       height: rate != null ? heightTOTAL + 45 : heightTOTAL,
@@ -179,19 +179,6 @@ class DetailProfile extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-
-  BoxDecoration buildBoxDecoration() {
-    return BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black87.withOpacity(0.2),
-          blurRadius: 1.0,
-          offset: Offset(0, 0),
-        )
-      ],
-      color: Colors.white,
     );
   }
 }

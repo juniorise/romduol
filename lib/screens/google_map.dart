@@ -58,9 +58,9 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
   void initState() {
     _maplocation = _yourLocation =
         LatLng(widget.maplocation.latitude, widget.maplocation.longitude);
-    _buslocation =
-        LatLng(widget.buslocation.latitude, widget.buslocation.longitude) ??
-            null;
+    _buslocation = widget.buslocation != null
+        ? LatLng(widget.buslocation.latitude, widget.buslocation.longitude)
+        : null;
 
     addMarker(location: _maplocation, title: "Destination");
     addCircle(_maplocation);
@@ -191,8 +191,7 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
     _yourLocation = await _getCurrentLocation();
   }
 
-  void addMarker(
-      {LatLng location, String title, String snippet}) {
+  void addMarker({LatLng location, String title, String snippet}) {
     setState(
       () {
         _markers.add(
