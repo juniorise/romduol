@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final List<PackageModel> packages =
         Provider.of<List<PackageModel>>(context) ?? [];
-
+    var scaffoldKey = GlobalKey<ScaffoldState>();
     // Backup().autoBackupProvince();
     // Backup().autoBackupPackages();
 
@@ -36,184 +36,198 @@ class _HomePageState extends State<HomePage> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      key: scaffoldKey,
       appBar: buildAppBar(context, "រំដួល"),
       drawer: HomeDrawer(),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Positioned(
-            top: -80,
-            child: Column(
-              children: [
-                Container(
-                  height: height * 0.78,
-                  width: width,
-                  child: Image.asset(
-                    "assets/home/background.jpg",
-                    fit: BoxFit.cover,
+      body: GestureDetector(
+        onHorizontalDragEnd: (e) {
+          if (e.velocity.pixelsPerSecond.direction > 0 &&
+              e.velocity.pixelsPerSecond.dx > 0) {
+            scaffoldKey.currentState.openDrawer();
+          }
+        },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              top: -80,
+              child: Column(
+                children: [
+                  Container(
+                    height: height * 0.78,
+                    width: width,
+                    child: Image.asset(
+                      "assets/home/background.jpg",
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                Container(
-                  height: height * 0.22 + 80,
-                  width: width,
-                  child: Image.asset(
-                    "assets/home/background.jpg",
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-            ),
-          ),
-          RefreshIndicator(
-            onRefresh: () => Navigator.pushReplacement(
-              context,
-              PageRouteTransition(
-                child: MyApp(),
-                duration: Duration(milliseconds: 500),
+                  Container(
+                    height: height * 0.22 + 80,
+                    width: width,
+                    child: Image.asset(
+                      "assets/home/background.jpg",
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                ],
               ),
             ),
-            child: ListView(
-              children: [
-                //HELLO TITLE
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('questions')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData)
-                      snapshot.data.docs.forEach(
-                        (element) {
-                          if (!question.contains(element['question']))
-                            question.add(element['question']);
-                        },
-                      );
-                    return hello(width, question);
-                  },
+            Positioned.fill(
+              child: Container(
+                color: Palette.sky.withOpacity(0.5),
+              ),
+            ),
+            RefreshIndicator(
+              onRefresh: () => Navigator.pushReplacement(
+                context,
+                PageRouteTransition(
+                  child: MyApp(),
+                  duration: Duration(milliseconds: 500),
                 ),
-
-                //PROVINCES
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  color: Colors.white,
-                  width: width,
-                  child: Column(
-                    children: [
-                      sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរបាន"),
-                      Stack(
-                        children: [
-                          Container(
-                            height: width > 360 ? 160 : 300,
-                            child: LiveGrid.options(
-                              physics: NeverScrollableScrollPhysics(),
-                              options: options,
-                              itemBuilder: (context, index, animation) {
-                                ProvinceModel data = provinces[index];
-                                return FadeTransition(
-                                  opacity: Tween<double>(
-                                    begin: 0,
-                                    end: 1,
-                                  ).animate(animation),
-                                  child: buildProvinceCard(
-                                    context: context,
-                                    province: data.province,
-                                    views: data.views,
-                                    imagelocation: data.imagelocation,
-                                    onPressed: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Province(
-                                          province: data.province,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              itemCount: 4,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: width > 360 * 2 ? 4 : 2,
-                                crossAxisSpacing: 0,
-                                mainAxisSpacing: 0,
-                                childAspectRatio: 16 / 14.2,
-                              ),
-                            ),
-                          ),
-                          width < 360 * 2
-                              ? Positioned.fill(
-                                  top: -7.5,
-                                  right: 0.2,
-                                  child: IgnorePointer(
-                                    child: Container(
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                          'assets/graphics/provincedivider.svg',
-                                          width: 60,
-                                          height: 60,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox(),
-                        ],
-                      ),
-                    ],
+              ),
+              child: ListView(
+                children: [
+                  //HELLO TITLE
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('questions')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData)
+                        snapshot.data.docs.forEach(
+                          (element) {
+                            if (!question.contains(element['question']))
+                              question.add(element['question']);
+                          },
+                        );
+                      return hello(width, question);
+                    },
                   ),
-                ),
-                SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
-                Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(15),
-                  width: width,
-                  child: Column(
-                    children: [
-                      posterCard(width),
-                      SizedBox(height: 5),
-                      sectionTitle("ចូលរួមជាមួយពួកយើង"),
-                      Wrap(
-                        children: [
-                          packages.length != null
-                              ? LiveList.options(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  options: options,
-                                  itemCount: packages.length,
-                                  itemBuilder: (context, i, animation) {
-                                    return FadeTransition(
-                                      opacity: Tween<double>(
-                                        begin: 0,
-                                        end: 1,
-                                      ).animate(animation),
-                                      child: packageCard(
-                                        width: width,
-                                        package: packages[i],
-                                        onErrorPressed: () =>
-                                            Navigator.pushReplacement(
-                                          context,
-                                          PageRouteTransition(
-                                            child: MyApp(),
-                                            duration:
-                                                Duration(milliseconds: 500),
+
+                  //PROVINCES
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    color: Colors.white,
+                    width: width,
+                    child: Column(
+                      children: [
+                        sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
+                        Stack(
+                          children: [
+                            Container(
+                              height: width > 360 ? 155 : 290,
+                              child: LiveGrid.options(
+                                physics: NeverScrollableScrollPhysics(),
+                                options: options,
+                                itemBuilder: (context, index, animation) {
+                                  ProvinceModel data = provinces[index];
+                                  return FadeTransition(
+                                    opacity: Tween<double>(
+                                      begin: 0,
+                                      end: 1,
+                                    ).animate(animation),
+                                    child: buildProvinceCard(
+                                      context: context,
+                                      province: data.province,
+                                      views: data.views,
+                                      imagelocation: data.imagelocation,
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Province(
+                                            province: data.province,
                                           ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                )
-                              : Center(
-                                  heightFactor: 2,
-                                  child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                },
+                                itemCount: 4,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: width > 360 * 2 ? 4 : 2,
+                                  crossAxisSpacing: 0,
+                                  mainAxisSpacing: 0,
+                                  childAspectRatio: 8 / 7,
                                 ),
-                        ],
-                      )
-                    ],
+                              ),
+                            ),
+                            width < 360 * 2
+                                ? Positioned.fill(
+                                    top: -1.5,
+                                    right: 0.2,
+                                    child: IgnorePointer(
+                                      child: Container(
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            'assets/graphics/provincedivider.svg',
+                                            width: 100,
+                                            height: 100,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
+                  Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.all(15),
+                    width: width,
+                    child: Column(
+                      children: [
+                        posterCard(width),
+                        SizedBox(height: 5),
+                        sectionTitle("ចូលរួមជាមួយពួកយើង"),
+                        Wrap(
+                          children: [
+                            packages.length != null
+                                ? LiveList.options(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    options: options,
+                                    itemCount: packages.length,
+                                    itemBuilder: (context, i, animation) {
+                                      return FadeTransition(
+                                        opacity: Tween<double>(
+                                          begin: 0,
+                                          end: 1,
+                                        ).animate(animation),
+                                        child: packageCard(
+                                          width: width,
+                                          package: packages[i],
+                                          onErrorPressed: () =>
+                                              Navigator.pushReplacement(
+                                            context,
+                                            PageRouteTransition(
+                                              child: MyApp(),
+                                              duration:
+                                                  Duration(milliseconds: 500),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(
+                                    heightFactor: 2,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -267,28 +281,33 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Positioned(
-                      bottom: 5,
-                      left: 0,
+                      bottom: 0,
                       child: Container(
-                        width: 75,
-                        color: Colors.white.withOpacity(0.8),
-                        padding: EdgeInsets.all(3),
+                        width: 110,
+                        color: Palette.sky.withOpacity(0.7),
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.center,
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: TextStyle(
-                                color: Palette.sky, fontFamily: "Kantumruy"),
+                                color: Colors.white.withOpacity(1),
+                                fontFamily: "Kantumruy",
+                                fontWeight: FontWeight.w300),
                             children: [
                               TextSpan(
                                 text:
                                     "${khNum(package.bookedspace.toString())}",
-                                style: TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                               TextSpan(
                                 text:
                                     "/${khNum(package.totalspace.toString())} នាក់",
                                 style: TextStyle(fontSize: 11),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -368,55 +387,73 @@ class _HomePageState extends State<HomePage> {
     return Container(
       width: width,
       height: 150,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Image.asset("assets/home/package_poster.png",
-                fit: BoxFit.cover),
-          ),
-          FlatButton(
-            splashColor: Palette.bg.withOpacity(0.1),
-            onPressed: () {},
-            padding: EdgeInsets.zero,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0x00000000),
-                    Color(0x99000000),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      "អេកូ-កញ្ចប់ដំណើរកំសាន្ត",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                  ),
-                  Container(
-                    width: width,
-                    color: Palette.sky70,
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      "ដំណើរកំសាន្តប្រកបដោយចីរភាព សន្សំសច្ចៃ និង មានសុវត្តិភាព",
-                      style: TextStyle(fontSize: 12, color: Colors.white),
-                    ),
-                  )
-                ],
-              ),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/home/package_poster.png'),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: FlatButton(
+        splashColor: Palette.bg.withOpacity(0.1),
+        onPressed: () {},
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        child: Container(
+          height: 150,
+          width: width,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0x00000000),
+                Color(0x99000000),
+              ],
             ),
+            borderRadius: BorderRadius.circular(5),
           ),
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 10.0, top: 10),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(1),
+                      fontFamily: "Kantumruy",
+                      fontSize: 20,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: "អេកូ-កញ្ចប់",
+                      ),
+                      TextSpan(
+                        text: "ដំណើរកំសាន្ត",
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: width,
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.only(bottom: 8),
+                color: Palette.sky70,
+                child: Text(
+                  "ដំណើរកំសាន្តប្រកបដោយចីរភាព សន្សំសច្ចៃ និង មានសុវត្តិភាព",
+                  style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -477,15 +514,44 @@ class _HomePageState extends State<HomePage> {
               province,
               style: TextStyle(
                 fontSize: 14,
-                color: Palette.text,
+                color: Palette.sky,
               ),
             ),
-            Text(
-              "${khNum(views.toString())} នាក់ចូលមើលក្នុងខែនេះ",
-              style: TextStyle(
-                fontSize: 12,
-                color: Palette.text.withOpacity(0.8),
-              ),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: TextStyle(
+                        height: 1.6,
+                        fontSize: 13,
+                        color: Palette.text,
+                        fontFamily: "Kantumruy"),
+                    children: [
+                      TextSpan(
+                        text: "${khNum(views.toString())}",
+                      ),
+                      TextSpan(
+                        text: " ",
+                        style: TextStyle(fontSize: 3),
+                      ),
+                      TextSpan(
+                        text: "នាក់បានចូលមើល ",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.remove_red_eye,
+                  size: 12,
+                  color: Palette.text.withOpacity(0.0),
+                ),
+              ],
             ),
           ],
         ),

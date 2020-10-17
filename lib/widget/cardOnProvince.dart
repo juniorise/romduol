@@ -22,7 +22,7 @@ class CardOnProvince extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black87.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10.0,
             spreadRadius: -20,
             offset: Offset(0, 25),

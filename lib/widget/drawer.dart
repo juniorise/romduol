@@ -28,6 +28,11 @@ class HomeDrawer extends StatelessWidget {
               onTap: () {},
             ),
             _createDrawerItem(
+              icon: Icons.feedback_outlined,
+              text: 'ទាក់ទង់ពួកយើង',
+              onTap: () {},
+            ),
+            _createDrawerItem(
               icon: Icons.logout,
               text: 'ចាកចេញ',
               onTap: () {},
@@ -73,26 +78,30 @@ class HomeDrawer extends StatelessWidget {
             ),
           ),
           SizedBox(width: 13),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Sok Chan",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w300,
-                    height: 1.5),
-              ),
-              Text(
-                "sokchan@romduol.com",
-                style: TextStyle(
-                  height: 1.5,
-                  color: Colors.white.withOpacity(0.8),
-                  fontWeight: FontWeight.w300,
+          Flexible(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                Text(
+                  "Sok Chan",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                      height: 1.5),
                 ),
-              ),
-            ],
+                Text(
+                  "sokchan@romduol.com",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    height: 1.5,
+                    color: Colors.white.withOpacity(0.8),
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ],
+            ),
           )
         ],
       ),
@@ -113,9 +122,10 @@ class HomeDrawer extends StatelessWidget {
             child: Text(
               text,
               style: TextStyle(
-                  fontSize: 13,
-                  color: Palette.sky,
-                  fontWeight: FontWeight.w400),
+                fontSize: 13,
+                color: Palette.sky,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           )
         ],
