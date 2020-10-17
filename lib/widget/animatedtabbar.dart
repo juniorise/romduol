@@ -64,13 +64,13 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
-            color: _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.2)
+            color: _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.15)
           ),
           child: FlatButton(
             height: double.infinity,
             minWidth: 130,
-            splashColor: Palette.bggrey.withOpacity(0.2),
-            highlightColor: Palette.bggrey.withOpacity(0.1),
+            splashColor: Palette.bggrey.withOpacity(0.08),
+            highlightColor: Palette.bggrey.withOpacity(0.01),
             onPressed: () {
               widget.onTap(i);
               setState(() {

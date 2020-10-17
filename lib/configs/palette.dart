@@ -39,13 +39,19 @@ Container noData() {
 }
 
 PreferredSize buildAppBar(BuildContext context, String title) {
+  Color color = Palette.sky;
   return PreferredSize(
     preferredSize: const Size.fromHeight(48),
     child: AppBar(
       elevation: 0.3,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white.withOpacity(0.8),
       titleSpacing: 0.0,
-      title: Text(title, textAlign: TextAlign.start),
+      iconTheme: IconThemeData(color: color),
+      title: Text(
+        title,
+        textAlign: TextAlign.start,
+        style: TextStyle(color: color),
+      ),
       actions: [
         IconButton(
           icon: Icon(Icons.notifications),

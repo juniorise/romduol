@@ -69,7 +69,7 @@ class CardOnProvince extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(data.title),
+                Text(data.title, style: TextStyle(color: Palette.bgdark.withOpacity(0.8)),),
                 LocationText(location: data.location),
                 Container(
                   height: 32,

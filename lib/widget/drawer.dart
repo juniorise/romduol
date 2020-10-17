@@ -16,7 +16,14 @@ class HomeDrawer extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             _createHeader(),
-            Divider(height: 5),
+            _createDrawerItem(
+              icon: Icons.home,
+              text: 'រំដួល',
+              active: true,
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
             _createDrawerItem(
               icon: Icons.settings,
               text: 'ការកំណត់',
@@ -29,7 +36,7 @@ class HomeDrawer extends StatelessWidget {
             ),
             _createDrawerItem(
               icon: Icons.feedback_outlined,
-              text: 'ទាក់ទង់ពួកយើង',
+              text: 'កម្មវិធីមានបញ្ហា',
               onTap: () {},
             ),
             _createDrawerItem(
@@ -40,7 +47,7 @@ class HomeDrawer extends StatelessWidget {
             ListTile(
               title: Text(
                 '0.0.1',
-                style: TextStyle(color: Palette.sky),
+                style: TextStyle(color: Palette.text),
               ),
               onTap: () {},
             ),
@@ -108,27 +115,38 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  Widget _createDrawerItem({IconData icon, String text, Function onTap}) {
-    return FlatButton(
-      onPressed: onTap,
-      height: 50,
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      highlightColor: Palette.text.withOpacity(0.01),
-      child: Row(
-        children: <Widget>[
-          Icon(icon, color: Palette.sky),
-          Padding(
-            padding: EdgeInsets.only(left: 10.0),
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 13,
-                color: Palette.sky,
-                fontWeight: FontWeight.w400,
+  Widget _createDrawerItem(
+      {IconData icon, String text, Function onTap, bool active = false}) {
+    Color color = active ? Palette.sky : Palette.bgdark.withOpacity(0.7);
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Palette.text, width: 0.2),
+        ),
+      ),
+      child: FlatButton(
+        onPressed: onTap,
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        highlightColor: Palette.text.withOpacity(0.01),
+        splashColor: Palette.text.withOpacity(0.05),
+        color: Colors.white,
+        child: Row(
+          children: <Widget>[
+            Icon(icon, color: color),
+            Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: color,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

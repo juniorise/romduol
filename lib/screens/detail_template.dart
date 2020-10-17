@@ -94,6 +94,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
   PageController _imageController = PageController(initialPage: 0);
   bool scrollEnabled = true;
   final bool isHasPrice = false;
+  bool isZoom = false;
 
   bool isVisible = false;
   double rate = 0;
@@ -124,6 +125,16 @@ class _DetailTemplateState extends State<DetailTemplate> {
             pinned: true,
             iconTheme: IconThemeData(color: Colors.white),
             title: Text("អំពីរទីកន្លែង", style: TextStyle(color: Colors.white)),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.text_fields),
+                onPressed: () {
+                  setState(() {
+                    isZoom = !isZoom;
+                  });
+                },
+              )
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 width: width,
@@ -209,7 +220,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             decoration: buildBoxDecoration(),
-                            child: ArticleDetail(widget: widget, width: width),
+                            child: ArticleDetail(widget: widget, width: width, isZoom: isZoom,),
                           ),
                           widget.data.refpath
                                   .contains('restaurants/default_data/')
@@ -413,8 +424,10 @@ class ArticleDetail extends StatelessWidget {
     Key key,
     @required this.widget,
     @required this.width,
+    @required this.isZoom,
   }) : super(key: key);
 
+  final bool isZoom;
   final DetailTemplate widget;
   final double width;
 
@@ -463,8 +476,9 @@ class ArticleDetail extends StatelessWidget {
         Text(
           khNum(article),
           style: TextStyle(
-            fontSize: 13,
+            fontSize: isZoom ? 15 : 13,
             color: Palette.text,
+            height: isZoom ? 2.2 : 2.1,
           ),
         ),
         SizedBox(height: 20),

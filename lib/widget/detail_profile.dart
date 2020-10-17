@@ -51,7 +51,10 @@ class DetailProfile extends StatelessWidget {
                 child: Text(
                   title,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Palette.bgdark.withOpacity(0.8),
+                  ),
                 ),
               ),
               isShowPrice

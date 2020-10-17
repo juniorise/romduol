@@ -20,6 +20,13 @@ class _AnimatedListsState extends State<AnimatedLists> {
     Size size = MediaQuery.of(context).size;
     double width = size.width;
     double height = size.height;
+    if (widget.data.length < 1)
+      return Center(
+        child: Text(
+          "មិនមានទិន្នន័យ!",
+          style: TextStyle(color: Palette.text),
+        ),
+      );
     return Container(
       color: Palette.bg,
       width: width,
