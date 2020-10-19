@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:romduol/widget/theme/theme.dart';
 
 class GoogleMapTemplate extends StatefulWidget {
   GoogleMapTemplate({Key key, this.maplocation, this.buslocation})
@@ -70,7 +71,7 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, "ផែនទី"),
+      appBar: buildAppBar(title: "ផែនទី"),
       body: Stack(
         children: [
           GoogleMap(
@@ -210,18 +211,6 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
           ),
         );
       },
-    );
-  }
-
-  PreferredSize buildAppBar(BuildContext context, String title) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(48),
-      child: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.white,
-        titleSpacing: 0.0,
-        title: Text(title, textAlign: TextAlign.start),
-      ),
     );
   }
 }

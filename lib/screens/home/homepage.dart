@@ -8,14 +8,16 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
 import 'package:romduol/data/data.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/package_detail.dart';
+import 'package:romduol/screens/package/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
-import 'package:romduol/screens/province.dart';
+import 'package:romduol/screens/province/province.dart';
 import 'package:romduol/widget/drawer.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:romduol/widget/theme/theme.dart';
+import 'dart:math' as math;
 
 class HomePage extends StatefulWidget {
   final Function onTab;
@@ -51,9 +53,19 @@ class _HomePageState extends State<HomePage> {
         onWillPop: _onWillPop,
         child: Scaffold(
           key: scaffoldKey,
-          appBar: buildAppBar(context, "រំដួល"),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(48),
+            child: Consumer<ScrollNotifier>(
+              builder: (context, notifier, child) {
+                return buildAppBar(
+                  title: "រំដួល",
+                  onTab: () {},
+                  elevation: math.min(notifier.offset * 0.05, 3),
+                );
+              },
+            ),
+          ),
           drawer: HomeDrawer(),
-          extendBodyBehindAppBar: true,
           body: GestureDetector(
             onHorizontalDragEnd: (e) {
               if (e.velocity.pixelsPerSecond.direction > 0 &&
@@ -65,31 +77,40 @@ class _HomePageState extends State<HomePage> {
               fit: StackFit.expand,
               children: [
                 Positioned(
-                  top: -80,
-                  child: Column(
+                  top: -80 - 30.0,
+                  child: Stack(
                     children: [
                       Container(
-                        height: height * 0.78,
+                        height: height * 0.85,
+                        constraints: BoxConstraints(minHeight: 620),
                         width: width,
-                        child: Image.asset(
-                          "assets/home/background.jpg",
-                          fit: BoxFit.cover,
+                        child: Consumer<ScrollNotifier>(
+                          builder: (context, notifier, child) {
+                            return Transform.translate(
+                              offset: Offset(0, notifier.offset * 0.2),
+                              child: child,
+                            );
+                          },
+                          child: Image.asset(
+                            "assets/home/background.jpg",
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                      Container(
-                        height: height * 0.22 + 80,
-                        width: width,
-                        child: Image.asset(
-                          "assets/home/background.jpg",
-                          fit: BoxFit.cover,
+                      Positioned.fill(
+                        child: Container(
+                          color: Palette.sky.withOpacity(0.3),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
-                Positioned.fill(
+                Positioned(
+                  bottom: 0,
                   child: Container(
-                    color: Palette.sky.withOpacity(0.5),
+                    height: height - 200,
+                    width: width,
+                    color: Palette.bg,
                   ),
                 ),
                 ListView(
@@ -117,11 +138,13 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      color: Colors.white,
                       width: width,
+                      decoration: buildBoxDecoration(),
                       child: Column(
                         children: [
-                          sectionTitle("សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
+                          sectionTitle(
+                              context: context,
+                              title: "សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
                           Stack(
                             children: [
                               Container(
@@ -186,14 +209,17 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
                     Container(
-                      color: Colors.white,
+                      decoration: buildBoxDecoration(),
                       padding: EdgeInsets.all(15),
                       width: width,
                       child: Column(
                         children: [
                           posterCard(width),
                           SizedBox(height: 5),
-                          sectionTitle("ចូលរួមជាមួយពួកយើង"),
+                          sectionTitle(
+                            context: context,
+                            title: "ចូលរួមជាមួយពួកយើង",
+                          ),
                           Wrap(
                             children: [
                               packages.length != null
@@ -216,8 +242,8 @@ class _HomePageState extends State<HomePage> {
                                               context,
                                               PageRouteTransition(
                                                 child: MyApp(),
-                                                duration: Duration(
-                                                    milliseconds: 500),
+                                                duration:
+                                                    Duration(milliseconds: 500),
                                               ),
                                             ),
                                           ),
@@ -398,197 +424,100 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container posterCard(double width) {
-    return Container(
-      width: width,
-      height: 150,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/home/package_poster.png'),
-          fit: BoxFit.cover,
-        ),
+  Widget posterCard(double width) {
+    return Consumer<ScrollNotifier>(
+      builder: (context, notifier, child) {
+        return Container(
+          width: width,
+          height: 150,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Palette.sky,
+            image: DecorationImage(
+              image: AssetImage('assets/home/package_poster.png'),
+              alignment: Alignment(0, notifier.offset.abs() / 280),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: child,
+        );
+      },
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(5),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 10,
-            right: -20,
-            width: 80,
-            height: 80,
-            child: Consumer<ScrollNotifier>(
-              builder: (context, notifier, child) {
-                return Transform.rotate(
-                  angle: notifier.offset / 350,
-                  child: Center(
-                    child: SvgPicture.asset('assets/graphics/leaf.svg'),
-                  ),
-                );
-              },
-            ),
-          ),
-          FlatButton(
-            splashColor: Palette.bg.withOpacity(0.1),
-            onPressed: () {},
-            padding: EdgeInsets.zero,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            child: Container(
-              height: 150,
-              width: width,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0x00000000),
-                    Color(0x99000000),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(left: 10.0, top: 10),
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(1),
-                          fontFamily: "Kantumruy",
-                          fontSize: 20,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "អេកូ-កញ្ចប់",
-                          ),
-                          TextSpan(
-                            text: "ដំណើរកំសាន្ត",
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: width,
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.only(bottom: 8),
-                    color: Palette.sky70,
-                    child: Text(
-                      "ដំណើរកំសាន្តប្រកបដោយចីរភាព សន្សំសច្ចៃ និង មានសុវត្តិភាព",
-                      style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Container sectionTitle(String title) {
-    return Container(
-      padding: const EdgeInsets.all(5),
-      width: MediaQuery.of(context).size.width,
-      child: Text(
-        title,
-        textAlign: TextAlign.start,
-        style: TextStyle(fontSize: 14, color: Palette.bgdark.withOpacity(0.8)),
-      ),
-    );
-  }
-
-  Container buildProvinceCard({
-    String province,
-    int views,
-    Function onPressed,
-    String imagelocation,
-    BuildContext context,
-  }) {
-    double width = MediaQuery.of(context).size.width;
-    return Container(
-      margin: EdgeInsets.zero,
-      width: (width - 60) / 2,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Palette.text.withOpacity(0.2),
-            blurRadius: 0,
-            offset: Offset(-0.25, -0.25),
-          )
-        ],
-        color: Colors.white,
-      ),
-      child: FlatButton(
-        padding: EdgeInsets.fromLTRB(5, 8, 5, 0),
-        onPressed: onPressed,
-        highlightColor: Palette.bg,
-        splashColor: Palette.bggrey.withOpacity(0.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(1),
-              child: Image.asset(
-                imagelocation,
-                height: 80,
-                fit: BoxFit.cover,
-                width: (width - 60) / 2,
+            Positioned.fill(
+              child: Container(
+                color: Palette.sky.withOpacity(0.35),
               ),
             ),
-            SizedBox(height: 5.0),
-            Text(
-              province,
-              style: TextStyle(
-                fontSize: 14,
-                color: Palette.sky,
-              ),
-            ),
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: TextStyle(
-                        height: 1.6,
-                        fontSize: 13,
-                        color: Palette.bgdark.withOpacity(0.8),
-                        fontFamily: "Kantumruy"),
+            FlatButton(
+              splashColor: Palette.bg.withOpacity(0.1),
+              onPressed: () {},
+              padding: EdgeInsets.zero,
+              child: Container(
+                height: 150,
+                width: width,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Palette.bgdark.withOpacity(0.2)),
+                child: Container(
+                  padding: const EdgeInsets.only(left: 10.0, top: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextSpan(
-                        text: "${khNum(views.toString())}",
-                      ),
-                      TextSpan(
-                        text: " ",
-                        style: TextStyle(fontSize: 3),
-                      ),
-                      TextSpan(
-                        text: "នាក់បានចូលមើល ",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300,
-                          color: Palette.bgdark.withOpacity(1),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(1),
+                            fontFamily: "Kantumruy",
+                            fontSize: 20,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: "អេកូ-កញ្ចប់",
+                            ),
+                            TextSpan(
+                              text: "ដំណើរកំសាន្ត",
+                            ),
+                          ],
                         ),
+                      ),
+                      Text(
+                        "ដំណើរកំសាន្តប្រកបដោយចីរភាព សន្សំសច្ចៃ និង មានសុវត្តិភាព",
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300),
                       ),
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.remove_red_eye,
-                  size: 12,
-                  color: Palette.text.withOpacity(0.0),
+              ),
+            ),
+            Positioned(
+              bottom: 5,
+              right: 10,
+              child: Container(
+                width: 104.0 + 17,
+                child: FlatButton.icon(
+                  splashColor: Palette.sky.withOpacity(0.15),
+                  color: Palette.sky.withOpacity(0.25),
+                  highlightColor: Palette.sky.withOpacity(0.35),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18)),
+                  onPressed: () {},
+                  icon: Icon(Icons.info, color: Colors.white, size: 16),
+                  label: Text(
+                    "ព័ត៏មានបន្ថែម",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -596,9 +525,102 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget buildProvinceCard({
+    String province,
+    int views,
+    Function onPressed,
+    String imagelocation,
+    BuildContext context,
+  }) {
+    double width = MediaQuery.of(context).size.width;
+    return Consumer<ScrollNotifier>(builder: (context, notifier, child) {
+      return Container(
+        margin: EdgeInsets.zero,
+        width: (width - 60) / 2,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Palette.text.withOpacity(0.2),
+              blurRadius: 0,
+              offset: Offset(-0.25, -0.25),
+            )
+          ],
+          color: Colors.white,
+        ),
+        child: FlatButton(
+          padding: EdgeInsets.fromLTRB(5, 8, 5, 0),
+          onPressed: onPressed,
+          highlightColor: Palette.bg,
+          splashColor: Palette.bggrey.withOpacity(0.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(1),
+                child: Image.asset(
+                  imagelocation,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  width: (width - 60) / 2,
+                ),
+              ),
+              SizedBox(height: 5.0),
+              Text(
+                province,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Palette.sky,
+                ),
+              ),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: TextStyle(
+                          height: 1.6,
+                          fontSize: 13,
+                          color: Palette.bgdark.withOpacity(0.8),
+                          fontFamily: "Kantumruy"),
+                      children: [
+                        TextSpan(
+                          text: "${khNum(views.toString())}",
+                        ),
+                        TextSpan(
+                          text: " ",
+                          style: TextStyle(fontSize: 3),
+                        ),
+                        TextSpan(
+                          text: "នាក់បានចូលមើល ",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            color: Palette.bgdark.withOpacity(1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.remove_red_eye,
+                    size: 12,
+                    color: Palette.text.withOpacity(0.0),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
   Container hello(double width, List<String> question) {
     String name = "Sok";
     int index = Random().nextInt(question.length).toInt();
+    Color color = Colors.white;
     print(index);
     return Container(
       width: width,
@@ -611,12 +633,12 @@ class _HomePageState extends State<HomePage> {
             "សួរស្តី​ $name",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: color,
             ),
           ),
           Text(
             question[index],
-            style: TextStyle(fontSize: 14, color: Colors.white),
+            style: TextStyle(fontSize: 14, color: color),
           ),
         ],
       ),

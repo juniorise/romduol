@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/booking/b_accomodation.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
 import 'package:romduol/widget/sliver_card_delegate.dart';
+import 'package:romduol/widget/theme/theme.dart';
 
 class PackageDetail extends StatefulWidget {
   const PackageDetail({Key key, @required this.package}) : super(key: key);
@@ -95,7 +97,12 @@ class _PackageDetailState extends State<PackageDetail> {
                 width: width,
                 pricefrom: 25,
                 location: widget.package.location,
-                onBookPressed: () {},
+                onBookPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookingAccomodation(),
+                  ),
+                ),
                 maplocation: widget.package.maplocation,
                 buslocation: widget.package.buslocation,
                 isBookAble: true,

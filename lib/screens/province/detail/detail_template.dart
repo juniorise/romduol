@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/comment_page.dart';
+import 'package:romduol/screens/booking/b_accomodation.dart';
+import 'package:romduol/screens/booking/b_bike.dart';
+import 'package:romduol/screens/booking/b_resturant.dart';
+import 'package:romduol/screens/province/detail/comment_page.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
 import 'package:romduol/widget/sliver_card_delegate.dart';
 import 'package:romduol/widget/star_rating.dart';
+import 'package:romduol/widget/theme/theme.dart';
 
 List<CommentModel> comments = [
   CommentModel(
@@ -190,7 +194,23 @@ class _DetailTemplateState extends State<DetailTemplate> {
                 title: widget.data.title,
                 width: width,
                 location: widget.data.location,
-                onBookPressed: () {},
+                onBookPressed: () {
+                  Widget screen;
+                  print(widget.data.refpath);
+                  if (widget.data.refpath.contains('accomodations'))
+                    screen = BookingAccomodation();
+                  if (widget.data.refpath.contains('activities/default_data/act_biking')) 
+                    screen = BookingBike();
+                  if (widget.data.refpath.contains('restaurants/')) 
+                    screen = BookingRestaurant();
+                    
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => screen,
+                    ),
+                  );
+                },
                 rate: widget.data.rating,
                 ratetotal: widget.data.ratetotal,
                 isBookAble: widget.data.pricefrom != null ||
@@ -220,7 +240,11 @@ class _DetailTemplateState extends State<DetailTemplate> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             decoration: buildBoxDecoration(),
-                            child: ArticleDetail(widget: widget, width: width, isZoom: isZoom,),
+                            child: ArticleDetail(
+                              widget: widget,
+                              width: width,
+                              isZoom: isZoom,
+                            ),
                           ),
                           widget.data.refpath
                                   .contains('restaurants/default_data/')

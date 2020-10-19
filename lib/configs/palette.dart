@@ -1,78 +1,5 @@
 import 'package:flutter/material.dart';
 
-Center loading() {
-  return Center(
-    heightFactor: 1,
-    child: Container(
-      width: 30,
-      height: 30,
-      child: CircularProgressIndicator(),
-    ),
-  );
-}
-
-BoxDecoration buildBoxDecoration() {
-  return BoxDecoration(
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black87.withOpacity(0.1),
-        blurRadius: 1.0,
-        offset: Offset(0, 0),
-      )
-    ],
-    color: Colors.white,
-  );
-}
-
-Container noData() {
-  return Container(
-    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-    decoration: buildBoxDecoration(),
-    child: Text(
-      "គ្មានទិន្នន័យ",
-      style: TextStyle(
-        fontSize: 13,
-        color: Palette.text,
-      ),
-    ),
-  );
-}
-
-PreferredSize buildAppBar(BuildContext context, String title) {
-  Color color = Palette.sky;
-  return PreferredSize(
-    preferredSize: const Size.fromHeight(48),
-    child: AppBar(
-      elevation: 0.3,
-      backgroundColor: Colors.white.withOpacity(0.8),
-      titleSpacing: 0.0,
-      iconTheme: IconThemeData(color: color),
-      title: Text(
-        title,
-        textAlign: TextAlign.start,
-        style: TextStyle(color: color),
-      ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.notifications),
-          onPressed: () {},
-        )
-      ],
-    ),
-  );
-}
-
-String khNum(String input) {
-  const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-  const farsi = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
-
-  for (int i = 0; i < english.length; i++) {
-    input = input.replaceAll(english[i], farsi[i]);
-  }
-
-  return input;
-}
-
 class Palette {
   static Map<int, Color> color = {
     50: Color.fromRGBO(136, 14, 79, .1),
@@ -118,13 +45,4 @@ class Palette {
   static const Color yellow60 = Color.fromRGBO(241, 201, 51, .6);
   static const Color yellow50 = Color.fromRGBO(241, 201, 51, .5);
 
-  static const Color white90 = Color.fromRGBO(255, 255, 255, .9);
-  static const Color white80 = Color.fromRGBO(255, 255, 255, .8);
-  static const Color white70 = Color.fromRGBO(255, 255, 255, .7);
-  static const Color white60 = Color.fromRGBO(255, 255, 255, .6);
-  static const Color white50 = Color.fromRGBO(255, 255, 255, .5);
-  static const Color white40 = Color.fromRGBO(255, 255, 255, .4);
-  static const Color white30 = Color.fromRGBO(255, 255, 255, .3);
-  static const Color white20 = Color.fromRGBO(255, 255, 255, .2);
-  static const Color white10 = Color.fromRGBO(255, 255, 255, .1);
 }

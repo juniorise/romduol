@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/homepage.dart';
+import 'package:romduol/screens/home/homepage.dart';
 import 'package:romduol/services/database.dart';
 
 class MyApp extends StatefulWidget {

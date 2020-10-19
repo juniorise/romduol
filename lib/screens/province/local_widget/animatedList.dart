@@ -2,7 +2,7 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/widget/cardOnProvince.dart';
+import 'package:romduol/screens/province/local_widget/card_province.dart';
 
 class AnimatedLists extends StatefulWidget {
   const AnimatedLists({Key key, this.data, this.isAnimated = false})

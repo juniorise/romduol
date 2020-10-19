@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/widget/theme/theme.dart';
 
 class TextWithIndicator extends StatelessWidget {
   const TextWithIndicator({

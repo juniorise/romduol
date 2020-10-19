@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/detail_template.dart';
+import 'package:romduol/screens/province/detail/detail_template.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
+import 'package:romduol/widget/theme/theme.dart';
 
 class CardOnProvince extends StatelessWidget {
   final CardModel data;
@@ -69,7 +70,10 @@ class CardOnProvince extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(data.title, style: TextStyle(color: Palette.bgdark.withOpacity(0.8)),),
+                Text(
+                  data.title,
+                  style: TextStyle(color: Palette.bgdark.withOpacity(0.8)),
+                ),
                 LocationText(location: data.location),
                 Container(
                   height: 32,
@@ -103,7 +107,7 @@ class CardOnProvince extends StatelessWidget {
                       Container(
                         width: data.pricefrom == null ? 104 : 104.0 + 17,
                         child: FlatButton.icon(
-                          splashColor: Palette.white20,
+                          splashColor: Colors.white.withOpacity(0.2),
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)),

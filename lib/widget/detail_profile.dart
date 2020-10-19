@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/screens/google_map.dart';
+import 'package:romduol/screens/map/google_map.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/star_rating.dart';
+import 'package:romduol/widget/theme/theme.dart';
 
 class DetailProfile extends StatelessWidget {
   const DetailProfile({
