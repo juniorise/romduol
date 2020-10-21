@@ -22,10 +22,10 @@ class TextWithIndicator extends StatelessWidget {
     String price;
     if (pricetotal != null && pricefrom != null) {
       price = pricetotal != null && pricefrom != null
-          ? "ចាប់ពី ${khNum(pricefrom.toInt().toString())}\$ - ${khNum(pricetotal.toInt().toString())}\$"
+          ? "ចាប់ពី ${khNum(pricefrom.toString())}\$ - ${khNum(pricetotal.toString())}\$"
           : pricetotal != null && pricefrom == null
-              ? "ចាប់ពី ${khNum(pricefrom.toInt().toString())}\$"
-              : "${khNum(pricetotal.toInt().toString())}\$";
+              ? "ចាប់ពី ${khNum(pricefrom.toString())}\$"
+              : "${khNum(pricetotal.toString())}\$";
     }
     return Positioned(
       right: 20,

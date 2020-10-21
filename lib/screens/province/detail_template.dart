@@ -5,8 +5,9 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/booking/b_accomodation.dart';
 import 'package:romduol/screens/booking/b_bike.dart';
+import 'package:romduol/screens/booking/b_boat.dart';
 import 'package:romduol/screens/booking/b_resturant.dart';
-import 'package:romduol/screens/province/detail/comment_page.dart';
+import 'package:romduol/screens/province/comment_page.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/networkImage.dart';
@@ -199,11 +200,16 @@ class _DetailTemplateState extends State<DetailTemplate> {
                   print(widget.data.refpath);
                   if (widget.data.refpath.contains('accomodations'))
                     screen = BookingAccomodation();
-                  if (widget.data.refpath.contains('activities/default_data/act_biking')) 
+                  if (widget.data.refpath
+                      .contains('activities/default_data/act_biking'))
                     screen = BookingBike();
-                  if (widget.data.refpath.contains('restaurants/')) 
+                  if (widget.data.refpath.contains('restaurants/'))
                     screen = BookingRestaurant();
-                    
+
+                  if (widget.data.refpath
+                      .contains('activities/default_data/act_boating'))
+                    screen = BookingBoat();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -375,59 +381,71 @@ class FoodMenuDetail extends StatelessWidget {
                 );
 
                 return Container(
-                  height: foods.length / 2 * 190.0 + foods.length / 2 * 10,
+                  height: foods.length * 190.0 / 2 + foods.length * 20 / 2,
                   child: GridView.count(
                     padding: EdgeInsets.zero,
                     crossAxisCount: 2,
-                    crossAxisSpacing: 20,
+                    crossAxisSpacing: 10,
                     childAspectRatio: 3 / 4,
-                    mainAxisSpacing: 20,
+                    mainAxisSpacing: 5,
                     physics: NeverScrollableScrollPhysics(),
                     children: [
                       for (int i = 0; i < foods.length; i++)
                         Container(
-                          width: width / 2,
-                          padding: EdgeInsets.zero,
-                          margin: EdgeInsets.zero,
-                          decoration:
-                              buildBoxDecoration().copyWith(color: Palette.bg),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: width / 2,
-                                height: 105,
-                                child: NetworkImageLoader(
-                                  imagelocation: foods[i].thumbnail,
-                                  onPressed: () {},
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: Container(
+                            width: width / 2,
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
+                            decoration: buildBoxDecoration().copyWith(
+                              color: Palette.bg,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 5.0,
+                                  spreadRadius: 0,
+                                  offset: Offset(0, 0),
                                 ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 10,
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: width / 2,
+                                  height: 105,
+                                  child: NetworkImageLoader(
+                                    imagelocation: foods[i].thumbnail,
+                                    onPressed: () {},
+                                  ),
                                 ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      foods[i].title,
-                                      style: TextStyle(
-                                        fontSize: 13,
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 10,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        foods[i].title,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(height: 5.0),
-                                    Text(
-                                      khNum(foods[i].price.toString()) + "\$",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Palette.sky,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
+                                      SizedBox(height: 5.0),
+                                      Text(
+                                        khNum(foods[i].price.toString()) + "\$",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Palette.sky,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         )
                     ],

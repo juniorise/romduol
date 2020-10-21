@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/province/detail/detail_template.dart';
+import 'package:romduol/screens/province/detail_template.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
@@ -55,7 +55,7 @@ class CardOnProvince extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
                           khNum(
-                              "ចាប់ពី​ ${data.pricefrom.toInt()}\$ - ${data.pricetotal.toInt()}\$"),
+                              "ចាប់ពី​ ${data.pricefrom}\$ - ${data.pricetotal}\$"),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
                       ),

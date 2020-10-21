@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:romduol/widget/theme/theme.dart';
 
 class Date {
@@ -84,5 +85,46 @@ class Date {
       _month = 0;
     }
     return DateTime(_year, _month + 1, _day);
+  }
+}
+
+class Time {
+  final int hour, min, sec;
+  final String status;
+  Time({this.hour, this.min, this.sec, this.status});
+
+  Time toSpecific(TimeOfDay time) {
+    int _hour = 0, _min = 0, _sec = 0;
+    String _status = "ព្រឺក";
+
+    _hour = time.hour;
+
+    if (time.minute >= 0 && time.minute < 15) {
+      _min = 0;
+    }
+
+    if (time.minute >= 15 && time.minute < 30) {
+      _min = 15;
+    }
+
+    if (time.minute >= 30 && time.minute < 45) {
+      _min = 30;
+    }
+
+    if (time.minute >= 45 && time.minute < 50) {
+      _min = 45;
+    }
+
+    if (time.minute >= 50) {
+      _min = 0;
+      _hour += 1;
+    }
+
+    if (_hour > 12) {
+      _hour -= 12;
+      _status = "ល្ងាច";
+    }
+
+    return Time(hour: _hour, min: _min, sec: _sec, status: _status);
   }
 }

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/booking/b_accomodation.dart';
+import 'package:romduol/screens/booking/b_package.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
@@ -100,7 +100,7 @@ class _PackageDetailState extends State<PackageDetail> {
                 onBookPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BookingAccomodation(),
+                    builder: (context) => BookingPackage(),
                   ),
                 ),
                 maplocation: widget.package.maplocation,

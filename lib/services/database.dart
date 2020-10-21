@@ -16,7 +16,7 @@ class Database {
           title: doc.data()['title'],
           location: doc.data()['location'],
           date: doc.data()['date'],
-          price: doc.data()['price'],
+          price: doc.data()['price'].toDouble(),
           refpath: doc.reference.path,
           maplocation: doc.data()['maplocation'],
           buslocation: doc.data()['buslocation'],
@@ -48,8 +48,12 @@ class Database {
             location: element.data()['location'] ?? "No location provided.",
             thumbnail: element.data()['thumbnail'] ?? null,
             id: element.data()['id'] ?? "No id provided.",
-            pricefrom: element.data()['pricefrom'] ?? null,
-            pricetotal: element.data()['pricetotal'] ?? null,
+            pricefrom: element.data()['pricefrom'] != null
+                ? element.data()['pricefrom'].toDouble()
+                : null ?? null,
+            pricetotal: element.data()['pricetotal'] != null
+                ? element.data()['pricetotal'].toDouble()
+                : null ?? null,
             rating: element.data()['rating'] ?? null,
             ratetotal: element.data()['ratetotal'] ?? null,
             maplocation: element.data()['maplocation'] ?? null,

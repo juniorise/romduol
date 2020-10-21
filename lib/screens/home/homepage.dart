@@ -107,10 +107,18 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Positioned(
                   bottom: 0,
-                  child: Container(
-                    height: height - 200,
-                    width: width,
-                    color: Palette.bg,
+                  child: Consumer<ScrollNotifier>(
+                    builder: (context, notifier, child) {
+                      return Transform.translate(
+                        offset: Offset(0, -notifier.offset),
+                        child: child,
+                      );
+                    },
+                    child: Container(
+                      height: height - 200,
+                      width: width,
+                      color: Palette.bg,
+                    ),
                   ),
                 ),
                 ListView(
@@ -207,7 +215,8 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
+                    SizedBox(height: 20.0),
+                    //ECO TRAVEL PACKAGE
                     Container(
                       decoration: buildBoxDecoration(),
                       padding: EdgeInsets.all(15),
@@ -383,7 +392,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Text(
-                        "${khNum(package.price.toInt().toString())}\$",
+                        "${khNum(package.price.toString())}\$",
                         style: TextStyle(
                           fontSize: 14,
                           color: Palette.sky,
@@ -435,7 +444,7 @@ class _HomePageState extends State<HomePage> {
             color: Palette.sky,
             image: DecorationImage(
               image: AssetImage('assets/home/package_poster.png'),
-              alignment: Alignment(0, notifier.offset.abs() / 280),
+              alignment: Alignment(0, notifier.offset.abs() * 0.002),
               fit: BoxFit.cover,
             ),
           ),

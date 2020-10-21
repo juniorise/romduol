@@ -39,7 +39,7 @@ BoxDecoration buildBoxDecoration() {
         color: Colors.black87.withOpacity(0.1),
         blurRadius: 1.0,
         offset: Offset(0, 0),
-      )
+      ),
     ],
     color: Colors.white,
   );
@@ -49,11 +49,13 @@ Container noData() {
   return Container(
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     decoration: buildBoxDecoration(),
-    child: Text(
-      "គ្មានទិន្នន័យ",
-      style: TextStyle(
-        fontSize: 13,
-        color: Palette.text,
+    child: Center(
+      child: Text(
+        "គ្មានទិន្នន័យ",
+        style: TextStyle(
+          fontSize: 13,
+          color: Palette.text,
+        ),
       ),
     ),
   );
