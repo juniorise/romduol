@@ -1,0 +1,15 @@
+{
+    "@@last_modified": "2020-10-21T15:49:27.101265",
+    "title": "រំដួល",
+    "@title": {
+      "description": "The home title of the application",
+      "type": "text",
+      "placeholders": {}
+    },
+    "moreInfoButton": "ព័ត៍មានបន្ថែម",
+    "@moreInfoButton": {
+      "description": "More info button of the application",
+      "type": "text",
+      "placeholders": {}
+    }
+  }

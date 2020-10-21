@@ -1,0 +1,15 @@
+{
+  "@@last_modified": "2020-10-21T15:49:27.101265",
+  "title": "Romduol",
+  "@title": {
+    "description": "The home title of the application",
+    "type": "text",
+    "placeholders": {}
+  },
+  "moreInfoButton": "More info",
+  "@moreInfoButton": {
+    "description": "More info button of the application",
+    "type": "text",
+    "placeholders": {}
+  }
+}

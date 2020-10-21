@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
 import 'package:romduol/data/data.dart';
+import 'package:romduol/localization/localization.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/package/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
@@ -47,6 +48,8 @@ class _HomePageState extends State<HomePage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    Locale locale = Localizations.localeOf(context);
+    print("HERE IS LOCAL: " + locale.toString());
     return ChangeNotifierProvider(
       create: (_) => ScrollNotifier(_scrollController),
       child: WillPopScope(
@@ -58,7 +61,7 @@ class _HomePageState extends State<HomePage> {
             child: Consumer<ScrollNotifier>(
               builder: (context, notifier, child) {
                 return buildAppBar(
-                  title: "រំដួល",
+                  title: AppLocalization.of(context).title,
                   onTab: () {},
                   elevation: math.min(notifier.offset * 0.05, 3),
                 );
