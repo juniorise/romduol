@@ -88,8 +88,10 @@ List<CommentModel> comments = [
 ///
 ///
 class DetailTemplate extends StatefulWidget {
-  const DetailTemplate({Key key, this.data}) : super(key: key);
+  const DetailTemplate({Key key, this.data, @required this.isKH})
+      : super(key: key);
   final CardModel data;
+  final bool isKH;
   @override
   _DetailTemplateState createState() => _DetailTemplateState();
 }
@@ -129,7 +131,13 @@ class _DetailTemplateState extends State<DetailTemplate> {
             backgroundColor: Palette.sky,
             pinned: true,
             iconTheme: IconThemeData(color: Colors.white),
-            title: Text("អំពីរទីកន្លែង", style: TextStyle(color: Colors.white)),
+            title: Text(
+              widget.isKH ? "អំពីរទីកន្លែង" : "About place",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
+              ),
+            ),
             actions: [
               IconButton(
                 icon: Icon(Icons.text_fields),
@@ -178,6 +186,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                             imageList: images,
                             pricefrom: widget.data.pricefrom,
                             pricetotal: widget.data.pricetotal,
+                            isKH: widget.isKH,
                           ),
                         ],
                       );
@@ -199,16 +208,16 @@ class _DetailTemplateState extends State<DetailTemplate> {
                   Widget screen;
                   print(widget.data.refpath);
                   if (widget.data.refpath.contains('accomodations'))
-                    screen = BookingAccomodation();
+                    screen = BookingAccomodation(isKH: widget.isKH);
                   if (widget.data.refpath
                       .contains('activities/default_data/act_biking'))
-                    screen = BookingBike();
+                    screen = BookingBike(isKH: widget.isKH);
                   if (widget.data.refpath.contains('restaurants/'))
-                    screen = BookingRestaurant();
+                    screen = BookingRestaurant(isKH: widget.isKH);
 
                   if (widget.data.refpath
                       .contains('activities/default_data/act_boating'))
-                    screen = BookingBoat();
+                    screen = BookingBoat(isKH: widget.isKH);
 
                   Navigator.push(
                     context,
@@ -224,6 +233,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                     ? true
                     : false,
                 maplocation: widget.data.maplocation,
+                isKH: widget.isKH,
               ),
               height: widget.data.ratetotal == null
                   ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
@@ -254,7 +264,10 @@ class _DetailTemplateState extends State<DetailTemplate> {
                           ),
                           widget.data.refpath
                                   .contains('restaurants/default_data/')
-                              ? FoodMenuDetail(path: widget.data.refpath)
+                              ? FoodMenuDetail(
+                                  path: widget.data.refpath,
+                                  isKH: widget.isKH,
+                                )
                               : SizedBox(),
                         ],
                       ),
@@ -268,7 +281,13 @@ class _DetailTemplateState extends State<DetailTemplate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text("បញ្ចេញមតិយោបល់"),
+                            Text(
+                              "បញ្ចេញមតិយោបល់",
+                              style: TextStyle(
+                                fontFamily:
+                                    widget.isKH ? 'Kantumruy' : 'Open Sans',
+                              ),
+                            ),
                             SizedBox(height: 5),
                             StarRating(
                               size: 30,
@@ -314,8 +333,10 @@ class _DetailTemplateState extends State<DetailTemplate> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  CommentPage(comments: comments),
+                              builder: (context) => CommentPage(
+                                comments: comments,
+                                isKH: widget.isKH,
+                              ),
                             ),
                           );
                         },
@@ -323,7 +344,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                         splashColor: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "មតិយោបល់ (${khNum(comments.length.toString())})",
+                          "មតិយោបល់ (${khNum(comments.length.toString(), widget.isKH)})",
                           style: TextStyle(color: Palette.sky),
                           textAlign: TextAlign.left,
                         ),
@@ -341,8 +362,10 @@ class _DetailTemplateState extends State<DetailTemplate> {
 }
 
 class FoodMenuDetail extends StatelessWidget {
-  const FoodMenuDetail({Key key, this.path}) : super(key: key);
+  const FoodMenuDetail({Key key, this.path, @required this.isKH})
+      : super(key: key);
 
+  final bool isKH;
   final String path;
   @override
   Widget build(BuildContext context) {
@@ -434,7 +457,8 @@ class FoodMenuDetail extends StatelessWidget {
                                       ),
                                       SizedBox(height: 5.0),
                                       Text(
-                                        khNum(foods[i].price.toString()) + "\$",
+                                        khNum(foods[i].price.toString(), isKH) +
+                                            "\$",
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Palette.sky,
@@ -516,7 +540,7 @@ class ArticleDetail extends StatelessWidget {
     return Column(
       children: [
         Text(
-          khNum(article),
+          khNum(article, widget.isKH),
           style: TextStyle(
             fontSize: isZoom ? 15 : 13,
             color: Palette.text,

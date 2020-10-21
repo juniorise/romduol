@@ -5,7 +5,7 @@ class Date {
   String year, day, month;
   Date({this.year, this.day, this.month});
 
-  Date toKhDate(DateTime date) {
+  Date toKhDate(DateTime date, bool isKH) {
     List<String> month = [
       'មករា',
       'កុម្ភៈ',
@@ -22,9 +22,9 @@ class Date {
     ];
 
     Date khDate = Date(
-        day: khNum(date.day.toString()),
+        day: khNum(date.day.toString(), isKH),
         month: month[date.month],
-        year: khNum(date.year.toString()));
+        year: khNum(date.year.toString(), isKH));
     return khDate;
   }
 

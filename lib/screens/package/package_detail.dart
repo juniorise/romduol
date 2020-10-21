@@ -10,9 +10,11 @@ import 'package:romduol/widget/sliver_card_delegate.dart';
 import 'package:romduol/widget/theme/theme.dart';
 
 class PackageDetail extends StatefulWidget {
-  const PackageDetail({Key key, @required this.package}) : super(key: key);
+  const PackageDetail({Key key, @required this.package, @required this.isKH})
+      : super(key: key);
 
   final PackageModel package;
+  final bool isKH;
   @override
   _PackageDetailState createState() => _PackageDetailState();
 }
@@ -79,6 +81,7 @@ class _PackageDetailState extends State<PackageDetail> {
                             currentImage: currentImage,
                             imageList: images,
                             text: widget.package.date,
+                            isKH: widget.isKH,
                           ),
                         ],
                       );
@@ -100,12 +103,15 @@ class _PackageDetailState extends State<PackageDetail> {
                 onBookPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BookingPackage(),
+                    builder: (context) => BookingPackage(
+                      isKH: widget.isKH,
+                    ),
                   ),
                 ),
                 maplocation: widget.package.maplocation,
                 buslocation: widget.package.buslocation,
                 isBookAble: true,
+                isKH: widget.isKH,
               ),
               height: 20.0 + 20 + 14 + 16 + 15 + 48 + 17,
             ),
@@ -254,14 +260,14 @@ class _PackageDetailState extends State<PackageDetail> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          khNum((i + 1).toString() + ". " + faq[i].question),
+          khNum((i + 1).toString() + ". " + faq[i].question, widget.isKH),
           style: TextStyle(
             fontSize: 14,
             color: Palette.bgdark.withOpacity(0.8),
           ),
         ),
         Text(
-          khNum(faq[i].paragraph),
+          khNum(faq[i].paragraph, widget.isKH),
           style: TextStyle(
             fontSize: 13,
             color: Palette.text,
@@ -281,7 +287,7 @@ class _PackageDetailState extends State<PackageDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    khNum(article[i].header),
+                    khNum(article[i].header, widget.isKH),
                     style: TextStyle(
                       fontSize: 14,
                       color: Palette.sky,
@@ -292,7 +298,7 @@ class _PackageDetailState extends State<PackageDetail> {
               )
             : SizedBox(),
         Text(
-          khNum(article[i].paragraph),
+          khNum(article[i].paragraph, widget.isKH),
           style: TextStyle(
             fontSize: 13,
             color: Palette.text,

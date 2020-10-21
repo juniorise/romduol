@@ -10,22 +10,24 @@ class TextWithIndicator extends StatelessWidget {
     this.text,
     this.pricefrom,
     this.pricetotal,
+    @required this.isKH,
   }) : super(key: key);
 
   final List<String> imageList;
   final int currentImage;
   final String text;
   final double pricefrom, pricetotal;
+  final bool isKH;
 
   @override
   Widget build(BuildContext context) {
     String price;
     if (pricetotal != null && pricefrom != null) {
       price = pricetotal != null && pricefrom != null
-          ? "ចាប់ពី ${khNum(pricefrom.toString())}\$ - ${khNum(pricetotal.toString())}\$"
+          ? "ចាប់ពី ${khNum(pricefrom.toString(), isKH)}\$ - ${khNum(pricetotal.toString(), isKH)}\$"
           : pricetotal != null && pricefrom == null
-              ? "ចាប់ពី ${khNum(pricefrom.toString())}\$"
-              : "${khNum(pricetotal.toString())}\$";
+              ? "ចាប់ពី ${khNum(pricefrom.toString(), isKH)}\$"
+              : "${khNum(pricetotal.toString(), isKH)}\$";
     }
     return Positioned(
       right: 20,
@@ -42,7 +44,7 @@ class TextWithIndicator extends StatelessWidget {
                     color: Palette.sky.withOpacity(0.8),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                     child: Text(
-                      khNum(text),
+                      khNum(text, isKH),
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   )

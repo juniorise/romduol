@@ -61,11 +61,13 @@ Container noData() {
   );
 }
 
-PreferredSize buildAppBar(
-    {String title,
-    Function onTab,
-    bool isBlue = false,
-    double elevation = 0.5}) {
+PreferredSize buildAppBar({
+  String title,
+  Function onTab,
+  bool isBlue = false,
+  double elevation = 0.5,
+  @required bool isKH,
+}) {
   Color color = !isBlue ? Palette.sky : Colors.white;
   return PreferredSize(
     preferredSize: const Size.fromHeight(48),
@@ -77,7 +79,10 @@ PreferredSize buildAppBar(
       title: Text(
         title,
         textAlign: TextAlign.start,
-        style: TextStyle(color: color),
+        style: TextStyle(
+          color: color,
+          fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+        ),
       ),
       actions: [
         onTab != null
@@ -91,26 +96,36 @@ PreferredSize buildAppBar(
   );
 }
 
-String khNum(String input) {
+String khNum(String input, bool isKH) {
   const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   const farsi = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
 
-  for (int i = 0; i < english.length; i++) {
-    input = input.replaceAll(english[i], farsi[i]);
+  if (isKH) {
+    for (int i = 0; i < english.length; i++) {
+      input = input.replaceAll(english[i], farsi[i]);
+    }
   }
 
   return input;
 }
 
-Container sectionTitle(
-    {BuildContext context, String title, double padding = 5}) {
+Container sectionTitle({
+  BuildContext context,
+  String title,
+  double padding = 5,
+  @required bool isKH,
+}) {
   return Container(
     padding: EdgeInsets.all(padding),
     width: MediaQuery.of(context).size.width,
     child: Text(
       title,
       textAlign: TextAlign.start,
-      style: TextStyle(fontSize: 14, color: Palette.bgdark.withOpacity(0.8)),
+      style: TextStyle(
+        fontSize: 14,
+        color: Palette.bgdark.withOpacity(0.8),
+        fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+      ),
     ),
   );
 }

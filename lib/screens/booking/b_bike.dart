@@ -5,8 +5,8 @@ import 'package:romduol/screens/booking/local_widget/drop_down.dart';
 import 'package:romduol/widget/theme/theme.dart';
 
 class BookingBike extends StatefulWidget {
-  const BookingBike({Key key}) : super(key: key);
-
+  const BookingBike({Key key, @required this.isKH}) : super(key: key);
+  final bool isKH;
   @override
   _BookingBikeState createState() => _BookingBikeState();
 }
@@ -66,9 +66,9 @@ class _BookingBikeState extends State<BookingBike>
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    selectedDateKH = Date().toKhDate(selectedDate);
+    selectedDateKH = Date().toKhDate(selectedDate, widget.isKH);
     return Scaffold(
-      appBar: buildAppBar(title: "កក់កង់", isBlue: true),
+      appBar: buildAppBar(title: "កក់កង់", isBlue: true, isKH: widget.isKH),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Column(
@@ -84,7 +84,7 @@ class _BookingBikeState extends State<BookingBike>
                   sectionTitle(
                     context: context,
                     title: "សូមបំពេញព័ត៏មានដើម្បីកក់",
-                    padding: 0,
+                    padding: 0,isKH: widget.isKH,
                   ),
                   SizedBox(height: 8.0),
                   Container(
@@ -123,7 +123,7 @@ class _BookingBikeState extends State<BookingBike>
                   sectionTitle(
                     context: context,
                     title: "ជ្រើសរើសប្រភេទកង់",
-                    padding: 0,
+                    padding: 0,isKH: widget.isKH,
                   ),
                   SizedBox(height: 12.0),
                   Row(
@@ -134,6 +134,7 @@ class _BookingBikeState extends State<BookingBike>
                           width: width,
                           isSelected: isSelectedA,
                           price: bikeAPrice,
+                          isKH: widget.isKH,
                           onPressed: () {
                             if (!isSelectedA) {
                               setState(() {
@@ -148,6 +149,7 @@ class _BookingBikeState extends State<BookingBike>
                         width: width,
                         isSelected: isSelectedB,
                         price: bikeBPrice,
+                        isKH: widget.isKH,
                         onPressed: () {
                           if (!isSelectedB) {
                             setState(() {
@@ -166,6 +168,7 @@ class _BookingBikeState extends State<BookingBike>
                     total: 5,
                     endTitle: "កង់",
                     onTab: (i) => setState(() => bikeNum = i),
+                    isKH: widget.isKH,
                   ),
                   SizedBox(height: 8),
                   Container(
@@ -179,24 +182,28 @@ class _BookingBikeState extends State<BookingBike>
                       children: [
                         buildWrap(
                             "តម្លៃ/កង់",
-                            khNum(isSelectedA
-                                    ? bikeAPrice.toString()
-                                    : isSelectedB
-                                        ? bikeBPrice.toString()
-                                        : '0') +
+                            khNum(
+                                    isSelectedA
+                                        ? bikeAPrice.toString()
+                                        : isSelectedB
+                                            ? bikeBPrice.toString()
+                                            : '0',
+                                    widget.isKH) +
                                 "\$"),
                         buildWrap(
                           "ចំនួនកង",
-                          khNum((bikeNum.toString())),
+                          khNum((bikeNum.toString()), widget.isKH),
                         ),
                         buildWrap(
                           "ប្រាក់សរុប",
-                          khNum((isSelectedA
-                                      ? bikeAPrice * bikeNum
-                                      : isSelectedB
-                                          ? bikeBPrice * bikeNum
-                                          : 0)
-                                  .toString()) +
+                          khNum(
+                                  (isSelectedA
+                                          ? bikeAPrice * bikeNum
+                                          : isSelectedB
+                                              ? bikeBPrice * bikeNum
+                                              : 0)
+                                      .toString(),
+                                  widget.isKH) +
                               "\$",
                         ),
                       ],
@@ -237,6 +244,7 @@ class BikePickerCard extends StatelessWidget {
     @required this.width,
     this.isSelected = false,
     @required this.onPressed,
+    @required this.isKH,
     this.price,
   })  : _animation = animation,
         super(key: key);
@@ -246,6 +254,7 @@ class BikePickerCard extends StatelessWidget {
   final Function onPressed;
   final Animation<double> _animation;
   final double width;
+  final bool isKH;
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +329,7 @@ class BikePickerCard extends StatelessWidget {
                     width: width,
                     alignment: Alignment.center,
                     child: Text(
-                      '${khNum(price.toString())}\$',
+                      '${khNum(price.toString(), isKH)}\$',
                       style: TextStyle(
                         fontSize: 13,
                         color: Palette.sky,

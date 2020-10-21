@@ -9,8 +9,9 @@ import 'package:romduol/widget/theme/theme.dart';
 
 class CardOnProvince extends StatelessWidget {
   final CardModel data;
-
-  const CardOnProvince({Key key, @required this.data}) : super(key: key);
+  final bool isKH;
+  const CardOnProvince({Key key, @required this.data, @required this.isKH})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +56,11 @@ class CardOnProvince extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
                           khNum(
-                              "ចាប់ពី​ ${data.pricefrom}\$ - ${data.pricetotal}\$"),
+                              isKH
+                                  ? "ចាប់ពី​ "
+                                  : " "
+                                      "${data.pricefrom}\$ - ${data.pricetotal}\$",
+                              isKH),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
                       ),
@@ -74,7 +79,10 @@ class CardOnProvince extends StatelessWidget {
                   data.title,
                   style: TextStyle(color: Palette.bgdark.withOpacity(0.8)),
                 ),
-                LocationText(location: data.location),
+                LocationText(
+                  location: data.location,
+                  isKH: isKH,
+                ),
                 Container(
                   height: 32,
                   alignment: Alignment.bottomRight,
@@ -88,14 +96,16 @@ class CardOnProvince extends StatelessWidget {
                                 StarRating(rating: data.rating),
                                 SizedBox(width: 5),
                                 Text(
-                                  khNum(data.rating.toString()),
+                                  khNum(data.rating.toString(), isKH),
                                   style: TextStyle(
                                     color: Palette.text,
                                     fontSize: 14,
                                   ),
                                 ),
                                 Text(
-                                  "(" + khNum(data.ratetotal.toString()) + ")",
+                                  "(" +
+                                      khNum(data.ratetotal.toString(), isKH) +
+                                      ")",
                                   style: TextStyle(
                                     color: Palette.bggrey,
                                     fontSize: 12,
@@ -105,7 +115,11 @@ class CardOnProvince extends StatelessWidget {
                             )
                           : SizedBox(),
                       Container(
-                        width: data.pricefrom == null ? 104 : 104.0 + 17,
+                        width: data.pricefrom == null
+                            ? isKH
+                                ? 104
+                                : 104.0 + 10
+                            : 104.0 + 17,
                         child: FlatButton.icon(
                           splashColor: Colors.white.withOpacity(0.2),
                           color: Palette.sky,
@@ -116,18 +130,23 @@ class CardOnProvince extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    DetailTemplate(data: data),
+                                    DetailTemplate(data: data, isKH: isKH),
                               ),
                             );
                           },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),
                           label: Text(
                             data.pricefrom == null
-                                ? "អានបន្ថែម"
-                                : "ព័ត៏មានបន្ថែម",
+                                ? isKH
+                                    ? "អានបន្ថែម"
+                                    : "Read more"
+                                : isKH
+                                    ? "ព័ត៏មានបន្ថែម"
+                                    : "More info",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
+                              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                             ),
                           ),
                         ),

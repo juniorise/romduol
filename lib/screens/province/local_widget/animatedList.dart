@@ -5,11 +5,12 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/province/local_widget/card_province.dart';
 
 class AnimatedLists extends StatefulWidget {
-  const AnimatedLists({Key key, this.data, this.isAnimated = false})
+  const AnimatedLists(
+      {Key key, this.data, this.isAnimated = false, @required this.isKH})
       : super(key: key);
 
   final List<CardModel> data;
-  final bool isAnimated;
+  final bool isAnimated, isKH;
   @override
   _AnimatedListsState createState() => _AnimatedListsState();
 }
@@ -45,7 +46,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
               begin: widget.isAnimated ? 1 : 0,
               end: 1,
             ).animate(animation),
-            child: CardOnProvince(data: data),
+            child: CardOnProvince(data: data, isKH: widget.isKH,),
           );
         },
         itemCount: widget.data.length,

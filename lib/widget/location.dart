@@ -4,8 +4,9 @@ import 'package:romduol/widget/theme/theme.dart';
 
 class LocationText extends StatelessWidget {
   final String location;
-  const LocationText({Key key, @required this.location}) : super(key: key);
-
+  const LocationText({Key key, @required this.location, @required this.isKH})
+      : super(key: key);
+  final bool isKH;
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -17,7 +18,7 @@ class LocationText extends StatelessWidget {
           size: 16,
         ),
         Text(
-          khNum(location),
+          khNum(location, isKH),
           style: TextStyle(
             fontSize: 12,
             color: Palette.text.withOpacity(0.8),

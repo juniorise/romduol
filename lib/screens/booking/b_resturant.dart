@@ -5,8 +5,8 @@ import 'package:romduol/screens/booking/local_widget/drop_down.dart';
 import 'package:romduol/widget/theme/theme.dart';
 
 class BookingRestaurant extends StatefulWidget {
-  const BookingRestaurant({Key key}) : super(key: key);
-
+  const BookingRestaurant({Key key, @required this.isKH}) : super(key: key);
+  final bool isKH;
   @override
   _BookingRestaurantState createState() => _BookingRestaurantState();
 }
@@ -47,10 +47,10 @@ class _BookingRestaurantState extends State<BookingRestaurant>
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    selectedDateKH = Date().toKhDate(selectedDate);
+    selectedDateKH = Date().toKhDate(selectedDate, widget.isKH);
     selectedTimeKH = Time().toSpecific(selectedTime);
     return Scaffold(
-      appBar: buildAppBar(title: "កក់កន្លែងអង្គុយ", isBlue: true),
+      appBar: buildAppBar(title: "កក់កន្លែងអង្គុយ", isBlue: true, isKH: widget.isKH),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Column(
@@ -66,7 +66,7 @@ class _BookingRestaurantState extends State<BookingRestaurant>
                   sectionTitle(
                     context: context,
                     title: "សូមបំពេញព័ត៏មានដើម្បីកក់",
-                    padding: 0,
+                    padding: 0,isKH: widget.isKH,
                   ),
                   SizedBox(height: 8.0),
                   Container(
@@ -117,7 +117,7 @@ class _BookingRestaurantState extends State<BookingRestaurant>
                           Padding(
                             padding: const EdgeInsets.only(left: 20.0),
                             child: Text(
-                              "${khNum(selectedTimeKH.hour.toString())}:${khNum(selectedTimeKH.min.toString().padLeft(2, '0'))} ${selectedTimeKH.status}",
+                              "${khNum(selectedTimeKH.hour.toString(), widget.isKH)}:${khNum(selectedTimeKH.min.toString().padLeft(2, '0'), widget.isKH)} ${selectedTimeKH.status}",
                               style: TextStyle(
                                 color: Palette.bgdark,
                                 fontSize: 13,
@@ -143,6 +143,7 @@ class _BookingRestaurantState extends State<BookingRestaurant>
                     total: 10,
                     endTitle: "នាក់",
                     onTab: (i) => setState(() => peopleNum = i),
+                    isKH: widget.isKH,
                   ),
                   SizedBox(height: 8),
                   Container(
@@ -154,15 +155,17 @@ class _BookingRestaurantState extends State<BookingRestaurant>
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        buildWrap(
-                            "ថ្លៃកក់/តុ", khNum(tablePrice.toString()) + "\$"),
+                        buildWrap("ថ្លៃកក់/តុ",
+                            khNum(tablePrice.toString(), widget.isKH) + "\$"),
                         buildWrap(
                           "ចំនួន",
-                          khNum((peopleNum.toString())),
+                          khNum((peopleNum.toString()), widget.isKH),
                         ),
                         buildWrap(
                           "ប្រាក់សរុប",
-                          khNum((tablePrice * peopleNum).toString()) + "\$",
+                          khNum((tablePrice * peopleNum).toString(),
+                                  widget.isKH) +
+                              "\$",
                         ),
                       ],
                     ),
@@ -209,113 +212,6 @@ class _BookingRestaurantState extends State<BookingRestaurant>
           ],
         ),
       ),
-    );
-  }
-}
-
-class BikePickerCard extends StatelessWidget {
-  const BikePickerCard({
-    Key key,
-    @required Animation<double> animation,
-    @required this.width,
-    this.isSelected = false,
-    @required this.onPressed,
-    this.price,
-  })  : _animation = animation,
-        super(key: key);
-
-  final int price;
-  final bool isSelected;
-  final Function onPressed;
-  final Animation<double> _animation;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AnimatedContainer(
-          width: 115,
-          height: 155,
-          duration: Duration(milliseconds: 200),
-          decoration: buildBoxDecoration().copyWith(
-            border: Border.all(
-              color: isSelected ? Palette.sky : Palette.bgdark.withOpacity(0.6),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10.0,
-                spreadRadius: 0,
-                offset: Offset(0, 4),
-              ),
-            ],
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.white,
-          ),
-          child: FlatButton(
-            padding: EdgeInsets.zero,
-            highlightColor: Palette.sky.withOpacity(0.1),
-            splashColor: Palette.sky.withOpacity(0.1),
-            onPressed: onPressed,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: AnimatedContainer(
-                    height: 28,
-                    width: 115,
-                    duration: Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(4)),
-                      color: isSelected
-                          ? Palette.sky
-                          : Palette.bgdark.withOpacity(0.6),
-                    ),
-                    child: Text(
-                      'កង់អេឡិចត្រូនិច',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: ClipRRect(
-                    child: Transform.translate(
-                      offset: Offset(_animation.value, 5),
-                      child: Image.asset(
-                        'assets/graphics/bike.png',
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  child: Container(
-                    width: width,
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${khNum(price.toString())}\$',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Palette.sky,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        )
-      ],
     );
   }
 }

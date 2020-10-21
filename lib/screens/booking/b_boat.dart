@@ -5,8 +5,8 @@ import 'package:romduol/screens/booking/local_widget/drop_down.dart';
 import 'package:romduol/widget/theme/theme.dart';
 
 class BookingBoat extends StatefulWidget {
-  const BookingBoat({Key key}) : super(key: key);
-
+  const BookingBoat({Key key, @required this.isKH}) : super(key: key);
+  final bool isKH;
   @override
   _BookingBoatState createState() => _BookingBoatState();
 }
@@ -33,9 +33,12 @@ class _BookingBoatState extends State<BookingBoat> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    selectedDateKH = Date().toKhDate(selectedDate);
+    selectedDateKH = Date().toKhDate(
+      selectedDate,
+      widget.isKH,
+    );
     return Scaffold(
-      appBar: buildAppBar(title: "កក់ទូកដើរកំសាន្ត", isBlue: true),
+      appBar: buildAppBar(title: "កក់ទូកដើរកំសាន្ត", isBlue: true, isKH: widget.isKH),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Column(
@@ -51,7 +54,7 @@ class _BookingBoatState extends State<BookingBoat> {
                   sectionTitle(
                     context: context,
                     title: "សូមបំពេញព័ត៏មានដើម្បីកក់",
-                    padding: 0,
+                    padding: 0,isKH: widget.isKH,
                   ),
                   SizedBox(height: 8.0),
                   Container(
@@ -93,6 +96,7 @@ class _BookingBoatState extends State<BookingBoat> {
                     total: 5,
                     endTitle: "នាក់",
                     onTab: (i) => setState(() => peopleNum = i),
+                    isKH: widget.isKH,
                   ),
                   SizedBox(height: 8),
                   Container(
@@ -104,15 +108,20 @@ class _BookingBoatState extends State<BookingBoat> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        buildWrap("តម្លៃ/នាក់",
-                            khNum(boatPrice.toString() ?? '0') + "\$"),
+                        buildWrap(
+                          "តម្លៃ/នាក់",
+                          khNum(boatPrice.toString() ?? '0', widget.isKH) +
+                              "\$",
+                        ),
                         buildWrap(
                           "ចំនួន",
-                          khNum((peopleNum.toString())) + " នាក់",
+                          khNum((peopleNum.toString()), widget.isKH) + " នាក់",
                         ),
                         buildWrap(
                           "ប្រាក់សរុប",
-                          khNum((boatPrice * peopleNum).toString()) + "\$",
+                          khNum((boatPrice * peopleNum).toString(),
+                                  widget.isKH) +
+                              "\$",
                         ),
                       ],
                     ),
@@ -141,113 +150,6 @@ class _BookingBoatState extends State<BookingBoat> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class BikePickerCard extends StatelessWidget {
-  const BikePickerCard({
-    Key key,
-    @required Animation<double> animation,
-    @required this.width,
-    this.isSelected = false,
-    @required this.onPressed,
-    this.price,
-  })  : _animation = animation,
-        super(key: key);
-
-  final int price;
-  final bool isSelected;
-  final Function onPressed;
-  final Animation<double> _animation;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AnimatedContainer(
-          width: 115,
-          height: 155,
-          duration: Duration(milliseconds: 200),
-          decoration: buildBoxDecoration().copyWith(
-            border: Border.all(
-              color: isSelected ? Palette.sky : Palette.bgdark.withOpacity(0.6),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10.0,
-                spreadRadius: 0,
-                offset: Offset(0, 4),
-              ),
-            ],
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.white,
-          ),
-          child: FlatButton(
-            padding: EdgeInsets.zero,
-            highlightColor: Palette.sky.withOpacity(0.1),
-            splashColor: Palette.sky.withOpacity(0.1),
-            onPressed: onPressed,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: AnimatedContainer(
-                    height: 28,
-                    width: 115,
-                    duration: Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(4)),
-                      color: isSelected
-                          ? Palette.sky
-                          : Palette.bgdark.withOpacity(0.6),
-                    ),
-                    child: Text(
-                      'កង់អេឡិចត្រូនិច',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: ClipRRect(
-                    child: Transform.translate(
-                      offset: Offset(_animation.value, 5),
-                      child: Image.asset(
-                        'assets/graphics/bike.png',
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  child: Container(
-                    width: width,
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${khNum(price.toString())}\$',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Palette.sky,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        )
-      ],
     );
   }
 }

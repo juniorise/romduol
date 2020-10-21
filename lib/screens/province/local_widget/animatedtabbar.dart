@@ -1,33 +1,29 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/lang/lang.dart';
 
 class AnimatedTabBar extends StatefulWidget {
   final PageController pageController;
   final int currentPage;
   final ScrollController scrollController;
   final Function onTap;
+  final bool isKH;
 
-  const AnimatedTabBar(
-      {Key key,
-      this.pageController,
-      this.currentPage,
-      this.scrollController,
-      this.onTap,})
-      : super(key: key);
+  const AnimatedTabBar({
+    Key key,
+    this.pageController,
+    this.currentPage,
+    this.scrollController,
+    this.onTap,
+    @required this.isKH,
+  }) : super(key: key);
 
   @override
   _AnimatedTabBarState createState() => _AnimatedTabBarState();
 }
 
 class _AnimatedTabBarState extends State<AnimatedTabBar> {
-  List<String> _tabBarNames = [
-    "ទីកន្លែង",
-    "កន្លែងស្នាក់នៅ",
-    "សកម្មភាព",
-    "អាហារ"
-  ];
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -49,6 +45,13 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
   }
 
   List<Widget> _buildTabBarList() {
+    List<String> _tabBarNames = [
+      Lang().of(key: 'place', isKH: widget.isKH),
+      Lang().of(key: 'accomodation', isKH: widget.isKH),
+      Lang().of(key: 'activities', isKH: widget.isKH),
+      Lang().of(key: 'restaurant', isKH: widget.isKH),
+    ];
+
     List<Widget> _tabItem = List();
     for (int i = 0; i < _tabBarNames.length; i++) {
       bool _isSelected = i == widget.currentPage;
@@ -63,9 +66,9 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
           padding: EdgeInsets.zero,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.15)
-          ),
+              borderRadius: BorderRadius.circular(24),
+              color:
+                  _isSelected ? Palette.sky : Palette.bggrey.withOpacity(0.15)),
           child: FlatButton(
             height: double.infinity,
             minWidth: 130,
@@ -90,6 +93,7 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
+                fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
                 color: !_isSelected ? Palette.sky : Colors.white,
               ),
             ),

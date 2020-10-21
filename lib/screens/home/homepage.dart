@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
 import 'package:romduol/data/data.dart';
-import 'package:romduol/localization/localization.dart';
+import 'package:romduol/lang/lang.dart';
+import 'package:romduol/main.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/package/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
@@ -28,13 +28,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController =
+      ScrollController(initialScrollOffset: 0.0);
   double offset = 0;
+  bool isKH = true;
+
+  @override
+  void initState() {
+    getLang();
+    super.initState();
+  }
 
   @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
+  }
+
+  void getLang() async {
+    isKH = await Lang().isKH();
+    setState(() {
+      if (isKH == null) {
+        Lang().setLang(true);
+        isKH = true;
+      }
+    });
   }
 
   @override
@@ -48,8 +66,6 @@ class _HomePageState extends State<HomePage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    Locale locale = Localizations.localeOf(context);
-    print("HERE IS LOCAL: " + locale.toString());
     return ChangeNotifierProvider(
       create: (_) => ScrollNotifier(_scrollController),
       child: WillPopScope(
@@ -61,14 +77,23 @@ class _HomePageState extends State<HomePage> {
             child: Consumer<ScrollNotifier>(
               builder: (context, notifier, child) {
                 return buildAppBar(
-                  title: AppLocalization.of(context).title,
+                  title: Lang().of(key: 'title', isKH: isKH),
                   onTab: () {},
                   elevation: math.min(notifier.offset * 0.05, 3),
+                  isKH: isKH,
                 );
               },
             ),
           ),
-          drawer: HomeDrawer(),
+          drawer: HomeDrawer(
+            onLangTab: () => setState(() {
+              isKH = !isKH;
+              Lang().setLang(isKH);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => SplashScreen()));
+            }),
+            isKH: isKH,
+          ),
           body: GestureDetector(
             onHorizontalDragEnd: (e) {
               if (e.velocity.pixelsPerSecond.direction > 0 &&
@@ -154,8 +179,13 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           sectionTitle(
-                              context: context,
-                              title: "សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
+                            context: context,
+                            title: Lang().of(
+                              key: 'chooseaprovince',
+                              isKH: isKH,
+                            ),
+                            isKH: isKH,
+                          ),
                           Stack(
                             children: [
                               Container(
@@ -172,7 +202,9 @@ class _HomePageState extends State<HomePage> {
                                       ).animate(animation),
                                       child: buildProvinceCard(
                                         context: context,
-                                        province: data.province,
+                                        province: isKH
+                                            ? data.province
+                                            : data.enprovince,
                                         views: data.views,
                                         imagelocation: data.imagelocation,
                                         onPressed: () => Navigator.push(
@@ -180,6 +212,8 @@ class _HomePageState extends State<HomePage> {
                                           MaterialPageRoute(
                                             builder: (context) => Province(
                                               province: data.province,
+                                              enprovince: data.enprovince,
+                                              isKH: isKH,
                                             ),
                                           ),
                                         ),
@@ -230,7 +264,8 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: 5),
                           sectionTitle(
                             context: context,
-                            title: "ចូលរួមជាមួយពួកយើង",
+                            title: Lang().of(key: 'joinwithus', isKH: isKH),
+                            isKH: isKH,
                           ),
                           Wrap(
                             children: [
@@ -312,7 +347,10 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PackageDetail(package: package),
+              builder: (context) => PackageDetail(
+                package: package,
+                isKH: isKH,
+              ),
             ),
           );
         },
@@ -346,13 +384,14 @@ class _HomePageState extends State<HomePage> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: TextStyle(
-                          color: Colors.white.withOpacity(1),
-                          fontFamily: "Kantumruy",
-                          fontWeight: FontWeight.w300,
-                        ),
+                            color: Colors.white.withOpacity(1),
+                            fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                            fontWeight: FontWeight.w300,
+                            fontSize: 11),
                         children: [
                           TextSpan(
-                            text: "${khNum(package.bookedspace.toString())}",
+                            text:
+                                "${khNum(package.bookedspace.toString(), isKH)}",
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
@@ -360,9 +399,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           TextSpan(
                             text:
-                                "/${khNum(package.totalspace.toString())} នាក់",
-                            style: TextStyle(fontSize: 11),
+                                "/${khNum(package.totalspace.toString(), isKH)} ",
                           ),
+                          TextSpan(text: isKH ? 'នាក់' : "Joined")
                         ],
                       ),
                     ),
@@ -391,14 +430,16 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                             fontSize: 14,
                             color: Palette.bgdark.withOpacity(0.8),
+                            fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                           ),
                         ),
                       ),
                       Text(
-                        "${khNum(package.price.toString())}\$",
+                        "${khNum(package.price.toString(), isKH)}\$",
                         style: TextStyle(
                           fontSize: 14,
                           color: Palette.sky,
+                          fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                         ),
                       ),
                     ],
@@ -409,7 +450,10 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      LocationText(location: package.location),
+                      LocationText(
+                        location: package.location,
+                        isKH: isKH,
+                      ),
                       SizedBox(width: 5),
                       Flexible(
                         child: Container(
@@ -419,9 +463,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                           color: Palette.text.withOpacity(0.1),
                           child: Text(
-                            khNum(package.date),
+                            khNum(package.date, isKH),
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12, color: Palette.text),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Palette.text,
+                              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                            ),
                           ),
                         ),
                       )
@@ -478,30 +526,22 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(1),
-                            fontFamily: "Kantumruy",
-                            fontSize: 20,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: "អេកូ-កញ្ចប់",
-                            ),
-                            TextSpan(
-                              text: "ដំណើរកំសាន្ត",
-                            ),
-                          ],
+                      Text(
+                        Lang().of(key: 'ecotravelpackage', isKH: isKH),
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(1),
+                          fontFamily: isKH ? 'Kantumruy' : 'Playfair',
+                          fontSize: 20,
                         ),
                       ),
                       Text(
-                        "ដំណើរកំសាន្តប្រកបដោយចីរភាព សន្សំសច្ចៃ និង មានសុវត្តិភាព",
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300),
+                        Lang().of(key: 'posterpackageinfo', isKH: isKH),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
+                          fontFamily: isKH ? 'Kantumruy' : 'Playfair',
+                        ),
                       ),
                     ],
                   ),
@@ -522,10 +562,11 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {},
                   icon: Icon(Icons.info, color: Colors.white, size: 16),
                   label: Text(
-                    "ព័ត៏មានបន្ថែម",
+                    Lang().of(key: 'moreinfo', isKH: isKH),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
+                      fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                     ),
                   ),
                 ),
@@ -583,6 +624,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontSize: 14,
                   color: Palette.sky,
+                  fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                 ),
               ),
               Wrap(
@@ -592,24 +634,26 @@ class _HomePageState extends State<HomePage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       style: TextStyle(
-                          height: 1.6,
-                          fontSize: 13,
-                          color: Palette.bgdark.withOpacity(0.8),
-                          fontFamily: "Kantumruy"),
+                        height: 1.6,
+                        fontSize: 13,
+                        color: Palette.bgdark.withOpacity(0.8),
+                        fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                      ),
                       children: [
                         TextSpan(
-                          text: "${khNum(views.toString())}",
+                          text: "${khNum(views.toString(), isKH)}",
                         ),
                         TextSpan(
                           text: " ",
-                          style: TextStyle(fontSize: 3),
+                          style: TextStyle(fontSize: isKH ? 3 : 10),
                         ),
                         TextSpan(
-                          text: "នាក់បានចូលមើល ",
+                          text: Lang().of(key: 'views', isKH: isKH),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w300,
                             color: Palette.bgdark.withOpacity(1),
+                            fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                           ),
                         ),
                       ],
@@ -631,7 +675,7 @@ class _HomePageState extends State<HomePage> {
 
   Container hello(double width, List<String> question) {
     String name = "Sok";
-    int index = Random().nextInt(question.length).toInt();
+    int index = math.Random().nextInt(question.length).toInt();
     Color color = Colors.white;
     print(index);
     return Container(
@@ -642,15 +686,20 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "សួរស្តី​ $name",
+            "${Lang().of(key: 'hello', isKH: isKH)} $name",
             style: TextStyle(
               fontSize: 16,
               color: color,
+              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
             ),
           ),
           Text(
             question[index],
-            style: TextStyle(fontSize: 14, color: color),
+            style: TextStyle(
+              fontSize: 14,
+              color: color,
+              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+            ),
           ),
         ],
       ),
@@ -665,14 +714,19 @@ class _HomePageState extends State<HomePage> {
             contentPadding: EdgeInsets.only(left: 15),
             actionsPadding: EdgeInsets.only(right: 5),
             title: Text(
-              'តើអ្នកចង់ចាក់ចេញពីកម្មវិធីមែនទេ?',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              Lang().of(key: 'doyouwantexitapp', isKH: isKH),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+              ),
             ),
             content: Text(
-              'សូមចុច "បាទ/ចាស"',
+              isKH ? 'សូមចុច "បាទ/ចាស"' : "Please click on 'Yes'",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 13,
+                fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
               ),
             ),
             backgroundColor: Palette.sky,
@@ -681,16 +735,24 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text(
-                  "ទេ",
-                  style: TextStyle(color: Palette.sky, fontSize: 14),
+                  isKH ? "ទេ" : "No",
+                  style: TextStyle(
+                    color: Palette.sky,
+                    fontSize: 14,
+                    fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                  ),
                 ),
               ),
               FlatButton(
                 color: Colors.white,
                 onPressed: () => Navigator.of(context).pop(true),
                 child: Text(
-                  "បាទ/ចាស",
-                  style: TextStyle(color: Palette.sky, fontSize: 14),
+                  isKH ? "បាទ/ចាស" : "Yes",
+                  style: TextStyle(
+                    color: Palette.sky,
+                    fontSize: 14,
+                    fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                  ),
                 ),
               ),
             ],

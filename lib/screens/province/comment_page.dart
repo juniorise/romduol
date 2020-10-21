@@ -4,8 +4,9 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/widget/star_rating.dart';
 
 class CommentPage extends StatelessWidget {
-  const CommentPage({Key key, @required this.comments}) : super(key: key);
-
+  const CommentPage({Key key, @required this.comments, @required this.isKH})
+      : super(key: key);
+  final bool isKH;
   final List<CommentModel> comments;
   @override
   Widget build(BuildContext context) {

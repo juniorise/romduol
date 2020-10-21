@@ -20,6 +20,7 @@ class DetailProfile extends StatelessWidget {
     this.maplocation,
     this.buslocation,
     this.isBookAble = false,
+     @required this.isKH ,
   }) : super(key: key);
 
   final GeoPoint maplocation, buslocation;
@@ -30,7 +31,7 @@ class DetailProfile extends StatelessWidget {
   final Function onBookPressed;
   final double rate;
   final int ratetotal;
-  final bool isBookAble;
+  final bool isBookAble, isKH;
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +60,11 @@ class DetailProfile extends StatelessWidget {
                 ),
               ),
               isShowPrice
-                  ? Text(khNum("${khNum(pricefrom.toString())}\$"))
+                  ? Text(khNum("${khNum(pricefrom.toString(), isKH)}\$", isKH))
                   : SizedBox(),
             ],
           ),
-          LocationText(location: location),
+          LocationText(location: location, isKH: isKH,),
           SizedBox(height: 8.0),
           rate != null
               ? Row(
@@ -71,14 +72,14 @@ class DetailProfile extends StatelessWidget {
                     StarRating(rating: rate),
                     SizedBox(width: 5),
                     Text(
-                      khNum(rate.toString()),
+                      khNum(rate.toString(), isKH),
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 14,
                       ),
                     ),
                     Text(
-                      "(${khNum(ratetotal.toString())})",
+                      "(${khNum(ratetotal.toString(), isKH)})",
                       style: TextStyle(
                         color: Palette.bggrey,
                         fontSize: 12,
@@ -112,6 +113,7 @@ class DetailProfile extends StatelessWidget {
                         builder: (context) => GoogleMapTemplate(
                           maplocation: maplocation ?? null,
                           buslocation: buslocation ?? null,
+                          isKH: isKH,
                         ),
                       ),
                     );

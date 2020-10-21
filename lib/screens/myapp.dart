@@ -6,8 +6,6 @@ import 'package:romduol/screens/home/homepage.dart';
 import 'package:romduol/services/database.dart';
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key key}) : super(key: key);
-
   @override
   _MyAppState createState() => _MyAppState();
 }

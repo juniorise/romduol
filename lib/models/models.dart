@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProvinceModel {
-  final String province;
+  final String province, enprovince;
   final int views;
   final String imagelocation;
 
   ProvinceModel({
+    this.enprovince,
     this.province,
     this.views,
     this.imagelocation,

@@ -6,8 +6,8 @@ import 'package:romduol/screens/booking/local_widget/drop_down.dart';
 import 'package:romduol/widget/theme/theme.dart';
 
 class BookingAccomodation extends StatefulWidget {
-  const BookingAccomodation({Key key}) : super(key: key);
-
+  const BookingAccomodation({Key key, @required this.isKH}) : super(key: key);
+  final bool isKH;
   @override
   _BookingAccomodationState createState() => _BookingAccomodationState();
 }
@@ -64,14 +64,15 @@ class _BookingAccomodationState extends State<BookingAccomodation> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    startdate = Date().toKhDate(selectedDate);
-    enddate = Date().toKhDate(selectedEndDate);
+    startdate = Date().toKhDate(selectedDate, widget.isKH);
+    enddate = Date().toKhDate(selectedEndDate, widget.isKH);
 
     int dateLength = Date().getLength(selectedDate, selectedEndDate);
     int res = getRecipt(dateLength);
 
     return Scaffold(
-      appBar: buildAppBar(title: "កក់កន្លែងស្នាក់នៅ", isBlue: true),
+      appBar: buildAppBar(
+          title: "កក់កន្លែងស្នាក់នៅ", isBlue: true, isKH: widget.isKH),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Column(
@@ -88,6 +89,7 @@ class _BookingAccomodationState extends State<BookingAccomodation> {
                     context: context,
                     title: "សូមបំពេញព័ត៏មានដើម្បីកក់",
                     padding: 0,
+                    isKH: widget.isKH,
                   ),
                   Divider(),
                   SizedBox(height: 5),
@@ -122,6 +124,7 @@ class _BookingAccomodationState extends State<BookingAccomodation> {
                     total: 4,
                     endTitle: "បន្ទប់",
                     onTab: (i) => setState(() => roomAmd = i),
+                    isKH: widget.isKH,
                   ),
                   SizedBox(height: 8),
                   DropdownCard(
@@ -130,6 +133,7 @@ class _BookingAccomodationState extends State<BookingAccomodation> {
                     total: 4,
                     endTitle: "គ្រែ",
                     onTab: (i) => setState(() => bedAmd = i),
+                    isKH: widget.isKH,
                   ),
                   SizedBox(height: 8),
                   Container(
@@ -141,12 +145,14 @@ class _BookingAccomodationState extends State<BookingAccomodation> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        buildWrap(
-                            "តម្លៃ/គ្រែ", khNum(bedPrice.toString()) + "\$"),
-                        buildWrap(
-                            "ចំនួនគ្រែ", khNum((bedAmd * roomAmd).toString())),
-                        buildWrap("ចំនួនថ្ងៃ", khNum(dateLength.toString())),
-                        buildWrap("ប្រាក់សរុប", khNum(res.toString()) + "\$"),
+                        buildWrap("តម្លៃ/គ្រែ",
+                            khNum(bedPrice.toString(), widget.isKH) + "\$"),
+                        buildWrap("ចំនួនគ្រែ",
+                            khNum((bedAmd * roomAmd).toString(), widget.isKH)),
+                        buildWrap("ចំនួនថ្ងៃ",
+                            khNum(dateLength.toString(), widget.isKH)),
+                        buildWrap("ប្រាក់សរុប",
+                            khNum(res.toString(), widget.isKH) + "\$"),
                       ],
                     ),
                   ),

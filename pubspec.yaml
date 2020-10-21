@@ -23,8 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
 
   provider: ^4.3.2+2
   auto_animated: ^2.1.0
@@ -34,8 +32,7 @@ dependencies:
   geolocator: ^6.0.0+4
   flutter_svg: ^0.19.0
   cloud_firestore_web: ^0.2.0+4
-  intl: ^0.16.1
-  intl_translation: ^0.17.10+1
+  shared_preferences: ^0.5.12+2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -87,16 +84,14 @@ flutter:
           weight: 400
         - asset: fonts/OpenSans-Bold.ttf
           weight: 700
-    - family: Hanuman
+    - family: Playfair
       fonts:
-        - asset: fonts/hanuman/Hanuman-Regular.ttf
+        - asset: fonts/playfair/PlayfairDisplay-Black.ttf
+          weight: 300
+        - asset: fonts/playfair/PlayfairDisplay-Regular.ttf
           weight: 400
-        - asset: fonts/hanuman/Hanuman-Bold.ttf
+        - asset: fonts/playfair/PlayfairDisplay-Bold.ttf
           weight: 700
-    - family: Siemreap
-      fonts:
-        - asset: fonts/Siemreap-Regular.ttf
-          weight: 400
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_intl:
