@@ -118,244 +118,250 @@ class _DetailTemplateState extends State<DetailTemplate> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Palette.bg,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            titleSpacing: 0.0,
-            toolbarHeight: 48,
-            elevation: 1,
-            expandedHeight: 150 + 48.0,
-            forceElevated: true,
-            backgroundColor: Palette.sky,
-            pinned: true,
-            iconTheme: IconThemeData(color: Colors.white),
-            title: Text(
-              widget.isKH ? "អំពីរទីកន្លែង" : "About place",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
+    return Theme(
+      data: ThemeData(fontFamily: widget.isKH ? "Kantumruy" : "Open Sans"),
+      child: Scaffold(
+        backgroundColor: Palette.bg,
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              titleSpacing: 0.0,
+              toolbarHeight: 48,
+              elevation: 1,
+              expandedHeight: 150 + 48.0,
+              forceElevated: true,
+              backgroundColor: Palette.sky,
+              pinned: true,
+              iconTheme: IconThemeData(color: Colors.white),
+              title: Text(
+                widget.isKH ? "អំពីរទីកន្លែង" : "About place",
+                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.text_fields),
-                onPressed: () {
-                  setState(() {
-                    isZoom = !isZoom;
-                  });
-                },
-              )
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                width: width,
-                height: 150 + 48.0,
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .doc(widget.data.refpath)
-                      .collection("images")
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    List<String> images = List();
-                    if (!snapshot.hasData)
-                      return noData();
-                    else if (snapshot.hasData) {
-                      snapshot.data.docs.forEach((element) {
-                        try {
-                          images.add(element['image']);
-                        } catch (e) {
-                          print(e);
-                        }
-                      });
-                      return Stack(
-                        children: [
-                          ImageViewer(
-                            thumnail: widget.data.thumbnail,
-                            pageController: _imageController,
-                            imageList: images,
-                            width: width,
-                            currentImage: currentImage,
-                            onPageChanged: (index) => setState(
-                              () => currentImage = index,
-                            ),
-                          ), // flutter clean && git add . && git commit -m "added function to convert from english number to khmer number." && git push origin master
-                          TextWithIndicator(
-                            currentImage: currentImage,
-                            imageList: images,
-                            pricefrom: widget.data.pricefrom,
-                            pricetotal: widget.data.pricetotal,
-                            isKH: widget.isKH,
-                          ),
-                        ],
-                      );
-                    }
-                    return noData();
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.text_fields),
+                  onPressed: () {
+                    setState(() {
+                      isZoom = !isZoom;
+                    });
                   },
-                ),
-              ),
-            ),
-          ),
-          SliverPersistentHeader(
-            floating: true,
-            delegate: SliverCardDelegate(
-              child: DetailProfile(
-                title: widget.data.title,
-                width: width,
-                location: widget.data.location,
-                onBookPressed: () {
-                  Widget screen;
-                  print(widget.data.refpath);
-                  if (widget.data.refpath.contains('accomodations'))
-                    screen = BookingAccomodation(isKH: widget.isKH);
-                  if (widget.data.refpath
-                      .contains('activities/default_data/act_biking'))
-                    screen = BookingBike(isKH: widget.isKH);
-                  if (widget.data.refpath.contains('restaurants/'))
-                    screen = BookingRestaurant(isKH: widget.isKH);
-
-                  if (widget.data.refpath
-                      .contains('activities/default_data/act_boating'))
-                    screen = BookingBoat(isKH: widget.isKH);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => screen,
-                    ),
-                  );
-                },
-                rate: widget.data.rating,
-                ratetotal: widget.data.ratetotal,
-                isBookAble: widget.data.pricefrom != null ||
-                        widget.data.pricetotal != null
-                    ? true
-                    : false,
-                maplocation: widget.data.maplocation,
-                isKH: widget.isKH,
-              ),
-              height: widget.data.ratetotal == null
-                  ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
-                  : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Container(
-                  color: Palette.bg,
+                )
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
                   width: width,
-                  constraints: BoxConstraints(minHeight: height - 75),
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(height: 10),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            decoration: buildBoxDecoration(),
-                            child: ArticleDetail(
-                              widget: widget,
-                              width: width,
-                              isZoom: isZoom,
-                            ),
-                          ),
-                          widget.data.refpath
-                                  .contains('restaurants/default_data/')
-                              ? FoodMenuDetail(
-                                  path: widget.data.refpath,
-                                  isKH: widget.isKH,
-                                )
-                              : SizedBox(),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        width: width,
-                        constraints: BoxConstraints(minHeight: 201.0),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: buildBoxDecoration(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                  height: 150 + 48.0,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .doc(widget.data.refpath)
+                        .collection("images")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      List<String> images = List();
+                      if (!snapshot.hasData)
+                        return noData();
+                      else if (snapshot.hasData) {
+                        snapshot.data.docs.forEach((element) {
+                          try {
+                            images.add(element['image']);
+                          } catch (e) {
+                            print(e);
+                          }
+                        });
+                        return Stack(
                           children: [
-                            Text(
-                              "បញ្ចេញមតិយោបល់",
-                              style: TextStyle(
-                                fontFamily:
-                                    widget.isKH ? 'Kantumruy' : 'Open Sans',
+                            ImageViewer(
+                              thumnail: widget.data.thumbnail,
+                              pageController: _imageController,
+                              imageList: images,
+                              width: width,
+                              currentImage: currentImage,
+                              onPageChanged: (index) => setState(
+                                () => currentImage = index,
                               ),
+                            ), // flutter clean && git add . && git commit -m "added function to convert from english number to khmer number." && git push origin master
+                            TextWithIndicator(
+                              currentImage: currentImage,
+                              imageList: images,
+                              pricefrom: widget.data.pricefrom,
+                              pricetotal: widget.data.pricetotal,
+                              isKH: widget.isKH,
                             ),
-                            SizedBox(height: 5),
-                            StarRating(
-                              size: 30,
-                              rating: rate,
-                              onRatingChanged: (double _rate) {
-                                setState(() => rate = _rate);
-                              },
-                            ),
-                            SizedBox(height: 15),
-                            TextField(
-                              maxLines: null,
-                              style: TextStyle(fontSize: 13),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 5),
-                                border: OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(5.0),
-                                    ),
-                                    borderSide: BorderSide.none),
-                                hintText: "មតិយោបល់",
-                                fillColor: Palette.bggrey.withOpacity(0.3),
-                                filled: true,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            FlatButton(
-                              onPressed: () {},
-                              color: Palette.sky,
-                              child: Text(
-                                "បង្ហោះជាសាធារណះ",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            )
                           ],
-                        ),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CommentPage(
-                                comments: comments,
-                                isKH: widget.isKH,
-                              ),
-                            ),
-                          );
-                        },
-                        highlightColor: Colors.white,
-                        splashColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "មតិយោបល់ (${khNum(comments.length.toString(), widget.isKH)})",
-                          style: TextStyle(color: Palette.sky),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                    ],
+                        );
+                      }
+                      return noData();
+                    },
                   ),
                 ),
-              ],
+              ),
             ),
-          )
-        ],
+            SliverPersistentHeader(
+              floating: true,
+              delegate: SliverCardDelegate(
+                child: DetailProfile(
+                  title: widget.data.title,
+                  width: width,
+                  location: widget.data.location,
+                  onBookPressed: () {
+                    Widget screen;
+                    print(widget.data.refpath);
+                    if (widget.data.refpath.contains('accomodations'))
+                      screen = BookingAccomodation(isKH: widget.isKH);
+                    if (widget.data.refpath
+                        .contains('activities/default_data/act_biking'))
+                      screen = BookingBike(isKH: widget.isKH);
+                    if (widget.data.refpath.contains('restaurants/'))
+                      screen = BookingRestaurant(isKH: widget.isKH);
+
+                    if (widget.data.refpath
+                        .contains('activities/default_data/act_boating'))
+                      screen = BookingBoat(isKH: widget.isKH);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => screen,
+                      ),
+                    );
+                  },
+                  rate: widget.data.rating,
+                  ratetotal: widget.data.ratetotal,
+                  isBookAble: widget.data.pricefrom != null ||
+                          widget.data.pricetotal != null
+                      ? true
+                      : false,
+                  maplocation: widget.data.maplocation,
+                  isKH: widget.isKH,
+                ),
+                height: widget.data.ratetotal == null
+                    ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
+                    : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Container(
+                    color: Palette.bg,
+                    width: width,
+                    constraints: BoxConstraints(minHeight: height - 75),
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(height: 10),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: buildBoxDecoration(),
+                              child: ArticleDetail(
+                                widget: widget,
+                                width: width,
+                                isZoom: isZoom,
+                              ),
+                            ),
+                            widget.data.refpath
+                                    .contains('restaurants/default_data/')
+                                ? FoodMenuDetail(
+                                    path: widget.data.refpath,
+                                    isKH: widget.isKH,
+                                  )
+                                : SizedBox(),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          width: width,
+                          constraints: BoxConstraints(minHeight: 201.0),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          decoration: buildBoxDecoration(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.isKH ? "បញ្ចេញមតិយោបល់" : "Recommend",
+                                style: TextStyle(
+                                  fontFamily:
+                                      widget.isKH ? 'Kantumruy' : 'Open Sans',
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              StarRating(
+                                size: 30,
+                                rating: rate,
+                                onRatingChanged: (double _rate) {
+                                  setState(() => rate = _rate);
+                                },
+                              ),
+                              SizedBox(height: 15),
+                              TextField(
+                                maxLines: null,
+                                style: TextStyle(fontSize: 13),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 5),
+                                  border: OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(5.0),
+                                      ),
+                                      borderSide: BorderSide.none),
+                                  hintText: widget.isKH
+                                      ? "មតិយោបល់"
+                                      : "Write your recommendation...",
+                                  fillColor: Palette.bggrey.withOpacity(0.3),
+                                  filled: true,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              FlatButton(
+                                onPressed: () {},
+                                color: Palette.sky,
+                                child: Text(
+                                  widget.isKH ? "បង្ហោះជាសាធារណះ" : "Publish",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        FlatButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommentPage(
+                                  comments: comments,
+                                  isKH: widget.isKH,
+                                ),
+                              ),
+                            );
+                          },
+                          highlightColor: Colors.white,
+                          splashColor: Colors.white,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            widget.isKH
+                                ? "មតិយោបល់ (${khNum(comments.length.toString(), widget.isKH)})"
+                                : "Comments (${khNum(comments.length.toString(), widget.isKH)})",
+                            style: TextStyle(
+                              color: Palette.sky,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -379,7 +385,7 @@ class FoodMenuDetail extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'បញ្ចី',
+           isKH ? 'បញ្ចី' : "Menu",
             style: TextStyle(fontSize: 14),
           ),
           SizedBox(height: 10),
@@ -537,18 +543,22 @@ class ArticleDetail extends StatelessWidget {
   }
 
   Column buildArticle(String article) {
-    return Column(
-      children: [
-        Text(
-          khNum(article, widget.isKH),
-          style: TextStyle(
-            fontSize: isZoom ? 15 : 13,
-            color: Palette.text,
-            height: isZoom ? 2.2 : 2.1,
-          ),
+    return Column(children: [
+      Text(
+        khNum(article, widget.isKH),
+        style: TextStyle(
+          fontSize: isZoom
+              ? widget.isKH
+                  ? 15
+                  : 17
+              : widget.isKH
+                  ? 13
+                  : 15,
+          color: Palette.text,
+          height: isZoom ? 2.2 : 2.1,
         ),
-        SizedBox(height: 20),
-      ],
-    );
+      ),
+      SizedBox(height: 20),
+    ]);
   }
 }

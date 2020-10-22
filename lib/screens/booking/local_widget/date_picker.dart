@@ -9,11 +9,13 @@ class DatePickerCard extends StatelessWidget {
     @required this.date,
     @required this.onPressed,
     this.isStart = false,
+    @required this.isKH,
   }) : super(key: key);
 
   final bool isStart;
   final Date date;
   final Function onPressed;
+  final bool isKH;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,13 @@ class DatePickerCard extends StatelessWidget {
         Column(
           children: [
             Text(
-              isStart ? 'ថ្ងៃកក់ឈ្មោះចូល' : 'ថ្ងៃបញ្ចប់',
+              isStart
+                  ? isKH
+                      ? 'ថ្ងៃកក់ឈ្មោះចូល'
+                      : "From"
+                  : isKH
+                      ? 'ថ្ងៃបញ្ចប់'
+                      : "End date",
               style: TextStyle(
                 fontSize: 13,
                 color: Palette.bgdark.withOpacity(0.8),

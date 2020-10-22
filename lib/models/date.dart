@@ -21,10 +21,26 @@ class Date {
       'ធ្នូ',
     ];
 
+    List<String> monthEN = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
     Date khDate = Date(
-        day: khNum(date.day.toString(), isKH),
-        month: month[date.month],
-        year: khNum(date.year.toString(), isKH));
+      day: khNum(date.day.toString(), isKH),
+      month: isKH ? month[date.month] : monthEN[date.month],
+      year: khNum(date.year.toString(), isKH),
+    );
     return khDate;
   }
 
@@ -93,9 +109,10 @@ class Time {
   final String status;
   Time({this.hour, this.min, this.sec, this.status});
 
-  Time toSpecific(TimeOfDay time) {
+  Time toSpecific(TimeOfDay time, bool isKH) {
     int _hour = 0, _min = 0, _sec = 0;
-    String _status = "ព្រឺក";
+    String _status = isKH ? "ព្រឺក" : "Morning";
+    
 
     _hour = time.hour;
 
@@ -122,7 +139,7 @@ class Time {
 
     if (_hour > 12) {
       _hour -= 12;
-      _status = "ល្ងាច";
+      _status = isKH ? "ល្ងាច" : "Evening";
     }
 
     return Time(hour: _hour, min: _min, sec: _sec, status: _status);

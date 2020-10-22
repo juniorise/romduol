@@ -92,9 +92,10 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
               _tabBarNames[i],
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: widget.isKH ? 12 : 13,
                 fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
                 color: !_isSelected ? Palette.sky : Colors.white,
+                height: widget.isKH ? 2.0 : 1.0
               ),
             ),
           ),

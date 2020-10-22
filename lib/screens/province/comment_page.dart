@@ -13,7 +13,7 @@ class CommentPage extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: buildAppBar(context, "មតិយោបល់"),
+      appBar: buildAppBar(context, isKH ? "មតិយោបល់" : "Recommends"),
       body: ListView(
         children: [
           for (int index = 0; index < comments.length; index++)
@@ -97,7 +97,7 @@ class CommentPage extends StatelessWidget {
                       size: 16,
                     ),
                     label: Text(
-                      "មានប្រយោជន៍",
+                      isKH ? "មានប្រយោជន៍" : "Useful",
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 12,
@@ -114,7 +114,7 @@ class CommentPage extends StatelessWidget {
                       size: 16,
                     ),
                     label: Text(
-                      "មិនផ្តល់ប្រយោជន៍",
+                      isKH ? "មិនផ្តល់ប្រយោជន៍" : "Not correct",
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 12,

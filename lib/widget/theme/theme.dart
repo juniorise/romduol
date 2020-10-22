@@ -81,6 +81,7 @@ PreferredSize buildAppBar({
         textAlign: TextAlign.start,
         style: TextStyle(
           color: color,
+          fontSize: 14,
           fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
         ),
       ),

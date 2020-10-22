@@ -123,17 +123,17 @@ class _ProvinceState extends State<Province> {
       decoration: InputDecoration(
         hintText: widget.isKH
             ? "ស្វែងរកក្នុង${widget.province}..."
-            : "Search in ${widget.enprovince}",
+            : "Search in ${widget.enprovince}...",
         border: InputBorder.none,
         hintStyle: TextStyle(
           color: Palette.text,
-          fontSize: 14,
+          fontSize: widget.isKH ? 14 : 15,
           fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
         ),
       ),
       style: TextStyle(
         color: Palette.text,
-        fontSize: 14.0,
+        fontSize: widget.isKH ? 14 : 15,
         fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
       ),
       textInputAction: TextInputAction.search,
@@ -149,9 +149,9 @@ class _ProvinceState extends State<Province> {
           child: Text(
             widget.isKH
                 ? "ស្វែងរកក្នុង${widget.province}..."
-                : "Search in ${widget.enprovince}",
+                : "Search in ${widget.enprovince}...",
             style: TextStyle(
-              fontSize: 14,
+              fontSize: widget.isKH ? 14 : 15,
               color: Palette.sky,
               fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
             ),

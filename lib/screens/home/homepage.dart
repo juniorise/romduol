@@ -70,245 +70,248 @@ class _HomePageState extends State<HomePage> {
       create: (_) => ScrollNotifier(_scrollController),
       child: WillPopScope(
         onWillPop: _onWillPop,
-        child: Scaffold(
-          key: scaffoldKey,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(48),
-            child: Consumer<ScrollNotifier>(
-              builder: (context, notifier, child) {
-                return buildAppBar(
-                  title: Lang().of(key: 'title', isKH: isKH),
-                  onTab: () {},
-                  elevation: math.min(notifier.offset * 0.05, 3),
-                  isKH: isKH,
-                );
-              },
+        child: Theme(
+          data: ThemeData(fontFamily: isKH ? "Kantumruy" : "Open Sans"),
+          child: Scaffold(
+            key: scaffoldKey,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(48),
+              child: Consumer<ScrollNotifier>(
+                builder: (context, notifier, child) {
+                  return buildAppBar(
+                    title: Lang().of(key: 'title', isKH: isKH),
+                    onTab: () {},
+                    elevation: math.min(notifier.offset * 0.05, 3),
+                    isKH: isKH,
+                  );
+                },
+              ),
             ),
-          ),
-          drawer: HomeDrawer(
-            onLangTab: () => setState(() {
-              isKH = !isKH;
-              Lang().setLang(isKH);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => SplashScreen()));
-            }),
-            isKH: isKH,
-          ),
-          body: GestureDetector(
-            onHorizontalDragEnd: (e) {
-              if (e.velocity.pixelsPerSecond.direction > 0 &&
-                  e.velocity.pixelsPerSecond.dx > 0) {
-                scaffoldKey.currentState.openDrawer();
-              }
-            },
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Positioned(
-                  top: -80 - 30.0,
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: height * 0.85,
-                        constraints: BoxConstraints(minHeight: 620),
-                        width: width,
-                        child: Consumer<ScrollNotifier>(
-                          builder: (context, notifier, child) {
-                            return Transform.translate(
-                              offset: Offset(0, notifier.offset * 0.2),
-                              child: child,
-                            );
-                          },
-                          child: Image.asset(
-                            "assets/home/background.jpg",
-                            fit: BoxFit.cover,
+            drawer: HomeDrawer(
+              onLangTab: () => setState(() {
+                isKH = !isKH;
+                Lang().setLang(isKH);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => SplashScreen()));
+              }),
+              isKH: isKH,
+            ),
+            body: GestureDetector(
+              onHorizontalDragEnd: (e) {
+                if (e.velocity.pixelsPerSecond.direction > 0 &&
+                    e.velocity.pixelsPerSecond.dx > 0) {
+                  scaffoldKey.currentState.openDrawer();
+                }
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Positioned(
+                    top: -80 - 30.0,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: height * 0.85,
+                          constraints: BoxConstraints(minHeight: 620),
+                          width: width,
+                          child: Consumer<ScrollNotifier>(
+                            builder: (context, notifier, child) {
+                              return Transform.translate(
+                                offset: Offset(0, notifier.offset * 0.2),
+                                child: child,
+                              );
+                            },
+                            child: Image.asset(
+                              "assets/home/background.jpg",
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
+                        Positioned.fill(
+                          child: Container(
+                            color: Palette.sky.withOpacity(0.3),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Consumer<ScrollNotifier>(
+                      builder: (context, notifier, child) {
+                        return Transform.translate(
+                          offset: Offset(0, -notifier.offset),
+                          child: child,
+                        );
+                      },
+                      child: Container(
+                        height: height - 200,
+                        width: width,
+                        color: Palette.bg,
                       ),
-                      Positioned.fill(
-                        child: Container(
-                          color: Palette.sky.withOpacity(0.3),
+                    ),
+                  ),
+                  ListView(
+                    controller: _scrollController,
+                    physics: RangeMaintainingScrollPhysics(),
+                    children: [
+                      //HELLO TITLE
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('questions')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            snapshot.data.docs.forEach(
+                              (element) {
+                                if (!question.contains(element['question']))
+                                  question.add(element['question']);
+                              },
+                            );
+                          return hello(width, question);
+                        },
+                      ),
+
+                      //PROVINCES
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        width: width,
+                        decoration: buildBoxDecoration(),
+                        child: Column(
+                          children: [
+                            sectionTitle(
+                              context: context,
+                              title: Lang().of(
+                                key: 'chooseaprovince',
+                                isKH: isKH,
+                              ),
+                              isKH: isKH,
+                            ),
+                            Stack(
+                              children: [
+                                Container(
+                                  height: width > 360 ? 155 : 290,
+                                  child: LiveGrid.options(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    options: options,
+                                    itemBuilder: (context, index, animation) {
+                                      ProvinceModel data = provinces[index];
+                                      return FadeTransition(
+                                        opacity: Tween<double>(
+                                          begin: 0,
+                                          end: 1,
+                                        ).animate(animation),
+                                        child: buildProvinceCard(
+                                          context: context,
+                                          province: isKH
+                                              ? data.province
+                                              : data.enprovince,
+                                          views: data.views,
+                                          imagelocation: data.imagelocation,
+                                          onPressed: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Province(
+                                                province: data.province,
+                                                enprovince: data.enprovince,
+                                                isKH: isKH,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    itemCount: 4,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: width > 360 * 2 ? 4 : 2,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 0,
+                                      childAspectRatio: 8 / 7,
+                                    ),
+                                  ),
+                                ),
+                                width < 360 * 2
+                                    ? Positioned.fill(
+                                        top: -1.5,
+                                        right: 0.2,
+                                        child: IgnorePointer(
+                                          child: Container(
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                'assets/graphics/provincedivider.svg',
+                                                width: 100,
+                                                height: 100,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      //ECO TRAVEL PACKAGE
+                      Container(
+                        decoration: buildBoxDecoration(),
+                        padding: EdgeInsets.all(15),
+                        width: width,
+                        child: Column(
+                          children: [
+                            posterCard(width),
+                            SizedBox(height: 5),
+                            sectionTitle(
+                              context: context,
+                              title: Lang().of(key: 'joinwithus', isKH: isKH),
+                              isKH: isKH,
+                            ),
+                            Wrap(
+                              children: [
+                                packages.length != null
+                                    ? LiveList.options(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        options: options,
+                                        itemCount: packages.length,
+                                        itemBuilder: (context, i, animation) {
+                                          return FadeTransition(
+                                            opacity: Tween<double>(
+                                              begin: 0,
+                                              end: 1,
+                                            ).animate(animation),
+                                            child: packageCard(
+                                              width: width,
+                                              package: packages[i],
+                                              onErrorPressed: () =>
+                                                  Navigator.pushReplacement(
+                                                context,
+                                                PageRouteTransition(
+                                                  child: MyApp(),
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Center(
+                                        heightFactor: 2,
+                                        child: CircularProgressIndicator(),
+                                      ),
+                              ],
+                            )
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Consumer<ScrollNotifier>(
-                    builder: (context, notifier, child) {
-                      return Transform.translate(
-                        offset: Offset(0, -notifier.offset),
-                        child: child,
-                      );
-                    },
-                    child: Container(
-                      height: height - 200,
-                      width: width,
-                      color: Palette.bg,
-                    ),
-                  ),
-                ),
-                ListView(
-                  controller: _scrollController,
-                  physics: RangeMaintainingScrollPhysics(),
-                  children: [
-                    //HELLO TITLE
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('questions')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          snapshot.data.docs.forEach(
-                            (element) {
-                              if (!question.contains(element['question']))
-                                question.add(element['question']);
-                            },
-                          );
-                        return hello(width, question);
-                      },
-                    ),
-
-                    //PROVINCES
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      width: width,
-                      decoration: buildBoxDecoration(),
-                      child: Column(
-                        children: [
-                          sectionTitle(
-                            context: context,
-                            title: Lang().of(
-                              key: 'chooseaprovince',
-                              isKH: isKH,
-                            ),
-                            isKH: isKH,
-                          ),
-                          Stack(
-                            children: [
-                              Container(
-                                height: width > 360 ? 155 : 290,
-                                child: LiveGrid.options(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  options: options,
-                                  itemBuilder: (context, index, animation) {
-                                    ProvinceModel data = provinces[index];
-                                    return FadeTransition(
-                                      opacity: Tween<double>(
-                                        begin: 0,
-                                        end: 1,
-                                      ).animate(animation),
-                                      child: buildProvinceCard(
-                                        context: context,
-                                        province: isKH
-                                            ? data.province
-                                            : data.enprovince,
-                                        views: data.views,
-                                        imagelocation: data.imagelocation,
-                                        onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => Province(
-                                              province: data.province,
-                                              enprovince: data.enprovince,
-                                              isKH: isKH,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: 4,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: width > 360 * 2 ? 4 : 2,
-                                    crossAxisSpacing: 0,
-                                    mainAxisSpacing: 0,
-                                    childAspectRatio: 8 / 7,
-                                  ),
-                                ),
-                              ),
-                              width < 360 * 2
-                                  ? Positioned.fill(
-                                      top: -1.5,
-                                      right: 0.2,
-                                      child: IgnorePointer(
-                                        child: Container(
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              'assets/graphics/provincedivider.svg',
-                                              width: 100,
-                                              height: 100,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    //ECO TRAVEL PACKAGE
-                    Container(
-                      decoration: buildBoxDecoration(),
-                      padding: EdgeInsets.all(15),
-                      width: width,
-                      child: Column(
-                        children: [
-                          posterCard(width),
-                          SizedBox(height: 5),
-                          sectionTitle(
-                            context: context,
-                            title: Lang().of(key: 'joinwithus', isKH: isKH),
-                            isKH: isKH,
-                          ),
-                          Wrap(
-                            children: [
-                              packages.length != null
-                                  ? LiveList.options(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      options: options,
-                                      itemCount: packages.length,
-                                      itemBuilder: (context, i, animation) {
-                                        return FadeTransition(
-                                          opacity: Tween<double>(
-                                            begin: 0,
-                                            end: 1,
-                                          ).animate(animation),
-                                          child: packageCard(
-                                            width: width,
-                                            package: packages[i],
-                                            onErrorPressed: () =>
-                                                Navigator.pushReplacement(
-                                              context,
-                                              PageRouteTransition(
-                                                child: MyApp(),
-                                                duration:
-                                                    Duration(milliseconds: 500),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : Center(
-                                      heightFactor: 2,
-                                      child: CircularProgressIndicator(),
-                                    ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -384,10 +387,11 @@ class _HomePageState extends State<HomePage> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: TextStyle(
-                            color: Colors.white.withOpacity(1),
-                            fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
-                            fontWeight: FontWeight.w300,
-                            fontSize: 11),
+                          color: Colors.white.withOpacity(1),
+                          fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                          fontWeight: FontWeight.w300,
+                          fontSize: 11,
+                        ),
                         children: [
                           TextSpan(
                             text:
@@ -428,9 +432,8 @@ class _HomePageState extends State<HomePage> {
                           package.title,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: isKH ? 14 : 15,
                             color: Palette.bgdark.withOpacity(0.8),
-                            fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                           ),
                         ),
                       ),
@@ -439,7 +442,6 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 14,
                           color: Palette.sky,
-                          fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                         ),
                       ),
                     ],
@@ -468,7 +470,6 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               fontSize: 12,
                               color: Palette.text,
-                              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                             ),
                           ),
                         ),
@@ -530,7 +531,6 @@ class _HomePageState extends State<HomePage> {
                         Lang().of(key: 'ecotravelpackage', isKH: isKH),
                         style: TextStyle(
                           color: Colors.white.withOpacity(1),
-                          fontFamily: isKH ? 'Kantumruy' : 'Playfair',
                           fontSize: 20,
                         ),
                       ),
@@ -540,7 +540,6 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 12,
                           color: Colors.white,
                           fontWeight: FontWeight.w300,
-                          fontFamily: isKH ? 'Kantumruy' : 'Playfair',
                         ),
                       ),
                     ],
@@ -566,7 +565,6 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
-                      fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                     ),
                   ),
                 ),
@@ -622,9 +620,8 @@ class _HomePageState extends State<HomePage> {
               Text(
                 province,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: isKH ? 14 : 15,
                   color: Palette.sky,
-                  fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                 ),
               ),
               Wrap(
@@ -653,7 +650,6 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 12,
                             fontWeight: FontWeight.w300,
                             color: Palette.bgdark.withOpacity(1),
-                            fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                           ),
                         ),
                       ],
@@ -690,7 +686,6 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
               fontSize: 16,
               color: color,
-              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
             ),
           ),
           Text(
@@ -698,7 +693,6 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
               fontSize: 14,
               color: color,
-              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
             ),
           ),
         ],
@@ -718,7 +712,6 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
-                fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
               ),
             ),
             content: Text(

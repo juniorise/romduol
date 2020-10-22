@@ -9,7 +9,7 @@ class DropdownCard extends StatelessWidget {
     @required this.onTab,
     @required this.value,
     @required this.total,
-    this.endTitle = "បន្ទប់",
+    @required this.endTitle,
     @required this.isKH,
   }) : super(key: key);
 
@@ -33,7 +33,9 @@ class DropdownCard extends StatelessWidget {
           Positioned(
             left: 20,
             child: Text(
-              "ចំនួន ${khNum(value.toString(), isKH)} $endTitle",
+              isKH
+                  ? "ចំនួន ${khNum(value.toString(), isKH)} $endTitle"
+                  : "For ${khNum(value.toString(), isKH)} $endTitle",
               style: TextStyle(color: Palette.bgdark, fontSize: 13),
             ),
           ),

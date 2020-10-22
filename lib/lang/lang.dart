@@ -21,6 +21,9 @@ class Lang {
     'accomodation': 'កន្លែងស្នាក់នៅ',
     'activities': 'សកម្មភាព',
     'restaurant': 'អាហារ',
+    'bookingheader': "សូមបំពេញព័ត៏មានដើម្បីកក់",
+    'restuarantexpire': "ការកក់នឹងត្រូវបានផុតកំណត់ក្នុងរយ:ពេល ២ម៉ោង",
+    'confirm': "បញ្ជាក់",
   };
 
   Map<String, String> en = {
@@ -42,6 +45,9 @@ class Lang {
     'accomodation': 'Accomodation',
     'activities': 'Activities',
     'restaurant': 'Restaurant',
+    'bookingheader': "Please fill the form to book",
+    'restuarantexpire': "Booking will be expired within 2 hours from booking",
+    'confirm': "Confirm",
   };
 
   String of({String key, bool isKH = true}) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/lang/lang.dart';
 import 'package:romduol/models/date.dart';
 import 'package:romduol/screens/booking/local_widget/drop_down.dart';
 import 'package:romduol/widget/theme/theme.dart';
@@ -67,170 +68,188 @@ class _BookingBikeState extends State<BookingBike>
     double height = MediaQuery.of(context).size.height;
 
     selectedDateKH = Date().toKhDate(selectedDate, widget.isKH);
-    return Scaffold(
-      appBar: buildAppBar(title: "កក់កង់", isBlue: true, isKH: widget.isKH),
-      resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              margin: EdgeInsets.zero,
-              constraints: BoxConstraints(minHeight: height - 110),
-              padding: EdgeInsets.all(20),
-              width: width,
-              child: Column(
-                children: [
-                  sectionTitle(
-                    context: context,
-                    title: "សូមបំពេញព័ត៏មានដើម្បីកក់",
-                    padding: 0,isKH: widget.isKH,
-                  ),
-                  SizedBox(height: 8.0),
-                  Container(
-                    height: 48,
-                    width: width,
-                    decoration: buildBoxDecoration().copyWith(
-                      borderRadius: BorderRadius.circular(5),
+    return Theme(
+      data: ThemeData(fontFamily: widget.isKH ? "Kantumruy" : "Open Sans"),
+      child: Scaffold(
+        appBar: buildAppBar(
+            title: widget.isKH ? "កក់កង់" : "Booking bike",
+            isBlue: true,
+            isKH: widget.isKH),
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: EdgeInsets.zero,
+                constraints: BoxConstraints(minHeight: height - 110),
+                padding: EdgeInsets.all(20),
+                width: width,
+                child: Column(
+                  children: [
+                    sectionTitle(
+                      context: context,
+                      title: Lang().of(key: "bookingheader", isKH: widget.isKH),
+                      padding: 0,
+                      isKH: widget.isKH,
                     ),
-                    child: FlatButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () => _selectDate(context: context),
+                    SizedBox(height: 8.0),
+                    Container(
+                      height: 48,
+                      width: width,
+                      decoration: buildBoxDecoration().copyWith(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: FlatButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => _selectDate(context: context),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Text(
+                                "${selectedDateKH.day} ${selectedDateKH.month} ${selectedDateKH.year}",
+                                style: TextStyle(
+                                    color: Palette.bgdark, fontSize: 13),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20.0),
+                              child: Icon(
+                                Icons.calendar_today,
+                                size: 18,
+                                color: Palette.bgdark.withOpacity(0.8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 18.0),
+                    sectionTitle(
+                      context: context,
+                      title:
+                          widget.isKH ? "ជ្រើសរើសប្រភេទកង់" : "Choose a type",
+                      padding: 0,
+                      isKH: widget.isKH,
+                    ),
+                    SizedBox(height: 12.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BikePickerCard(
+                            animation: _animation,
+                            width: width,
+                            isSelected: isSelectedA,
+                            price: bikeAPrice,
+                            isKH: widget.isKH,
+                            onPressed: () {
+                              if (!isSelectedA) {
+                                setState(() {
+                                  isSelectedA = !isSelectedA;
+                                  isSelectedB = !isSelectedA;
+                                });
+                              }
+                            }),
+                        SizedBox(width: 24),
+                        BikePickerCard(
+                          animation: _animation2,
+                          width: width,
+                          isSelected: isSelectedB,
+                          price: bikeBPrice,
+                          isKH: widget.isKH,
+                          isElec: true,
+                          onPressed: () {
+                            if (!isSelectedB) {
+                              setState(() {
+                                isSelectedB = !isSelectedB;
+                                isSelectedA = !isSelectedB;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 18),
+                    DropdownCard(
+                      width: width,
+                      value: bikeNum,
+                      total: 5,
+                      endTitle: widget.isKH
+                          ? "កង់"
+                          : bikeNum < 2
+                              ? "bike"
+                              : "bikes",
+                      onTab: (i) => setState(() => bikeNum = i),
+                      isKH: widget.isKH,
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      height: 75,
+                      width: width,
+                      decoration: buildBoxDecoration()
+                          .copyWith(borderRadius: BorderRadius.circular(5)),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: Text(
-                              "${selectedDateKH.day} ${selectedDateKH.month} ${selectedDateKH.year}",
-                              style: TextStyle(
-                                  color: Palette.bgdark, fontSize: 13),
-                            ),
+                          buildWrap(
+                              widget.isKH ? "តម្លៃ/កង់" : "Price/bike",
+                              khNum(
+                                      isSelectedA
+                                          ? bikeAPrice.toString()
+                                          : isSelectedB
+                                              ? bikeBPrice.toString()
+                                              : '0',
+                                      widget.isKH) +
+                                  "\$"),
+                          buildWrap(
+                            widget.isKH
+                                ? "ចំនួនកង"
+                                : bikeNum < 2
+                                    ? "Bike"
+                                    : "Bikes",
+                            khNum((bikeNum.toString()), widget.isKH),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 20.0),
-                            child: Icon(
-                              Icons.calendar_today,
-                              size: 18,
-                              color: Palette.bgdark.withOpacity(0.8),
-                            ),
+                          buildWrap(
+                            widget.isKH ? "ប្រាក់សរុប" : "Total price",
+                            khNum(
+                                    (isSelectedA
+                                            ? bikeAPrice * bikeNum
+                                            : isSelectedB
+                                                ? bikeBPrice * bikeNum
+                                                : 0)
+                                        .toString(),
+                                    widget.isKH) +
+                                "\$",
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  SizedBox(height: 18.0),
-                  sectionTitle(
-                    context: context,
-                    title: "ជ្រើសរើសប្រភេទកង់",
-                    padding: 0,isKH: widget.isKH,
-                  ),
-                  SizedBox(height: 12.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      BikePickerCard(
-                          animation: _animation,
-                          width: width,
-                          isSelected: isSelectedA,
-                          price: bikeAPrice,
-                          isKH: widget.isKH,
-                          onPressed: () {
-                            if (!isSelectedA) {
-                              setState(() {
-                                isSelectedA = !isSelectedA;
-                                isSelectedB = !isSelectedA;
-                              });
-                            }
-                          }),
-                      SizedBox(width: 24),
-                      BikePickerCard(
-                        animation: _animation2,
-                        width: width,
-                        isSelected: isSelectedB,
-                        price: bikeBPrice,
-                        isKH: widget.isKH,
-                        onPressed: () {
-                          if (!isSelectedB) {
-                            setState(() {
-                              isSelectedB = !isSelectedB;
-                              isSelectedA = !isSelectedB;
-                            });
-                          }
-                        },
+                    SizedBox(height: 8),
+                    Container(
+                      height: 50,
+                      width: width,
+                      decoration: buildBoxDecoration().copyWith(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Palette.sky,
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 18),
-                  DropdownCard(
-                    width: width,
-                    value: bikeNum,
-                    total: 5,
-                    endTitle: "កង់",
-                    onTab: (i) => setState(() => bikeNum = i),
-                    isKH: widget.isKH,
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    height: 75,
-                    width: width,
-                    decoration: buildBoxDecoration()
-                        .copyWith(borderRadius: BorderRadius.circular(5)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        buildWrap(
-                            "តម្លៃ/កង់",
-                            khNum(
-                                    isSelectedA
-                                        ? bikeAPrice.toString()
-                                        : isSelectedB
-                                            ? bikeBPrice.toString()
-                                            : '0',
-                                    widget.isKH) +
-                                "\$"),
-                        buildWrap(
-                          "ចំនួនកង",
-                          khNum((bikeNum.toString()), widget.isKH),
+                      child: FlatButton(
+                        onPressed: () {},
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Text(
+                          Lang().of(key: "confirm", isKH: widget.isKH),
+                          style: TextStyle(color: Colors.white, fontSize: 13),
                         ),
-                        buildWrap(
-                          "ប្រាក់សរុប",
-                          khNum(
-                                  (isSelectedA
-                                          ? bikeAPrice * bikeNum
-                                          : isSelectedB
-                                              ? bikeBPrice * bikeNum
-                                              : 0)
-                                      .toString(),
-                                  widget.isKH) +
-                              "\$",
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    height: 50,
-                    width: width,
-                    decoration: buildBoxDecoration().copyWith(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Palette.sky,
-                    ),
-                    child: FlatButton(
-                      onPressed: () {},
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text(
-                        "បញ្ជាក់",
-                        style: TextStyle(color: Colors.white, fontSize: 13),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -245,6 +264,7 @@ class BikePickerCard extends StatelessWidget {
     this.isSelected = false,
     @required this.onPressed,
     @required this.isKH,
+    this.isElec = false,
     this.price,
   })  : _animation = animation,
         super(key: key);
@@ -254,7 +274,7 @@ class BikePickerCard extends StatelessWidget {
   final Function onPressed;
   final Animation<double> _animation;
   final double width;
-  final bool isKH;
+  final bool isKH, isElec;
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +324,13 @@ class BikePickerCard extends StatelessWidget {
                           : Palette.bgdark.withOpacity(0.6),
                     ),
                     child: Text(
-                      'កង់អេឡិចត្រូនិច',
+                      isElec
+                          ? isKH
+                              ? 'កង់អេឡិចត្រូនិច'
+                              : "Electric bike"
+                          : isKH
+                              ? "កង់ធម្មតា"
+                              : "Normal bike",
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.white,

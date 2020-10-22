@@ -20,7 +20,7 @@ class DetailProfile extends StatelessWidget {
     this.maplocation,
     this.buslocation,
     this.isBookAble = false,
-     @required this.isKH ,
+    @required this.isKH,
   }) : super(key: key);
 
   final GeoPoint maplocation, buslocation;
@@ -54,7 +54,7 @@ class DetailProfile extends StatelessWidget {
                   title,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: isKH ? 14 : 15,
                     color: Palette.bgdark.withOpacity(0.8),
                   ),
                 ),
@@ -64,7 +64,11 @@ class DetailProfile extends StatelessWidget {
                   : SizedBox(),
             ],
           ),
-          LocationText(location: location, isKH: isKH,),
+          SizedBox(height: isKH ? 0 : 5.0),
+          LocationText(
+            location: location,
+            isKH: isKH,
+          ),
           SizedBox(height: 8.0),
           rate != null
               ? Row(
@@ -128,7 +132,7 @@ class DetailProfile extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "ទិសដៅ",
+                          isKH ? "ទិសដៅ" : "Map",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Palette.sky,
@@ -167,7 +171,7 @@ class DetailProfile extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                                "កក់ឥឡូវ",
+                               isKH ? "កក់ឥឡូវ" : "Book now",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,

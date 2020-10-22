@@ -22,11 +22,12 @@ class TextWithIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String price;
+    String start = isKH ? "ចាប់ពី" : "";
     if (pricetotal != null && pricefrom != null) {
       price = pricetotal != null && pricefrom != null
-          ? "ចាប់ពី ${khNum(pricefrom.toString(), isKH)}\$ - ${khNum(pricetotal.toString(), isKH)}\$"
+          ? "$start ${khNum(pricefrom.toString(), isKH)}\$ - ${khNum(pricetotal.toString(), isKH)}\$"
           : pricetotal != null && pricefrom == null
-              ? "ចាប់ពី ${khNum(pricefrom.toString(), isKH)}\$"
+              ? "$start ${khNum(pricefrom.toString(), isKH)}\$"
               : "${khNum(pricetotal.toString(), isKH)}\$";
     }
     return Positioned(
