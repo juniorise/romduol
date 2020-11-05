@@ -5,15 +5,21 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/province/local_widget/animatedList.dart';
-import 'package:romduol/screens/province/local_widget/animatedtabbar.dart';
-import 'package:romduol/screens/province/local_widget/fadeinout.dart';
+import 'package:romduol/widget/animatedList.dart';
+import 'package:romduol/widget/animatedtabbar.dart';
+import 'package:romduol/widget/fadeinout.dart';
 import 'package:romduol/services/database.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class Province extends StatefulWidget {
-  final String province;
-  const Province({Key key, @required this.province}) : super(key: key);
+  final String province, enprovince;
+  final bool isKH;
+  const Province(
+      {Key key,
+      @required this.province,
+      @required this.enprovince,
+      @required this.isKH})
+      : super(key: key);
   @override
   _ProvinceState createState() => _ProvinceState();
 }
@@ -31,6 +37,7 @@ class _ProvinceState extends State<Province> {
   @override
   void initState() {
     super.initState();
+    print(widget.isKH);
     _pageController = PageController(initialPage: currentPage);
     _pageController.addListener(pageControllerListener);
   }
@@ -75,6 +82,7 @@ class _ProvinceState extends State<Province> {
                     currentPage: currentPage,
                     scrollController: _scrollController,
                     onTap: (index) => removeAnimated(index),
+                    isKH: widget.isKH,
                   ),
                   preferredSize: Size.fromHeight(46),
                 ),
@@ -98,6 +106,7 @@ class _ProvinceState extends State<Province> {
                     child: AnimatedLists(
                       data: !isSearched ? pagesCard[i] : data,
                       isAnimated: isAnimated[i],
+                      isKH: widget.isKH,
                     ),
                   ),
               ],
@@ -112,11 +121,21 @@ class _ProvinceState extends State<Province> {
     return TextField(
       autofocus: true,
       decoration: InputDecoration(
-        hintText: 'ស្វែងរកក្នុង${widget.province}...',
+        hintText: widget.isKH
+            ? "ស្វែងរកក្នុង${widget.province}..."
+            : "Search in ${widget.enprovince}...",
         border: InputBorder.none,
-        hintStyle: const TextStyle(color: Palette.text, fontSize: 14),
+        hintStyle: TextStyle(
+          color: Palette.text,
+          fontSize: widget.isKH ? 14 : 15,
+          fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
+        ),
       ),
-      style: const TextStyle(color: Palette.text, fontSize: 14.0),
+      style: TextStyle(
+        color: Palette.text,
+        fontSize: widget.isKH ? 14 : 15,
+        fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
+      ),
       textInputAction: TextInputAction.search,
       onChanged: (value) => onSubmitted(value, pagesCard[pageCurrent]),
       controller: _textEditingController,
@@ -128,8 +147,14 @@ class _ProvinceState extends State<Province> {
         child: Container(
           width: double.infinity,
           child: Text(
-            "ស្វែងរកក្នុង${widget.province}...",
-            style: TextStyle(fontSize: 14, color: Palette.sky),
+            widget.isKH
+                ? "ស្វែងរកក្នុង${widget.province}..."
+                : "Search in ${widget.enprovince}...",
+            style: TextStyle(
+              fontSize: widget.isKH ? 14 : 15,
+              color: Palette.sky,
+              fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
+            ),
             textAlign: TextAlign.start,
           ),
         ),
@@ -166,8 +191,8 @@ class _ProvinceState extends State<Province> {
       for (int i = 0; i < pagesCard.length; i++) {
         if (pagesCard[i].title.contains(value) ||
             pagesCard[i].location.contains(value) ||
-            khNum(pagesCard[i].location).contains(value) ||
-            pagesCard[i].location.contains(khNum(value))) {
+            khNum(pagesCard[i].location, widget.isKH).contains(value) ||
+            pagesCard[i].location.contains(khNum(value, widget.isKH))) {
           data.add(pagesCard[i]);
         }
       }

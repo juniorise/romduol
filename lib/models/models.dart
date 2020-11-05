@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProvinceModel {
-  final String province;
+  final String province, id, enprovince;
   final int views;
   final String imagelocation;
 
   ProvinceModel({
+    this.id,
+    this.enprovince,
     this.province,
     this.views,
     this.imagelocation,
@@ -86,4 +88,18 @@ class CommentModel {
     this.useless,
     this.date,
   });
+}
+
+
+class WhyTourPackage {
+  final String imageLocation, title, des, link;
+
+  WhyTourPackage({this.imageLocation, this.title, this.des, this.link});
+}
+
+
+class UsefulPackParent {
+  final String path, title;
+
+  UsefulPackParent({this.path, this.title});
 }

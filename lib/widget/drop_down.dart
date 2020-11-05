@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class DropdownCard extends StatelessWidget {
   const DropdownCard({
@@ -9,13 +9,15 @@ class DropdownCard extends StatelessWidget {
     @required this.onTab,
     @required this.value,
     @required this.total,
-    this.endTitle = "បន្ទប់",
+    @required this.endTitle,
+    @required this.isKH,
   }) : super(key: key);
 
   final double width;
   final Function onTab;
   final int value;
   final int total;
+  final bool isKH;
   final String endTitle;
 
   @override
@@ -31,7 +33,9 @@ class DropdownCard extends StatelessWidget {
           Positioned(
             left: 20,
             child: Text(
-              "ចំនួន ${khNum(value.toString())} $endTitle",
+              isKH
+                  ? "ចំនួន ${khNum(value.toString(), isKH)} $endTitle"
+                  : "For ${khNum(value.toString(), isKH)} $endTitle",
               style: TextStyle(color: Palette.bgdark, fontSize: 13),
             ),
           ),
@@ -55,7 +59,7 @@ class DropdownCard extends StatelessWidget {
                       value: i,
                       onTap: () => onTab(i),
                       child: Text(
-                        '${khNum(i.toString())}',
+                        '${khNum(i.toString(), isKH)}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13,

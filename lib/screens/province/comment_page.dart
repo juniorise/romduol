@@ -4,15 +4,16 @@ import 'package:romduol/models/models.dart';
 import 'package:romduol/widget/star_rating.dart';
 
 class CommentPage extends StatelessWidget {
-  const CommentPage({Key key, @required this.comments}) : super(key: key);
-
+  const CommentPage({Key key, @required this.comments, @required this.isKH})
+      : super(key: key);
+  final bool isKH;
   final List<CommentModel> comments;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: buildAppBar(context, "មតិយោបល់"),
+      appBar: buildAppBar(context, isKH ? "មតិយោបល់" : "Recommends"),
       body: ListView(
         children: [
           for (int index = 0; index < comments.length; index++)
@@ -96,7 +97,7 @@ class CommentPage extends StatelessWidget {
                       size: 16,
                     ),
                     label: Text(
-                      "មានប្រយោជន៍",
+                      isKH ? "មានប្រយោជន៍" : "Useful",
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 12,
@@ -113,7 +114,7 @@ class CommentPage extends StatelessWidget {
                       size: 16,
                     ),
                     label: Text(
-                      "មិនផ្តល់ប្រយោជន៍",
+                      isKH ? "មិនផ្តល់ប្រយោជន៍" : "Not correct",
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 12,

@@ -1,10 +1,11 @@
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:romduol/widget/theme.dart';
 
 class Date {
   String year, day, month;
   Date({this.year, this.day, this.month});
 
-  Date toKhDate(DateTime date) {
+  Date toKhDate(DateTime date, bool isKH) {
     List<String> month = [
       'មករា',
       'កុម្ភៈ',
@@ -20,10 +21,26 @@ class Date {
       'ធ្នូ',
     ];
 
+    List<String> monthEN = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
     Date khDate = Date(
-        day: khNum(date.day.toString()),
-        month: month[date.month],
-        year: khNum(date.year.toString()));
+      day: khNum(date.day.toString(), isKH),
+      month: isKH ? month[date.month] : monthEN[date.month],
+      year: khNum(date.year.toString(), isKH),
+    );
     return khDate;
   }
 
@@ -84,5 +101,47 @@ class Date {
       _month = 0;
     }
     return DateTime(_year, _month + 1, _day);
+  }
+}
+
+class Time {
+  final int hour, min, sec;
+  final String status;
+  Time({this.hour, this.min, this.sec, this.status});
+
+  Time toSpecific(TimeOfDay time, bool isKH) {
+    int _hour = 0, _min = 0, _sec = 0;
+    String _status = isKH ? "ព្រឺក" : "Morning";
+    
+
+    _hour = time.hour;
+
+    if (time.minute >= 0 && time.minute < 15) {
+      _min = 0;
+    }
+
+    if (time.minute >= 15 && time.minute < 30) {
+      _min = 15;
+    }
+
+    if (time.minute >= 30 && time.minute < 45) {
+      _min = 30;
+    }
+
+    if (time.minute >= 45 && time.minute < 50) {
+      _min = 45;
+    }
+
+    if (time.minute >= 50) {
+      _min = 0;
+      _hour += 1;
+    }
+
+    if (_hour > 12) {
+      _hour -= 12;
+      _status = isKH ? "ល្ងាច" : "Evening";
+    }
+
+    return Time(hour: _hour, min: _min, sec: _sec, status: _status);
   }
 }

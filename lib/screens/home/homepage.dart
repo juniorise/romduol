@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,16 +6,21 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
 import 'package:romduol/data/data.dart';
+import 'package:romduol/lang/lang.dart';
+import 'package:romduol/main.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/home/aboutpack.dart';
+import 'package:romduol/screens/home/notification.dart';
 import 'package:romduol/screens/package/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province/province.dart';
+import 'package:romduol/services/auth.dart';
 import 'package:romduol/widget/drawer.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 import 'dart:math' as math;
 
 class HomePage extends StatefulWidget {
@@ -27,13 +31,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController =
+      ScrollController(initialScrollOffset: 0.0);
   double offset = 0;
+  bool isKH = true;
+  final AuthService authentication = AuthService();
+  CustomUser result;
+
+  @override
+  void initState() {
+    getLang();
+    anonLogin();
+    super.initState();
+  }
+
+  anonLogin() async {
+    result = await authentication.signInAnon();
+  }
 
   @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
+  }
+
+  void getLang() async {
+    isKH = await Lang().isKH();
+    setState(() {
+      if (isKH == null) {
+        Lang().setLang(true);
+        isKH = true;
+      }
+    });
   }
 
   @override
@@ -51,217 +80,286 @@ class _HomePageState extends State<HomePage> {
       create: (_) => ScrollNotifier(_scrollController),
       child: WillPopScope(
         onWillPop: _onWillPop,
-        child: Scaffold(
-          key: scaffoldKey,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(48),
-            child: Consumer<ScrollNotifier>(
-              builder: (context, notifier, child) {
-                return buildAppBar(
-                  title: "រំដួល",
-                  onTab: () {},
-                  elevation: math.min(notifier.offset * 0.05, 3),
-                );
-              },
-            ),
-          ),
-          drawer: HomeDrawer(),
-          body: GestureDetector(
-            onHorizontalDragEnd: (e) {
-              if (e.velocity.pixelsPerSecond.direction > 0 &&
-                  e.velocity.pixelsPerSecond.dx > 0) {
-                scaffoldKey.currentState.openDrawer();
-              }
-            },
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Positioned(
-                  top: -80 - 30.0,
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: height * 0.85,
-                        constraints: BoxConstraints(minHeight: 620),
-                        width: width,
-                        child: Consumer<ScrollNotifier>(
-                          builder: (context, notifier, child) {
-                            return Transform.translate(
-                              offset: Offset(0, notifier.offset * 0.2),
-                              child: child,
-                            );
-                          },
-                          child: Image.asset(
-                            "assets/home/background.jpg",
-                            fit: BoxFit.cover,
+        child: Theme(
+          data: ThemeData(fontFamily: isKH ? "Kantumruy" : "Open Sans"),
+          child: Scaffold(
+            key: scaffoldKey,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(48),
+              child: Consumer<ScrollNotifier>(
+                builder: (context, notifier, child) {
+                  return buildAppBar(
+                    title: Lang().of(key: 'title', isKH: isKH),
+                    onTab: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NotificationScreen(
+                            isKH: isKH,
                           ),
                         ),
+                      );
+                    },
+                    elevation: math.min(notifier.offset * 0.05, 3),
+                    isKH: isKH,
+                  );
+                },
+              ),
+            ),
+            drawer: HomeDrawer(
+              onLangTab: () => setState(() {
+                isKH = !isKH;
+                Lang().setLang(isKH);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => SplashScreen()));
+              }),
+              onWillPop: _onWillPop,
+              isKH: isKH,
+            ),
+            body: GestureDetector(
+              onHorizontalDragEnd: (e) {
+                if (e.velocity.pixelsPerSecond.direction > 0 &&
+                    e.velocity.pixelsPerSecond.dx > 0) {
+                  scaffoldKey.currentState.openDrawer();
+                }
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Positioned(
+                    top: -80 - 30.0,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: height * 0.85,
+                          constraints: BoxConstraints(minHeight: 620),
+                          width: width,
+                          child: Consumer<ScrollNotifier>(
+                            builder: (context, notifier, child) {
+                              return Transform.translate(
+                                offset: Offset(0, notifier.offset * 0.2),
+                                child: child,
+                              );
+                            },
+                            child: Image.asset(
+                              "assets/home/background.jpg",
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: Container(
+                            color: Palette.sky.withOpacity(0.3),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Consumer<ScrollNotifier>(
+                      builder: (context, notifier, child) {
+                        return Transform.translate(
+                          offset: Offset(0, -notifier.offset),
+                          child: child,
+                        );
+                      },
+                      child: Container(
+                        height: height - 200,
+                        width: width,
+                        color: Palette.bg,
                       ),
-                      Positioned.fill(
-                        child: Container(
-                          color: Palette.sky.withOpacity(0.3),
+                    ),
+                  ),
+                  ListView(
+                    controller: _scrollController,
+                    physics: RangeMaintainingScrollPhysics(),
+                    children: [
+                      //HELLO TITLE
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('questions')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            snapshot.data.docs.forEach(
+                              (element) {
+                                if (!question.contains(element['question']))
+                                  question.add(element['question']);
+                              },
+                            );
+                          return hello(width, question);
+                        },
+                      ),
+
+                      //PROVINCES
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        width: width,
+                        decoration: buildBoxDecoration(),
+                        child: Column(
+                          children: [
+                            sectionTitle(
+                              context: context,
+                              title: Lang().of(
+                                key: 'chooseaprovince',
+                                isKH: isKH,
+                              ),
+                              isKH: isKH,
+                            ),
+                            Stack(
+                              children: [
+                                Container(
+                                  height: width > 360 ? 155 : 290,
+                                  child: LiveGrid.options(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    options: options,
+                                    itemBuilder: (context, index, animation) {
+                                      ProvinceModel data = provinces[index];
+
+                                      String collectionPath =
+                                          "${data.id}/viewer/default_data/";
+                                      return StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection(collectionPath)
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          int view = 0;
+                                          print(data.id);
+                                          if (snapshot.hasData) {
+                                            view = snapshot.data.docs.length;
+                                          }
+                                          return FadeTransition(
+                                            opacity: Tween<double>(
+                                              begin: 0,
+                                              end: 1,
+                                            ).animate(animation),
+                                            child: buildProvinceCard(
+                                              context: context,
+                                              province: isKH
+                                                  ? data.province
+                                                  : data.enprovince,
+                                              views: view,
+                                              imagelocation: data.imagelocation,
+                                              onPressed: () {
+                                                print(result.uid);
+                                                Timestamp now = Timestamp.now();
+                                                FirebaseFirestore.instance
+                                                    .doc(collectionPath +
+                                                        "${result.uid}")
+                                                    .set(({
+                                                      'uid': result.uid,
+                                                      'date': now,
+                                                    }));
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Province(
+                                                      province: data.province,
+                                                      enprovince:
+                                                          data.enprovince,
+                                                      isKH: isKH,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    itemCount: 4,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: width > 360 * 2 ? 4 : 2,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 0,
+                                      childAspectRatio: 8 / 7,
+                                    ),
+                                  ),
+                                ),
+                                width < 360 * 2
+                                    ? Positioned.fill(
+                                        top: -1.5,
+                                        right: 0.2,
+                                        child: IgnorePointer(
+                                          child: Container(
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                'assets/graphics/provincedivider.svg',
+                                                width: 100,
+                                                height: 100,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      //ECO TRAVEL PACKAGE
+                      Container(
+                        decoration: buildBoxDecoration(),
+                        padding: EdgeInsets.all(15),
+                        width: width,
+                        child: Column(
+                          children: [
+                            posterCard(width),
+                            SizedBox(height: 5),
+                            sectionTitle(
+                              context: context,
+                              title: Lang().of(key: 'joinwithus', isKH: isKH),
+                              isKH: isKH,
+                            ),
+                            Wrap(
+                              children: [
+                                packages.length != null
+                                    ? LiveList.options(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        options: options,
+                                        itemCount: packages.length,
+                                        itemBuilder: (context, i, animation) {
+                                          return FadeTransition(
+                                            opacity: Tween<double>(
+                                              begin: 0,
+                                              end: 1,
+                                            ).animate(animation),
+                                            child: packageCard(
+                                              width: width,
+                                              package: packages[i],
+                                              onErrorPressed: () =>
+                                                  Navigator.pushReplacement(
+                                                context,
+                                                PageRouteTransition(
+                                                  child: MyApp(),
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Center(
+                                        heightFactor: 2,
+                                        child: CircularProgressIndicator(),
+                                      ),
+                              ],
+                            )
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    height: height - 200,
-                    width: width,
-                    color: Palette.bg,
-                  ),
-                ),
-                ListView(
-                  controller: _scrollController,
-                  physics: RangeMaintainingScrollPhysics(),
-                  children: [
-                    //HELLO TITLE
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('questions')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          snapshot.data.docs.forEach(
-                            (element) {
-                              if (!question.contains(element['question']))
-                                question.add(element['question']);
-                            },
-                          );
-                        return hello(width, question);
-                      },
-                    ),
-
-                    //PROVINCES
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      width: width,
-                      decoration: buildBoxDecoration(),
-                      child: Column(
-                        children: [
-                          sectionTitle(
-                              context: context,
-                              title: "សូមជ្រើសរើសខេត្តណាមួយនៃតំបន់ឆ្នេរ"),
-                          Stack(
-                            children: [
-                              Container(
-                                height: width > 360 ? 155 : 290,
-                                child: LiveGrid.options(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  options: options,
-                                  itemBuilder: (context, index, animation) {
-                                    ProvinceModel data = provinces[index];
-                                    return FadeTransition(
-                                      opacity: Tween<double>(
-                                        begin: 0,
-                                        end: 1,
-                                      ).animate(animation),
-                                      child: buildProvinceCard(
-                                        context: context,
-                                        province: data.province,
-                                        views: data.views,
-                                        imagelocation: data.imagelocation,
-                                        onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => Province(
-                                              province: data.province,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: 4,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: width > 360 * 2 ? 4 : 2,
-                                    crossAxisSpacing: 0,
-                                    mainAxisSpacing: 0,
-                                    childAspectRatio: 8 / 7,
-                                  ),
-                                ),
-                              ),
-                              width < 360 * 2
-                                  ? Positioned.fill(
-                                      top: -1.5,
-                                      right: 0.2,
-                                      child: IgnorePointer(
-                                        child: Container(
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              'assets/graphics/provincedivider.svg',
-                                              width: 100,
-                                              height: 100,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20.0), //ECO TRAVEL PACKAGE
-                    Container(
-                      decoration: buildBoxDecoration(),
-                      padding: EdgeInsets.all(15),
-                      width: width,
-                      child: Column(
-                        children: [
-                          posterCard(width),
-                          SizedBox(height: 5),
-                          sectionTitle(
-                            context: context,
-                            title: "ចូលរួមជាមួយពួកយើង",
-                          ),
-                          Wrap(
-                            children: [
-                              packages.length != null
-                                  ? LiveList.options(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      options: options,
-                                      itemCount: packages.length,
-                                      itemBuilder: (context, i, animation) {
-                                        return FadeTransition(
-                                          opacity: Tween<double>(
-                                            begin: 0,
-                                            end: 1,
-                                          ).animate(animation),
-                                          child: packageCard(
-                                            width: width,
-                                            package: packages[i],
-                                            onErrorPressed: () =>
-                                                Navigator.pushReplacement(
-                                              context,
-                                              PageRouteTransition(
-                                                child: MyApp(),
-                                                duration:
-                                                    Duration(milliseconds: 500),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : Center(
-                                      heightFactor: 2,
-                                      child: CircularProgressIndicator(),
-                                    ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -300,7 +398,10 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PackageDetail(package: package),
+              builder: (context) => PackageDetail(
+                package: package,
+                isKH: isKH,
+              ),
             ),
           );
         },
@@ -335,12 +436,14 @@ class _HomePageState extends State<HomePage> {
                       text: TextSpan(
                         style: TextStyle(
                           color: Colors.white.withOpacity(1),
-                          fontFamily: "Kantumruy",
+                          fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
                           fontWeight: FontWeight.w300,
+                          fontSize: 11,
                         ),
                         children: [
                           TextSpan(
-                            text: "${khNum(package.bookedspace.toString())}",
+                            text:
+                                "${khNum(package.bookedspace.toString(), isKH)}",
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
@@ -348,9 +451,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           TextSpan(
                             text:
-                                "/${khNum(package.totalspace.toString())} នាក់",
-                            style: TextStyle(fontSize: 11),
+                                "/${khNum(package.totalspace.toString(), isKH)} ",
                           ),
+                          TextSpan(text: isKH ? 'នាក់' : "Joined")
                         ],
                       ),
                     ),
@@ -377,13 +480,13 @@ class _HomePageState extends State<HomePage> {
                           package.title,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: isKH ? 14 : 15,
                             color: Palette.bgdark.withOpacity(0.8),
                           ),
                         ),
                       ),
                       Text(
-                        "${khNum(package.price.toInt().toString())}\$",
+                        "${khNum(package.price.toString(), isKH)}\$",
                         style: TextStyle(
                           fontSize: 14,
                           color: Palette.sky,
@@ -397,7 +500,10 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      LocationText(location: package.location),
+                      LocationText(
+                        location: package.location,
+                        isKH: isKH,
+                      ),
                       SizedBox(width: 5),
                       Flexible(
                         child: Container(
@@ -407,9 +513,12 @@ class _HomePageState extends State<HomePage> {
                           ),
                           color: Palette.text.withOpacity(0.1),
                           child: Text(
-                            khNum(package.date),
+                            khNum(package.date, isKH),
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12, color: Palette.text),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Palette.text,
+                            ),
                           ),
                         ),
                       )
@@ -435,7 +544,7 @@ class _HomePageState extends State<HomePage> {
             color: Palette.sky,
             image: DecorationImage(
               image: AssetImage('assets/home/package_poster.png'),
-              alignment: Alignment(0, notifier.offset.abs() / 280),
+              alignment: Alignment(0, notifier.offset.abs() * 0.002),
               fit: BoxFit.cover,
             ),
           ),
@@ -453,7 +562,14 @@ class _HomePageState extends State<HomePage> {
             ),
             FlatButton(
               splashColor: Palette.bg.withOpacity(0.1),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AboutTourPackage(isKH: isKH),
+                  ),
+                );
+              },
               padding: EdgeInsets.zero,
               child: Container(
                 height: 150,
@@ -466,30 +582,20 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(1),
-                            fontFamily: "Kantumruy",
-                            fontSize: 20,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: "អេកូ-កញ្ចប់",
-                            ),
-                            TextSpan(
-                              text: "ដំណើរកំសាន្ត",
-                            ),
-                          ],
+                      Text(
+                        Lang().of(key: 'ecotravelpackage', isKH: isKH),
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(1),
+                          fontSize: 20,
                         ),
                       ),
                       Text(
-                        "ដំណើរកំសាន្តប្រកបដោយចីរភាព សន្សំសច្ចៃ និង មានសុវត្តិភាព",
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300),
+                        Lang().of(key: 'posterpackageinfo', isKH: isKH),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                     ],
                   ),
@@ -507,10 +613,17 @@ class _HomePageState extends State<HomePage> {
                   highlightColor: Palette.sky.withOpacity(0.35),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18)),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AboutTourPackage(isKH: isKH),
+                      ),
+                    );
+                  },
                   icon: Icon(Icons.info, color: Colors.white, size: 16),
                   label: Text(
-                    "ព័ត៏មានបន្ថែម",
+                    Lang().of(key: 'moreinfo', isKH: isKH),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -569,7 +682,7 @@ class _HomePageState extends State<HomePage> {
               Text(
                 province,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: isKH ? 14 : 15,
                   color: Palette.sky,
                 ),
               ),
@@ -580,20 +693,21 @@ class _HomePageState extends State<HomePage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       style: TextStyle(
-                          height: 1.6,
-                          fontSize: 13,
-                          color: Palette.bgdark.withOpacity(0.8),
-                          fontFamily: "Kantumruy"),
+                        height: 1.6,
+                        fontSize: 13,
+                        color: Palette.bgdark.withOpacity(0.8),
+                        fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                      ),
                       children: [
                         TextSpan(
-                          text: "${khNum(views.toString())}",
+                          text: "${khNum(views.toString(), isKH)}",
                         ),
                         TextSpan(
                           text: " ",
-                          style: TextStyle(fontSize: 3),
+                          style: TextStyle(fontSize: isKH ? 3 : 10),
                         ),
                         TextSpan(
-                          text: "នាក់បានចូលមើល ",
+                          text: Lang().of(key: 'views', isKH: isKH),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w300,
@@ -619,7 +733,7 @@ class _HomePageState extends State<HomePage> {
 
   Container hello(double width, List<String> question) {
     String name = "Sok";
-    int index = Random().nextInt(question.length).toInt();
+    int index = math.Random().nextInt(question.length).toInt();
     Color color = Colors.white;
     print(index);
     return Container(
@@ -630,7 +744,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "សួរស្តី​ $name",
+            "${Lang().of(key: 'hello', isKH: isKH)} $name",
             style: TextStyle(
               fontSize: 16,
               color: color,
@@ -638,7 +752,10 @@ class _HomePageState extends State<HomePage> {
           ),
           Text(
             question[index],
-            style: TextStyle(fontSize: 14, color: color),
+            style: TextStyle(
+              fontSize: 14,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -653,14 +770,18 @@ class _HomePageState extends State<HomePage> {
             contentPadding: EdgeInsets.only(left: 15),
             actionsPadding: EdgeInsets.only(right: 5),
             title: Text(
-              'តើអ្នកចង់ចាក់ចេញពីកម្មវិធីមែនទេ?',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              Lang().of(key: 'doyouwantexitapp', isKH: isKH),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
             ),
             content: Text(
-              'សូមចុច "បាទ/ចាស"',
+              isKH ? 'សូមចុច "បាទ/ចាស"' : "Please click on 'Yes'",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 13,
+                fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
               ),
             ),
             backgroundColor: Palette.sky,
@@ -669,16 +790,24 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text(
-                  "ទេ",
-                  style: TextStyle(color: Palette.sky, fontSize: 14),
+                  isKH ? "ទេ" : "No",
+                  style: TextStyle(
+                    color: Palette.sky,
+                    fontSize: 14,
+                    fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                  ),
                 ),
               ),
               FlatButton(
                 color: Colors.white,
                 onPressed: () => Navigator.of(context).pop(true),
                 child: Text(
-                  "បាទ/ចាស",
-                  style: TextStyle(color: Palette.sky, fontSize: 14),
+                  isKH ? "បាទ/ចាស" : "Yes",
+                  style: TextStyle(
+                    color: Palette.sky,
+                    fontSize: 14,
+                    fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                  ),
                 ),
               ),
             ],

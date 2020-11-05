@@ -3,12 +3,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class GoogleMapTemplate extends StatefulWidget {
-  GoogleMapTemplate({Key key, this.maplocation, this.buslocation})
+  GoogleMapTemplate(
+      {Key key, this.maplocation, this.buslocation, @required this.isKH})
       : super(key: key);
   final GeoPoint maplocation, buslocation;
+  final bool isKH;
   @override
   _GoogleMapTemplateState createState() => _GoogleMapTemplateState();
 }
@@ -71,7 +73,7 @@ class _GoogleMapTemplateState extends State<GoogleMapTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(title: "ផែនទី"),
+      appBar: buildAppBar(title: "ផែនទី", isKH: widget.isKH),
       body: Stack(
         children: [
           GoogleMap(

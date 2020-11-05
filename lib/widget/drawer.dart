@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:romduol/lang/lang.dart';
+import 'package:romduol/screens/home/setting.dart';
 
 class HomeDrawer extends StatelessWidget {
-  const HomeDrawer({Key key}) : super(key: key);
+  const HomeDrawer(
+      {Key key, this.onLangTab, this.onWillPop, @required this.isKH})
+      : super(key: key);
+
+  final Function onLangTab, onWillPop;
+  final bool isKH;
 
   @override
   Widget build(BuildContext context) {
@@ -17,32 +24,49 @@ class HomeDrawer extends StatelessWidget {
           children: <Widget>[
             _createHeader(),
             _createDrawerItem(
-              icon: Icons.home,
-              text: 'រំដួល',
+              icon: Icons.language,
+              text: Lang().of(key: 'changelang', isKH: isKH),
               active: true,
               onTap: () {
                 Navigator.pop(context);
+                onLangTab();
               },
+              context: context,
             ),
             _createDrawerItem(
               icon: Icons.settings,
-              text: 'ការកំណត់',
-              onTap: () {},
+              text: Lang().of(key: 'setting', isKH: isKH),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingScreen(isKH: isKH),
+                  ),
+                );
+              },
+              context: context,
             ),
             _createDrawerItem(
               icon: Icons.contact_page,
-              text: 'ទាក់ទង់ពួកយើង',
+              text: Lang().of(key: 'contactus', isKH: isKH),
               onTap: () {},
+              context: context,
             ),
             _createDrawerItem(
               icon: Icons.feedback_outlined,
-              text: 'កម្មវិធីមានបញ្ហា',
+              text: Lang().of(key: 'reportissue', isKH: isKH),
               onTap: () {},
+              context: context,
             ),
             _createDrawerItem(
               icon: Icons.logout,
-              text: 'ចាកចេញ',
-              onTap: () {},
+              text: Lang().of(key: 'exitapp', isKH: isKH),
+              onTap: () {
+                Navigator.pop(context);
+                onWillPop();
+              },
+              context: context,
             ),
             ListTile(
               title: Text(
@@ -87,7 +111,7 @@ class HomeDrawer extends StatelessWidget {
           SizedBox(width: 13),
           Flexible(
             child: Wrap(
-              alignment: WrapAlignment.center,
+              alignment: WrapAlignment.start,
               crossAxisAlignment: WrapCrossAlignment.start,
               children: [
                 Text(
@@ -116,7 +140,11 @@ class HomeDrawer extends StatelessWidget {
   }
 
   Widget _createDrawerItem(
-      {IconData icon, String text, Function onTap, bool active = false}) {
+      {BuildContext context,
+      IconData icon,
+      String text,
+      Function onTap,
+      bool active = false}) {
     Color color = active ? Palette.sky : Palette.bgdark.withOpacity(0.7);
     return Container(
       height: 48,
@@ -132,19 +160,24 @@ class HomeDrawer extends StatelessWidget {
         splashColor: Palette.text.withOpacity(0.05),
         color: Colors.white,
         child: Row(
-          children: <Widget>[
-            Icon(icon, color: color),
-            Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: color,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            )
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: <Widget>[
+                Icon(icon, color: color),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: color,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       ),

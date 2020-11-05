@@ -4,7 +4,7 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/map/google_map.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/star_rating.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class DetailProfile extends StatelessWidget {
   const DetailProfile({
@@ -20,6 +20,7 @@ class DetailProfile extends StatelessWidget {
     this.maplocation,
     this.buslocation,
     this.isBookAble = false,
+    @required this.isKH,
   }) : super(key: key);
 
   final GeoPoint maplocation, buslocation;
@@ -30,7 +31,7 @@ class DetailProfile extends StatelessWidget {
   final Function onBookPressed;
   final double rate;
   final int ratetotal;
-  final bool isBookAble;
+  final bool isBookAble, isKH;
 
   @override
   Widget build(BuildContext context) {
@@ -53,17 +54,21 @@ class DetailProfile extends StatelessWidget {
                   title,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: isKH ? 14 : 15,
                     color: Palette.bgdark.withOpacity(0.8),
                   ),
                 ),
               ),
               isShowPrice
-                  ? Text(khNum("${khNum(pricefrom.toString())}\$"))
+                  ? Text(khNum("${khNum(pricefrom.toString(), isKH)}\$", isKH))
                   : SizedBox(),
             ],
           ),
-          LocationText(location: location),
+          SizedBox(height: isKH ? 0 : 5.0),
+          LocationText(
+            location: location,
+            isKH: isKH,
+          ),
           SizedBox(height: 8.0),
           rate != null
               ? Row(
@@ -71,14 +76,14 @@ class DetailProfile extends StatelessWidget {
                     StarRating(rating: rate),
                     SizedBox(width: 5),
                     Text(
-                      khNum(rate.toString()),
+                      khNum(rate.toString(), isKH),
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 14,
                       ),
                     ),
                     Text(
-                      "(${khNum(ratetotal.toString())})",
+                      "(${khNum(ratetotal.toString(), isKH)})",
                       style: TextStyle(
                         color: Palette.bggrey,
                         fontSize: 12,
@@ -112,6 +117,7 @@ class DetailProfile extends StatelessWidget {
                         builder: (context) => GoogleMapTemplate(
                           maplocation: maplocation ?? null,
                           buslocation: buslocation ?? null,
+                          isKH: isKH,
                         ),
                       ),
                     );
@@ -126,7 +132,7 @@ class DetailProfile extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "ទិសដៅ",
+                          isKH ? "ទិសដៅ" : "Map",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Palette.sky,
@@ -165,7 +171,7 @@ class DetailProfile extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                                "កក់ឥឡូវ",
+                               isKH ? "កក់ឥឡូវ" : "Book now",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
