@@ -9,15 +9,18 @@ import 'package:romduol/data/data.dart';
 import 'package:romduol/lang/lang.dart';
 import 'package:romduol/main.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/home/aboutpack.dart';
+import 'package:romduol/screens/home/notification.dart';
 import 'package:romduol/screens/package/package_detail.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/province/province.dart';
+import 'package:romduol/services/auth.dart';
 import 'package:romduol/widget/drawer.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 import 'dart:math' as math;
 
 class HomePage extends StatefulWidget {
@@ -32,11 +35,18 @@ class _HomePageState extends State<HomePage> {
       ScrollController(initialScrollOffset: 0.0);
   double offset = 0;
   bool isKH = true;
+  final AuthService authentication = AuthService();
+  CustomUser result;
 
   @override
   void initState() {
     getLang();
+    anonLogin();
     super.initState();
+  }
+
+  anonLogin() async {
+    result = await authentication.signInAnon();
   }
 
   @override
@@ -80,7 +90,16 @@ class _HomePageState extends State<HomePage> {
                 builder: (context, notifier, child) {
                   return buildAppBar(
                     title: Lang().of(key: 'title', isKH: isKH),
-                    onTab: () {},
+                    onTab: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NotificationScreen(
+                            isKH: isKH,
+                          ),
+                        ),
+                      );
+                    },
                     elevation: math.min(notifier.offset * 0.05, 3),
                     isKH: isKH,
                   );
@@ -94,6 +113,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (_) => SplashScreen()));
               }),
+              onWillPop: _onWillPop,
               isKH: isKH,
             ),
             body: GestureDetector(
@@ -197,29 +217,57 @@ class _HomePageState extends State<HomePage> {
                                     options: options,
                                     itemBuilder: (context, index, animation) {
                                       ProvinceModel data = provinces[index];
-                                      return FadeTransition(
-                                        opacity: Tween<double>(
-                                          begin: 0,
-                                          end: 1,
-                                        ).animate(animation),
-                                        child: buildProvinceCard(
-                                          context: context,
-                                          province: isKH
-                                              ? data.province
-                                              : data.enprovince,
-                                          views: data.views,
-                                          imagelocation: data.imagelocation,
-                                          onPressed: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => Province(
-                                                province: data.province,
-                                                enprovince: data.enprovince,
-                                                isKH: isKH,
-                                              ),
+
+                                      String collectionPath =
+                                          "${data.id}/viewer/default_data/";
+                                      return StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection(collectionPath)
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          int view = 0;
+                                          print(data.id);
+                                          if (snapshot.hasData) {
+                                            view = snapshot.data.docs.length;
+                                          }
+                                          return FadeTransition(
+                                            opacity: Tween<double>(
+                                              begin: 0,
+                                              end: 1,
+                                            ).animate(animation),
+                                            child: buildProvinceCard(
+                                              context: context,
+                                              province: isKH
+                                                  ? data.province
+                                                  : data.enprovince,
+                                              views: view,
+                                              imagelocation: data.imagelocation,
+                                              onPressed: () {
+                                                print(result.uid);
+                                                Timestamp now = Timestamp.now();
+                                                FirebaseFirestore.instance
+                                                    .doc(collectionPath +
+                                                        "${result.uid}")
+                                                    .set(({
+                                                      'uid': result.uid,
+                                                      'date': now,
+                                                    }));
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Province(
+                                                      province: data.province,
+                                                      enprovince:
+                                                          data.enprovince,
+                                                      isKH: isKH,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        },
                                       );
                                     },
                                     itemCount: 4,
@@ -514,7 +562,14 @@ class _HomePageState extends State<HomePage> {
             ),
             FlatButton(
               splashColor: Palette.bg.withOpacity(0.1),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AboutTourPackage(isKH: isKH),
+                  ),
+                );
+              },
               padding: EdgeInsets.zero,
               child: Container(
                 height: 150,
@@ -558,7 +613,14 @@ class _HomePageState extends State<HomePage> {
                   highlightColor: Palette.sky.withOpacity(0.35),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18)),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AboutTourPackage(isKH: isKH),
+                      ),
+                    );
+                  },
                   icon: Icon(Icons.info, color: Colors.white, size: 16),
                   label: Text(
                     Lang().of(key: 'moreinfo', isKH: isKH),

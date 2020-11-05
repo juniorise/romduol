@@ -14,7 +14,7 @@ import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
 import 'package:romduol/widget/sliver_card_delegate.dart';
 import 'package:romduol/widget/star_rating.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 List<CommentModel> comments = [
   CommentModel(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class Date {
   String year, day, month;

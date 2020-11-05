@@ -62,7 +62,7 @@ Container noData() {
 }
 
 PreferredSize buildAppBar({
-  String title,
+  @required String title,
   Function onTab,
   bool isBlue = false,
   double elevation = 0.5,

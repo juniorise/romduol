@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/date.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class DatePickerCard extends StatelessWidget {
   const DatePickerCard({

@@ -15,7 +15,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-        
+
     return StreamProvider<List<PackageModel>>.value(
       value: Database().packagesData,
       builder: (context, snapshot) {

@@ -5,7 +5,7 @@ import 'package:romduol/screens/province/detail_template.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class CardOnProvince extends StatelessWidget {
   final CardModel data;
@@ -56,10 +56,10 @@ class CardOnProvince extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
                           khNum(
-                              isKH
+                              (isKH
                                   ? "ចាប់ពី​ "
-                                  : " "
-                                      "${data.pricefrom}\$ - ${data.pricetotal}\$",
+                                  : "")
+                                       + "${data.pricefrom}\$ - ${data.pricetotal}\$",
                               isKH),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),

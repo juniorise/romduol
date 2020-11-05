@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/province/local_widget/animatedList.dart';
-import 'package:romduol/screens/province/local_widget/animatedtabbar.dart';
-import 'package:romduol/screens/province/local_widget/fadeinout.dart';
+import 'package:romduol/widget/animatedList.dart';
+import 'package:romduol/widget/animatedtabbar.dart';
+import 'package:romduol/widget/fadeinout.dart';
 import 'package:romduol/services/database.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class Province extends StatefulWidget {
   final String province, enprovince;

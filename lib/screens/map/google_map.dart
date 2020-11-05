@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class GoogleMapTemplate extends StatefulWidget {
   GoogleMapTemplate(

@@ -4,7 +4,7 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/map/google_map.dart';
 import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/star_rating.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class DetailProfile extends StatelessWidget {
   const DetailProfile({

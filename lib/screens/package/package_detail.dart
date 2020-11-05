@@ -7,7 +7,7 @@ import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/price_with_indicator.dart';
 import 'package:romduol/widget/sliver_card_delegate.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/theme.dart';
 
 class PackageDetail extends StatefulWidget {
   const PackageDetail({Key key, @required this.package, @required this.isKH})

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/lang/lang.dart';
 import 'package:romduol/models/date.dart';
-import 'package:romduol/screens/booking/local_widget/drop_down.dart';
-import 'package:romduol/widget/theme/theme.dart';
+import 'package:romduol/widget/drop_down.dart';
+import 'package:romduol/widget/theme.dart';
 
 class BookingBike extends StatefulWidget {
   const BookingBike({Key key, @required this.isKH}) : super(key: key);

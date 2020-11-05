@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/lang/lang.dart';
+import 'package:romduol/screens/home/setting.dart';
 
 class HomeDrawer extends StatelessWidget {
-  const HomeDrawer({Key key, this.onLangTab, @required this.isKH})
+  const HomeDrawer(
+      {Key key, this.onLangTab, this.onWillPop, @required this.isKH})
       : super(key: key);
 
-  final Function onLangTab;
+  final Function onLangTab, onWillPop;
   final bool isKH;
 
   @override
@@ -25,13 +27,24 @@ class HomeDrawer extends StatelessWidget {
               icon: Icons.language,
               text: Lang().of(key: 'changelang', isKH: isKH),
               active: true,
-              onTap: onLangTab,
+              onTap: () {
+                Navigator.pop(context);
+                onLangTab();
+              },
               context: context,
             ),
             _createDrawerItem(
               icon: Icons.settings,
               text: Lang().of(key: 'setting', isKH: isKH),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingScreen(isKH: isKH),
+                  ),
+                );
+              },
               context: context,
             ),
             _createDrawerItem(
@@ -49,7 +62,10 @@ class HomeDrawer extends StatelessWidget {
             _createDrawerItem(
               icon: Icons.logout,
               text: Lang().of(key: 'exitapp', isKH: isKH),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                onWillPop();
+              },
               context: context,
             ),
             ListTile(
