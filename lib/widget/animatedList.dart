@@ -81,7 +81,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
             ),
           );
         },
-        itemCount: widget.data.length,
+        itemCount: widget.data != null ? widget.data.length : 0,
         options: options,
       ),
     );

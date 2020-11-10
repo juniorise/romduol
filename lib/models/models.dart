@@ -23,12 +23,13 @@ class ArticleModal {
 class CardModel {
   final String title, location, thumbnail, opentime, id, refpath;
   final int ratetotal;
-  final double rating, pricefrom, pricetotal;
+  final double ratingaverage, pricefrom, pricetotal;
   final GeoPoint maplocation;
   final List<dynamic> images;
   final List<dynamic> articles;
   final String authur;
   final List<FoodMenu> foodmenu;
+  final List<CommentModel> comments;
 
   CardModel({
     this.images,
@@ -39,13 +40,14 @@ class CardModel {
     this.title,
     this.location,
     this.ratetotal,
-    this.rating,
+    this.ratingaverage,
     this.opentime,
     this.maplocation,
     this.thumbnail,
     this.refpath,
     this.authur,
     this.foodmenu,
+    this.comments,
   });
 }
 
@@ -83,7 +85,7 @@ class FoodMenu {
 
 class CommentModel {
   final String name, uid, comment, profileimg;
-  final int rating, useful, useless;
+  final dynamic rating;
   final Timestamp date;
 
   CommentModel({
@@ -92,8 +94,6 @@ class CommentModel {
     this.comment,
     this.profileimg,
     this.rating,
-    this.useful,
-    this.useless,
     this.date,
   });
 }

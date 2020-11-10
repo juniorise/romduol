@@ -7,8 +7,8 @@ import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
 import 'package:romduol/data/data.dart';
 import 'package:romduol/lang/lang.dart';
-import 'package:romduol/main.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/screens/package/aboutpack.dart';
 import 'package:romduol/screens/home/notification.dart';
 import 'package:romduol/screens/package/package_detail.dart';
@@ -37,9 +37,6 @@ class _HomePageState extends State<HomePage> {
   bool isKH = true, isInit = false;
   int qindex = 0;
 
-  final AuthService authentication = AuthService();
-  CustomUser result;
-
   @override
   void initState() {
     getLang();
@@ -48,11 +45,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  anonLogin() async {
-    result = await authentication.signInAnon();
-  }
-
   void getQuestion() async {
+    isInit = true;
     await FirebaseFirestore.instance
         .collection('questions')
         .get()
@@ -93,13 +87,6 @@ class _HomePageState extends State<HomePage> {
     double height = MediaQuery.of(context).size.height;
 
     final user = Provider.of<CustomUser>(context);
-
-    setState(() {
-      if (user != null)
-        result = user;
-      else
-        anonLogin();
-    });
 
     return user == null
         ? Scaffold(
@@ -142,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                         isKH = !isKH;
                         Lang().setLang(isKH);
                         Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => SplashScreen()));
+                            MaterialPageRoute(builder: (_) => MyApp()));
                       }),
                       onWillPop: _onWillPop,
                       isKH: isKH,
@@ -265,17 +252,17 @@ class _HomePageState extends State<HomePage> {
                                                         imagelocation:
                                                             data.imagelocation,
                                                         onPressed: () {
-                                                          if (result != null) {
+                                                          if (user != null) {
                                                             print("HERE" +
-                                                                result.uid);
+                                                                user.uid);
                                                             Timestamp now =
                                                                 Timestamp.now();
                                                             FirebaseFirestore
                                                                 .instance
                                                                 .doc(collectionPath +
-                                                                    "${result.uid}")
+                                                                    "${user.uid}")
                                                                 .set(({
-                                                                  'uid': result
+                                                                  'uid': user
                                                                       .uid,
                                                                   'date': now,
                                                                 }));

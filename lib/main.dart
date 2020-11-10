@@ -1,12 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/screens/myapp.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:romduol/widget/pageroutetransition.dart';
-
 import 'services/auth.dart';
 
 void main() async {
@@ -47,44 +43,5 @@ class InitAuth extends StatelessWidget {
             home: MyApp(),
           );
         });
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  SplashScreen({Key key}) : super(key: key);
-
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    var _duration = Duration(seconds: 1);
-    Timer(_duration, navigationPage);
-    super.initState();
-  }
-
-  void navigationPage() {
-    Navigator.pushReplacement(
-      context,
-      PageRouteTransition(
-        child: MyApp(),
-        duration: Duration(milliseconds: 1000),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

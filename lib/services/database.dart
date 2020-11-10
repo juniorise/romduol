@@ -39,14 +39,12 @@ class Database {
     for (int i = 0; i < _pages.length; i++) {
       String _page = _pages[i];
       instance
-          .collection('$province')
-          .doc(_page)
-          .collection('default_data')
+          .collection('$province/$_page/default_data')
           .snapshots()
           .forEach((element) {
         element.docs.forEach((element) {
           List<FoodMenu> foodMenu = List();
-          if (_page == "restaurants") {
+          if (_page == "restaurants" && element.data()['foodmenu'] != null) {
             List<dynamic> parentMap = element.data()['foodmenu'];
             parentMap.forEach((element) {
               print(element['title']);
@@ -60,7 +58,32 @@ class Database {
               );
             });
           }
-          
+
+          List<CommentModel> comments = List();
+          double ratetotal = 0.0;
+          if (element.data()['comments'] != null) {
+            List<dynamic> parentComment = element.data()['comments'];
+            parentComment.forEach((element) {
+              print("HERE IS " + element['uid']);
+              comments.add(CommentModel(
+                uid: element['uid'],
+                name: "Anonymous",
+                comment: element['comment'] ?? "empty",
+                rating: element['rate'],
+                profileimg: "",
+                date: element['date'],
+              ));
+              ratetotal += element['rate'];
+            });
+          }
+          double lastrate = (((ratetotal / comments.length) * 100).roundToDouble()) / 100;
+
+          for(double i=0; i<5; i+= 0.5){
+            if(lastrate < i){
+              lastrate = i - 0.5;
+              i = 5;
+            }
+          }
           _pagesCard[i].add(CardModel(
             title: element.data()['title'] ?? "No title provided.",
             location: element.data()['location'] ?? "No location provided.",
@@ -72,13 +95,16 @@ class Database {
             pricetotal: element.data()['pricetotal'] != null
                 ? element.data()['pricetotal'].toDouble()
                 : null ?? null,
-            rating: element.data()['rating'] ?? null,
-            ratetotal: element.data()['ratetotal'] ?? null,
+            ratingaverage: !(ratetotal / 5).isNaN
+                ? lastrate
+                : 0,
+            ratetotal: comments != null ? comments.length : 0,
             maplocation: element.data()['maplocation'] ?? null,
             refpath: element.reference.path,
             images: element.data()['images'],
             articles: element.data()['articles'],
             foodmenu: foodMenu.length > 0 ? foodMenu : null,
+            comments: comments.length > 0 ? comments : null,
           ));
         });
       });
@@ -111,6 +137,9 @@ class Database {
   Stream<List<List<CardModel>>> get sihaknoukData {
     print('sihaknoukData');
     List<List<CardModel>> _pagesCard = _provinceFromSnapshot('preahsihanouk');
-    return instance.collection('preahsihanouk').snapshots().map((_) => _pagesCard);
+    return instance
+        .collection('preahsihanouk')
+        .snapshots()
+        .map((_) => _pagesCard);
   }
 }

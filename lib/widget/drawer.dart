@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/lang/lang.dart';
-import 'package:romduol/main.dart';
 import 'package:romduol/screens/admin/a_province.dart';
 import 'package:romduol/screens/auth/login.dart';
 import 'package:romduol/screens/home/setting.dart';
+import 'package:romduol/screens/myapp.dart';
 import 'package:romduol/services/auth.dart';
 import 'package:romduol/services/user_data.dart';
 import 'package:romduol/widget/networkImage.dart';
@@ -150,7 +150,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => SplashScreen()),
+                        MaterialPageRoute(builder: (_) => MyApp()),
                       );
                       _auth.signOut();
                     },

@@ -12,7 +12,7 @@ class StarRating extends StatelessWidget {
 
   StarRating(
       {this.starCount = 5,
-      this.rating = .0,
+      this.rating = 0,
       this.onRatingChanged,
       this.size = 16});
 

@@ -43,7 +43,7 @@ class KompotDatabase {
         id: "acc_genesha",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -55,7 +55,7 @@ class KompotDatabase {
         id: "acc_eden",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -67,7 +67,7 @@ class KompotDatabase {
         id: "acc_ramo",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -86,7 +86,7 @@ class KompotDatabase {
         id: "act_biking",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -98,7 +98,7 @@ class KompotDatabase {
         id: "act_boating",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -116,7 +116,7 @@ class KompotDatabase {
         id: "res_epicartcafe",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -128,7 +128,7 @@ class KompotDatabase {
         id: "res_greenhouse",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),
@@ -140,7 +140,7 @@ class KompotDatabase {
         id: "res_tertulia",
         pricefrom: 15,
         pricetotal: 25,
-        rating: 4.5,
+        ratingaverage: 4.5,
         ratetotal: 50,
         maplocation: GeoPoint(11.562450, 104.916010)
       ),

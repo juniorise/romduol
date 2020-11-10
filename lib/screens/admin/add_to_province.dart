@@ -90,7 +90,7 @@ class _AddToProvinceState extends State<AddToProvince> {
         id: id ?? "No id provided.",
         pricefrom: !isPlace ? fpricefrom : 0,
         pricetotal: !isPlace ? fpricetotal : 0,
-        rating: !isPlace ? frating : 0,
+        ratingaverage: !isPlace ? frating : 0,
         ratetotal: !isPlace ? fratetotal : 0,
         maplocation: GeoPoint(flatitude, flongtitude),
         images: images,
@@ -136,7 +136,7 @@ class _AddToProvinceState extends State<AddToProvince> {
       pricefrom = widget.data.pricefrom.toString();
       pricetotal = widget.data.pricetotal.toString();
       ratetotal = widget.data.ratetotal.toString();
-      rating = widget.data.rating.toString();
+      rating = widget.data.ratingaverage.toString();
       images = widget.data.images ?? [''];
       paragraphs = widget.data.articles ?? [''];
       selectedProvince = widget.province.toString() ?? "keb";
@@ -182,22 +182,20 @@ class _AddToProvinceState extends State<AddToProvince> {
               key: _formKey,
               child: ListView(
                 children: [
-                  widget.data != null
-                      ? widget.data.authur != null
-                          ? Container(
-                              decoration: buildBoxDecoration()
-                                  .copyWith(color: Palette.sky),
-                              margin: EdgeInsets.only(top: 10),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              child: Text(
-                                "Data is uploaded to Firebase - id, province, and category can't be changed",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
-                          : SizedBox()
+                  !isInit
+                      ? Container(
+                          decoration:
+                              buildBoxDecoration().copyWith(color: Palette.sky),
+                          margin: EdgeInsets.only(top: 10),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                          child: Text(
+                            "Data is uploaded to Firebase - id, province, and category can't be changed",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
                       : SizedBox(),
-                      
+
                   error != ''
                       ? Container(
                           decoration:
@@ -228,9 +226,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                           value: name,
                         ),
                         IgnorePointer(
-                          ignoring: widget.data != null
-                              ? widget.data.authur != null
-                              : false,
+                          ignoring: !isInit,
                           child: BuildDropdown(
                             header: "Data will be added to:",
                             items: provinces,
@@ -242,9 +238,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                           ),
                         ),
                         IgnorePointer(
-                          ignoring: widget.data != null
-                              ? widget.data.authur != null
-                              : false,
+                          ignoring: !isInit,
                           child: BuildDropdown(
                             header: "Category:",
                             items: categories,
@@ -352,44 +346,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                                   ),
                                 ],
                               ),
-                            ),
-
-                            //SECTION #4
-                            SizedBox(height: 10),
-                            Container(
-                              width: width,
-                              decoration: buildBoxDecoration(),
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  BuildInput(
-                                    header:
-                                        "Rate (this will be removed in future)",
-                                    hint: "rating",
-                                    onFinished: (val) =>
-                                        setState(() => rating = val),
-                                    value:
-                                        rating != null ? rating.toString() : "",
-                                    validator: (e) {
-                                      return Validation().isNumeric(e);
-                                    },
-                                  ),
-                                  BuildInput(
-                                    header: null,
-                                    hint: "ratetotal",
-                                    onFinished: (val) =>
-                                        setState(() => ratetotal = val),
-                                    value: ratetotal != null
-                                        ? ratetotal.toString()
-                                        : "",
-                                    validator: (e) {
-                                      return Validation().isNumeric(e);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                            )
                           ],
                         )
                       : SizedBox(),

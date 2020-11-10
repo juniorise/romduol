@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/booking/b_accomodation.dart';
@@ -7,6 +9,9 @@ import 'package:romduol/screens/booking/b_bike.dart';
 import 'package:romduol/screens/booking/b_boat.dart';
 import 'package:romduol/screens/booking/b_resturant.dart';
 import 'package:romduol/screens/province/comment_page.dart';
+import 'package:romduol/services/auth.dart';
+import 'package:romduol/services/user_data.dart';
+import 'package:romduol/services/write_data.dart';
 import 'package:romduol/widget/detail_profile.dart';
 import 'package:romduol/widget/image_viewer.dart';
 import 'package:romduol/widget/networkImage.dart';
@@ -15,77 +20,6 @@ import 'package:romduol/widget/sliver_card_delegate.dart';
 import 'package:romduol/widget/star_rating.dart';
 import 'package:romduol/widget/theme.dart';
 
-List<CommentModel> comments = [
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-  CommentModel(
-    name: "Sok Chan",
-    comment:
-        "If you love nature, this place is for you, I love both environment and their service.",
-    profileimg: "assets/home/profile.png",
-    rating: 4,
-    useful: 100,
-    useless: 2,
-  ),
-];
-
-///
-///NOTED:
-///THIS PAGE START HERE
-///
-///
 class DetailTemplate extends StatefulWidget {
   const DetailTemplate({Key key, this.data, @required this.isKH})
       : super(key: key);
@@ -101,8 +35,10 @@ class _DetailTemplateState extends State<DetailTemplate> {
   bool scrollEnabled = true;
   final bool isHasPrice = false;
   bool isZoom = false;
+  TextEditingController _recommenedController = TextEditingController();
 
-  bool isVisible = false;
+  bool isVisible = false, validate = true, loading = false;
+  String error = "HAHAH";
   double rate = 0;
 
   double rateTOTAL = 10;
@@ -110,236 +46,346 @@ class _DetailTemplateState extends State<DetailTemplate> {
   @override
   void dispose() {
     super.dispose();
+    _recommenedController.dispose();
     _imageController.dispose();
+  }
+
+  void writeRecommendToFirebase({
+    String text,
+    double rate,
+    UserData userData,
+  }) async {
+    FirebaseFirestore.instance
+        .doc(widget.data.refpath)
+        .snapshots()
+        .forEach((element) {
+      print("I AM COLLECTION SNAPHSPTOOT");
+
+      List<String> uids = List();
+      element.data()['comments'].forEach((element) {
+        uids.add(element['uid']);
+      });
+
+      if (!uids.contains(userData.uid)) {
+        try {
+          WriteData().uploadRecommend(
+            text: text,
+            rate: rate,
+            ref: widget.data.refpath,
+            uid: userData.uid,
+          );
+          setState(() => loading = false);
+        } catch (e) {
+          error = e.toString();
+          validate = false;
+          setState(() => loading = false);
+        }
+      } else {
+        setState(() {
+          error = "You have recommended!";
+          validate = false;
+          setState(() => loading = false);
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<CustomUser>(context);
+
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Palette.bg,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            titleSpacing: 0.0,
-            toolbarHeight: 48,
-            elevation: 1,
-            expandedHeight: 150 + 48.0,
-            forceElevated: true,
-            backgroundColor: Palette.sky,
-            pinned: true,
-            iconTheme: IconThemeData(color: Colors.white),
-            title: Text(
-              widget.isKH ? "អំពីរទីកន្លែង" : "About place",
-              style: TextStyle(color: Colors.white, fontSize: 14),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.text_fields),
-                onPressed: () {
-                  setState(() {
-                    isZoom = !isZoom;
-                  });
-                },
-              )
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                width: width,
-                height: 150 + 48.0,
-                child: Stack(
-                  children: [
-                    ImageViewer(
-                      thumnail: widget.data.thumbnail,
-                      pageController: _imageController,
-                      imageList: widget.data.images ?? [''],
-                      width: width,
-                      currentImage: currentImage,
-                      onPageChanged: (index) => setState(
-                        () => currentImage = index,
-                      ),
-                      id: widget.data.id,
-                    ),
-                    TextWithIndicator(
-                      currentImage: currentImage,
-                      imageList: widget.data.images ?? [''],
-                      pricefrom: widget.data.pricefrom,
-                      pricetotal: widget.data.pricetotal,
-                      isKH: widget.isKH,
-                    ),
+    // double height = MediaQuery.of(context).size.height;
+    return StreamBuilder<UserData>(
+        stream: UserDatabase(uid: user.uid).userData,
+        builder: (context, snapshot) {
+          UserData userData;
+          if (snapshot.hasData) {
+            userData = snapshot.data;
+          }
+          return Scaffold(
+            backgroundColor: Palette.bg,
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  titleSpacing: 0.0,
+                  toolbarHeight: 48,
+                  elevation: 1,
+                  expandedHeight: 150 + 48.0,
+                  forceElevated: true,
+                  backgroundColor: Palette.sky,
+                  pinned: true,
+                  iconTheme: IconThemeData(color: Colors.white),
+                  title: Text(
+                    widget.isKH ? "អំពីរទីកន្លែង" : "About place",
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.text_fields),
+                      onPressed: () {
+                        setState(() {
+                          isZoom = !isZoom;
+                        });
+                      },
+                    )
                   ],
-                ),
-              ),
-            ),
-          ),
-          SliverPersistentHeader(
-            floating: true,
-            delegate: SliverCardDelegate(
-              child: DetailProfile(
-                title: widget.data.title,
-                width: width,
-                location: widget.data.location,
-                onBookPressed: () {
-                  Widget screen;
-                  print(widget.data.refpath);
-
-                  if (widget.data.refpath.contains('accomodations'))
-                    screen = BookingAccomodation(isKH: widget.isKH);
-                  if (widget.data.refpath
-                      .contains('activities/default_data/act_biking'))
-                    screen = BookingBike(isKH: widget.isKH);
-                  if (widget.data.refpath.contains('restaurants/'))
-                    screen = BookingRestaurant(isKH: widget.isKH);
-
-                  if (widget.data.refpath
-                      .contains('activities/default_data/act_boating'))
-                    screen = BookingBoat(isKH: widget.isKH);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => screen,
-                    ),
-                  );
-                },
-                rate: widget.data.rating,
-                ratetotal: widget.data.ratetotal,
-                isBookAble: widget.data.pricefrom != null ||
-                        widget.data.pricetotal != null
-                    ? true
-                    : false,
-                maplocation: widget.data.maplocation,
-                isKH: widget.isKH,
-              ),
-              height: widget.data.ratetotal == null
-                  ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
-                  : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Container(
-                  color: Palette.bg,
-                  width: width,
-                  constraints: BoxConstraints(minHeight: height - 75),
-                  child: Column(
-                    children: [
-                      Column(
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      width: width,
+                      height: 150 + 48.0,
+                      child: Stack(
                         children: [
-                          SizedBox(height: 10),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            decoration: buildBoxDecoration(),
-                            child: ArticleDetail(
-                              widget: widget,
-                              width: width,
-                              isZoom: isZoom,
-                              articles: widget.data.articles,
+                          ImageViewer(
+                            thumnail: widget.data.thumbnail,
+                            pageController: _imageController,
+                            imageList: widget.data.images ?? [''],
+                            width: width,
+                            currentImage: currentImage,
+                            onPageChanged: (index) => setState(
+                              () => currentImage = index,
                             ),
+                            id: widget.data.id,
                           ),
-                          widget.data.refpath
-                                  .contains('restaurants/default_data/')
-                              ? FoodMenuDetail(
-                                  foods: widget.data.foodmenu,
-                                  isKH: widget.isKH,
-                                )
-                              : SizedBox(),
+                          TextWithIndicator(
+                            currentImage: currentImage,
+                            imageList: widget.data.images ?? [''],
+                            pricefrom: widget.data.pricefrom,
+                            pricetotal: widget.data.pricetotal,
+                            isKH: widget.isKH,
+                          ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                    ),
+                  ),
+                ),
+                SliverPersistentHeader(
+                  floating: true,
+                  delegate: SliverCardDelegate(
+                    child: DetailProfile(
+                      title: widget.data.title,
+                      width: width,
+                      location: widget.data.location,
+                      onBookPressed: () {
+                        Widget screen;
+                        print(widget.data.refpath);
+
+                        if (widget.data.refpath.contains('accomodations'))
+                          screen = BookingAccomodation(isKH: widget.isKH);
+                        if (widget.data.refpath
+                            .contains('activities/default_data/act_biking'))
+                          screen = BookingBike(isKH: widget.isKH);
+                        if (widget.data.refpath.contains('restaurants/'))
+                          screen = BookingRestaurant(isKH: widget.isKH);
+
+                        if (widget.data.refpath
+                            .contains('activities/default_data/act_boating'))
+                          screen = BookingBoat(isKH: widget.isKH);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => screen,
+                          ),
+                        );
+                      },
+                      ratingaverage: widget.data.ratingaverage,
+                      ratetotal: widget.data.ratetotal,
+                      isBookAble: widget.data.pricefrom != null ||
+                              widget.data.pricetotal != null
+                          ? true
+                          : false,
+                      maplocation: widget.data.maplocation,
+                      isKH: widget.isKH,
+                    ),
+                    height: widget.data.ratetotal == null
+                        ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
+                        : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
                       Container(
+                        color: Palette.bg,
                         width: width,
-                        constraints: BoxConstraints(minHeight: 201.0),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: buildBoxDecoration(),
+                        constraints: BoxConstraints(minHeight: 0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              widget.isKH ? "បញ្ចេញមតិយោបល់" : "Recommend",
-                              style: TextStyle(fontFamily: 'Kantumruy'),
-                            ),
-                            SizedBox(height: 5),
-                            StarRating(
-                              size: 30,
-                              rating: rate,
-                              onRatingChanged: (double _rate) {
-                                setState(() => rate = _rate);
-                              },
-                            ),
-                            SizedBox(height: 15),
-                            TextField(
-                              maxLines: null,
-                              style: TextStyle(fontSize: 13),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 5),
-                                border: OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(5.0),
-                                    ),
-                                    borderSide: BorderSide.none),
-                                hintText: widget.isKH
-                                    ? "មតិយោបល់"
-                                    : "Write your recommendation...",
-                                fillColor: Palette.bggrey.withOpacity(0.3),
-                                filled: true,
-                              ),
+                            Column(
+                              children: [
+                                SizedBox(height: 10),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  decoration: buildBoxDecoration(),
+                                  child: ArticleDetail(
+                                    widget: widget,
+                                    width: width,
+                                    isZoom: isZoom,
+                                    articles: widget.data.articles,
+                                  ),
+                                ),
+                                widget.data.refpath
+                                        .contains('restaurants/default_data/')
+                                    ? FoodMenuDetail(
+                                        foods: widget.data.foodmenu,
+                                        isKH: widget.isKH,
+                                      )
+                                    : SizedBox(),
+                              ],
                             ),
                             SizedBox(height: 10),
-                            FlatButton(
-                              onPressed: () {},
-                              color: Palette.sky,
-                              splashColor: Colors.transparent,
-                              child: Text(
-                                widget.isKH ? "បង្ហោះជាសាធារណះ" : "Publish",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
+                            userData != null
+                                ? Container(
+                                    width: width,
+                                    constraints:
+                                        BoxConstraints(minHeight: 201.0),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 20),
+                                    decoration: buildBoxDecoration(),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          widget.isKH
+                                              ? "បញ្ចេញមតិយោបល់"
+                                              : "Recommend",
+                                          style: TextStyle(
+                                              fontFamily: 'Kantumruy'),
+                                        ),
+                                        SizedBox(height: 5),
+                                        StarRating(
+                                          size: 30,
+                                          rating: rate,
+                                          onRatingChanged: (double _rate) {
+                                            setState(() => rate = _rate);
+                                          },
+                                        ),
+                                        SizedBox(height: 15),
+                                        TextField(
+                                          maxLines: null,
+                                          controller: _recommenedController,
+                                          style: TextStyle(fontSize: 13),
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 10.0,
+                                                    vertical: 5),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                const Radius.circular(5.0),
+                                              ),
+                                              borderSide: BorderSide.none,
+                                            ),
+                                            errorText: validate ? "" : error,
+                                            errorStyle:
+                                                TextStyle(color: Palette.red),
+                                            hintText: widget.isKH
+                                                ? "មតិយោបល់"
+                                                : "Write your recommendation...",
+                                            fillColor:
+                                                Palette.bggrey.withOpacity(0.3),
+                                            filled: true,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        FlatButton(
+                                          onPressed: () {
+                                            if (_recommenedController
+                                                .text.isEmpty) {
+                                              setState(() {
+                                                error = "Empty";
+                                                validate = false;
+                                              });
+                                            } else if (rate == 0) {
+                                              setState(() {
+                                                error = "Rate can't be zero";
+                                                validate = false;
+                                              });
+                                            } else {
+                                              setState(() => loading = true);
+                                              writeRecommendToFirebase(
+                                                text:
+                                                    _recommenedController.text,
+                                                rate: rate,
+                                                userData: userData,
+                                              );
+                                            }
+                                          },
+                                          color: Palette.sky,
+                                          splashColor: Colors.transparent,
+                                          child: !loading
+                                              ? Text(
+                                                  widget.isKH
+                                                      ? "បង្ហោះជាសាធារណះ"
+                                                      : "Publish",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 13,
+                                                  ),
+                                                )
+                                              : Center(
+                                                  heightFactor: 1,
+                                                  child: Container(
+                                                    width: 30,
+                                                    height: 30,
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : SizedBox(),
+                            Builder(builder: (context) {
+                              return FlatButton(
+                                onPressed: () {
+                                  final snackBar = SnackBar(
+                                      content: Text('No comments'),
+                                      backgroundColor: Palette.sky);
+                                  if (widget.data.comments != null) {
+                                    if (widget.data.comments.length > 0) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CommentPage(
+                                            comments: widget.data.comments,
+                                            isKH: widget.isKH,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else
+                                    Scaffold.of(context).showSnackBar(snackBar);
+                                },
+                                highlightColor: Colors.white,
+                                splashColor: Colors.white,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  widget.isKH
+                                      ? "មតិយោបល់ (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})"
+                                      : "Comments (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})",
+                                  style: TextStyle(
+                                    color: Palette.sky,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                              ),
-                            )
+                              );
+                            })
                           ],
-                        ),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CommentPage(
-                                comments: comments,
-                                isKH: widget.isKH,
-                              ),
-                            ),
-                          );
-                        },
-                        highlightColor: Colors.white,
-                        splashColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          widget.isKH
-                              ? "មតិយោបល់ (${khNum(comments.length.toString(), widget.isKH)})"
-                              : "Comments (${khNum(comments.length.toString(), widget.isKH)})",
-                          style: TextStyle(
-                            color: Palette.sky,
-                          ),
-                          textAlign: TextAlign.left,
                         ),
                       ),
                     ],
                   ),
-                ),
+                )
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
+        });
   }
 }
 

@@ -17,13 +17,13 @@ class Province extends StatefulWidget {
   final String province, enprovince;
   final bool isKH;
   final UserData user;
-  const Province(
-      {Key key,
-      @required this.province,
-      @required this.enprovince,
-      @required this.isKH,
-      this.user})
-      : super(key: key);
+  const Province({
+    Key key,
+    @required this.province,
+    @required this.enprovince,
+    @required this.isKH,
+    this.user,
+  }) : super(key: key);
   @override
   _ProvinceState createState() => _ProvinceState();
 }
@@ -81,7 +81,7 @@ class _ProvinceState extends State<Province> {
               );
             });
           }
-          onTaps.add(_onTapsTMP);
+          onTaps.insert(i, _onTapsTMP);
         }
         return ChangeNotifierProvider(
           create: (e) => PageViewNotifier(_pageController),
@@ -131,10 +131,7 @@ class _ProvinceState extends State<Province> {
                       data: !isSearched ? pagesCard[i] : data,
                       isAnimated: isAnimated[i],
                       isKH: widget.isKH,
-                      onEditPressed:
-                          widget.user != null && widget.user.role == "Admin"
-                              ? onTaps[i + 1]
-                              : null,
+                      onEditPressed: isEditable() ? onTaps[i] : null,
                     ),
                   ),
               ],
@@ -257,7 +254,7 @@ class _ProvinceState extends State<Province> {
               id: element['id'] ?? "No id provided.",
               pricefrom: element['pricefrom'] ?? null,
               pricetotal: element['pricetotal'] ?? null,
-              rating: element['rating'] ?? null,
+              ratingaverage: element['rating'] ?? null,
               ratetotal: element['ratetotal'] ?? null,
               maplocation: element['maplocation'] ?? null,
               refpath: element.reference.path,
@@ -292,5 +289,14 @@ class _ProvinceState extends State<Province> {
         _pageController.offset * (0.19),
       );
     }
+  }
+
+  bool isEditable() {
+    if(widget.user != null){
+      if(widget.user.role == "Admin"){
+        return true;
+      }
+    }
+    return false;
   }
 }

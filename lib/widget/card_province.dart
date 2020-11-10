@@ -17,6 +17,8 @@ class CardOnProvince extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    print("HEHEIEIE IS MY AVERAGE");
+    print(data.ratingaverage);
     double width = size.width;
     // double height = size.height;
     return Container(
@@ -36,7 +38,7 @@ class CardOnProvince extends StatelessWidget {
           Stack(
             children: [
               Hero(
-                tag: "thumnail" + data.thumbnail + data.id, 
+                tag: "thumnail" + data.thumbnail + data.id,
                 child: NetworkImageLoader(
                   onPressed: () {},
                   width: width - 15 - 15,
@@ -44,7 +46,7 @@ class CardOnProvince extends StatelessWidget {
                   imagelocation: data.thumbnail,
                 ),
               ),
-              data.pricefrom != null
+              data.pricefrom != null && data.pricefrom > 0 && data.pricetotal > 0
                   ? Positioned(
                       top: 10,
                       left: 0,
@@ -56,11 +58,10 @@ class CardOnProvince extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
                           khNum(
-                              (isKH
-                                  ? "ចាប់ពី​ "
-                                  : "")
-                                       + "${data.pricefrom}\$ - ${data.pricetotal}\$",
-                              isKH),
+                            (isKH ? "ចាប់ពី​ " : "") +
+                                "${data.pricefrom}\$ - ${data.pricetotal}\$",
+                            isKH,
+                          ),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
                       ),
@@ -90,13 +91,20 @@ class CardOnProvince extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      data.rating != null
+                      data.ratingaverage != null
                           ? Row(
                               children: [
-                                StarRating(rating: data.rating),
+                                StarRating(
+                                    rating: data.ratingaverage.isNaN
+                                        ? 0
+                                        : data.ratingaverage),
                                 SizedBox(width: 5),
                                 Text(
-                                  khNum(data.rating.toString(), isKH),
+                                  khNum(
+                                      !data.ratingaverage.isNaN
+                                          ? data.ratingaverage.toString()
+                                          : 0.toString(),
+                                      isKH),
                                   style: TextStyle(
                                     color: Palette.text,
                                     fontSize: 14,

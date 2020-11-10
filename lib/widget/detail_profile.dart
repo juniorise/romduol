@@ -15,7 +15,7 @@ class DetailProfile extends StatelessWidget {
     @required this.title,
     @required this.location,
     @required this.onBookPressed,
-    this.rate,
+    this.ratingaverage,
     this.ratetotal,
     this.maplocation,
     this.buslocation,
@@ -29,7 +29,7 @@ class DetailProfile extends StatelessWidget {
   final String title;
   final String location;
   final Function onBookPressed;
-  final double rate;
+  final double ratingaverage;
   final int ratetotal;
   final bool isBookAble, isKH;
 
@@ -38,7 +38,7 @@ class DetailProfile extends StatelessWidget {
     bool isShowPrice = pricefrom != null;
     print(maplocation.latitude);
     double heightTOTAL = 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10;
-    double totalheight = rate != null ? heightTOTAL + 45 : heightTOTAL;
+    double totalheight = ratingaverage != null ? heightTOTAL + 45 : heightTOTAL;
     return Container(
       height: totalheight,
       width: width,
@@ -70,13 +70,13 @@ class DetailProfile extends StatelessWidget {
             isKH: isKH,
           ),
           SizedBox(height: 8.0),
-          rate != null
+          ratingaverage != null
               ? Row(
                   children: [
-                    StarRating(rating: rate),
+                    StarRating(rating: ratingaverage.isNaN ? 0 : ratingaverage),
                     SizedBox(width: 5),
                     Text(
-                      khNum(rate.toString(), isKH),
+                      khNum(ratingaverage.isNaN ? 0.toString() : ratingaverage.toString(), isKH),
                       style: TextStyle(
                         color: Palette.text,
                         fontSize: 14,
@@ -173,7 +173,7 @@ class DetailProfile extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                               isKH ? "កក់ឥឡូវ" : "Book now",
+                                isKH ? "កក់ឥឡូវ" : "Book now",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,

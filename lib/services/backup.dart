@@ -46,7 +46,7 @@ class Backup {
           "id": "${accomodations[i].id}",
           "pricefrom": accomodations[i].pricefrom,
           "pricetotal": accomodations[i].pricetotal,
-          "rating": accomodations[i].rating,
+          "rating": accomodations[i].ratingaverage,
           "ratetotal": accomodations[i].ratetotal,
           "maplocation": accomodations[i].maplocation,
         },
@@ -66,7 +66,7 @@ class Backup {
           "id": "${activities[i].id}",
           "pricefrom": accomodations[i].pricefrom,
           "pricetotal": accomodations[i].pricetotal,
-          "rating": accomodations[i].rating,
+          "rating": accomodations[i].ratingaverage,
           "ratetotal": activities[i].ratetotal,
           "maplocation": accomodations[i].maplocation
         },
@@ -86,7 +86,7 @@ class Backup {
           "id": "${restaurants[i].id}",
           "pricefrom": accomodations[i].pricefrom,
           "pricetotal": accomodations[i].pricetotal,
-          "rating": accomodations[i].rating,
+          "rating": accomodations[i].ratingaverage,
           "ratetotal": restaurants[i].ratetotal,
           "maplocation": accomodations[i].maplocation
         },

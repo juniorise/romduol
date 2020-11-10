@@ -100,7 +100,7 @@ class _AdminProvinceState extends State<AdminProvince> {
                       pricetotal: element.data()['pricetotal'] != null
                           ? element.data()['pricetotal'].toDouble()
                           : null ?? null,
-                      rating: element.data()['rating'] ?? null,
+                      ratingaverage: element.data()['rating'] ?? null,
                       ratetotal: element.data()['ratetotal'] ?? null,
                       maplocation: element.data()['maplocation'] ?? null,
                       refpath: element.reference.path,
