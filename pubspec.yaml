@@ -31,9 +31,12 @@ dependencies:
   firebase_core: "0.5.0+1"
   google_maps_flutter: ^1.0.2
   geolocator: ^6.0.0+4
-  flutter_svg: ^0.19.0
   cloud_firestore_web: ^0.2.0+4
   shared_preferences: ^0.5.12+2
+  
+
+  flutter_cache_manager: ^2.0.0
+  cached_network_image: ^2.3.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -77,23 +80,16 @@ flutter:
           weight: 400
         - asset: fonts/Kantumruy-Bold.ttf
           weight: 700
-    - family: Open Sans
-      fonts:
-        - asset: fonts/OpenSans-Light.ttf
-          weight: 300
-        - asset: fonts/OpenSans-Regular.ttf
-          weight: 400
-        - asset: fonts/OpenSans-Bold.ttf
-          weight: 700
-    - family: Playfair
-      fonts:
-        - asset: fonts/playfair/PlayfairDisplay-Black.ttf
-          weight: 300
-        - asset: fonts/playfair/PlayfairDisplay-Regular.ttf
-          weight: 400
-        - asset: fonts/playfair/PlayfairDisplay-Bold.ttf
-          weight: 700
+    # - family: Open Sans
+    #   fonts:
+    #     - asset: fonts/OpenSans-Light.ttf
+    #       weight: 300
+    #     - asset: fonts/OpenSans-Regular.ttf
+    #       weight: 400
+    #     - asset: fonts/OpenSans-Bold.ttf
+    #       weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_intl:
   enabled: true
+

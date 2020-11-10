@@ -6,11 +6,17 @@ import 'package:romduol/widget/card_province.dart';
 
 class AnimatedLists extends StatefulWidget {
   const AnimatedLists(
-      {Key key, this.data, this.isAnimated = false, @required this.isKH})
+      {Key key,
+      this.data,
+      this.isAnimated = false,
+      @required this.isKH,
+      this.onEditPressed,
+      this.isIgnoring = false})
       : super(key: key);
 
   final List<CardModel> data;
-  final bool isAnimated, isKH;
+  final bool isAnimated, isKH, isIgnoring;
+  final List<Function> onEditPressed;
   @override
   _AnimatedListsState createState() => _AnimatedListsState();
 }
@@ -20,7 +26,6 @@ class _AnimatedListsState extends State<AnimatedLists> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     double width = size.width;
-    double height = size.height;
     if (widget.data.length < 1)
       return Center(
         child: Text(
@@ -31,9 +36,11 @@ class _AnimatedListsState extends State<AnimatedLists> {
     return Container(
       color: Palette.bg,
       width: width,
-      height: height,
+      height: widget.data.length * 200.0,
       child: LiveList.options(
-        physics: const AlwaysScrollableScrollPhysics(),
+        physics: widget.isIgnoring
+            ? NeverScrollableScrollPhysics()
+            : AlwaysScrollableScrollPhysics(),
         primary: true,
         itemBuilder: (
           BuildContext context,
@@ -46,7 +53,32 @@ class _AnimatedListsState extends State<AnimatedLists> {
               begin: widget.isAnimated ? 1 : 0,
               end: 1,
             ).animate(animation),
-            child: CardOnProvince(data: data, isKH: widget.isKH,),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CardOnProvince(
+                  data: data,
+                  isKH: widget.isKH,
+                ),
+                widget.onEditPressed != null
+                    ? Positioned(
+                        right: 20,
+                        top: 8,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          child: RaisedButton(
+                            padding: EdgeInsets.zero,
+                            highlightColor: Palette.sky,
+                            child: Icon(Icons.edit, color: Colors.white),
+                            color: Palette.bgdark.withOpacity(1),
+                            onPressed: widget.onEditPressed[index],
+                          ),
+                        ),
+                      )
+                    : SizedBox()
+              ],
+            ),
           );
         },
         itemCount: widget.data.length,

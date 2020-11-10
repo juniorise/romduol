@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/pagenotifier.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/admin/add_to_province.dart';
+import 'package:romduol/services/user_data.dart';
 import 'package:romduol/widget/animatedList.dart';
 import 'package:romduol/widget/animatedtabbar.dart';
 import 'package:romduol/widget/fadeinout.dart';
@@ -14,11 +16,13 @@ import 'package:romduol/widget/theme.dart';
 class Province extends StatefulWidget {
   final String province, enprovince;
   final bool isKH;
+  final UserData user;
   const Province(
       {Key key,
       @required this.province,
       @required this.enprovince,
-      @required this.isKH})
+      @required this.isKH,
+      this.user})
       : super(key: key);
   @override
   _ProvinceState createState() => _ProvinceState();
@@ -50,7 +54,10 @@ class _ProvinceState extends State<Province> {
     _textEditingController.dispose();
   }
 
+  List<List<Function>> onTaps = List();
+
   List<bool> isAnimated = [false, true, true, true];
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<List<CardModel>>>.value(
@@ -59,6 +66,23 @@ class _ProvinceState extends State<Province> {
         final List<List<CardModel>> pagesCard =
             Provider.of<List<List<CardModel>>>(context) ?? [[]];
 
+        for (int i = 0; i < pagesCard.length; i++) {
+          List<Function> _onTapsTMP = List();
+          for (int j = 0; j < pagesCard[i].length; j++) {
+            _onTapsTMP.add(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddToProvince(
+                    isKH: widget.isKH,
+                    data: pagesCard[i][j],
+                  ),
+                ),
+              );
+            });
+          }
+          onTaps.add(_onTapsTMP);
+        }
         return ChangeNotifierProvider(
           create: (e) => PageViewNotifier(_pageController),
           child: Scaffold(
@@ -107,6 +131,10 @@ class _ProvinceState extends State<Province> {
                       data: !isSearched ? pagesCard[i] : data,
                       isAnimated: isAnimated[i],
                       isKH: widget.isKH,
+                      onEditPressed:
+                          widget.user != null && widget.user.role == "Admin"
+                              ? onTaps[i + 1]
+                              : null,
                     ),
                   ),
               ],
@@ -128,13 +156,11 @@ class _ProvinceState extends State<Province> {
         hintStyle: TextStyle(
           color: Palette.text,
           fontSize: widget.isKH ? 14 : 15,
-          fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
         ),
       ),
       style: TextStyle(
         color: Palette.text,
         fontSize: widget.isKH ? 14 : 15,
-        fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
       ),
       textInputAction: TextInputAction.search,
       onChanged: (value) => onSubmitted(value, pagesCard[pageCurrent]),
@@ -153,7 +179,6 @@ class _ProvinceState extends State<Province> {
             style: TextStyle(
               fontSize: widget.isKH ? 14 : 15,
               color: Palette.sky,
-              fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
             ),
             textAlign: TextAlign.start,
           ),

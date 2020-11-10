@@ -48,7 +48,7 @@ class Backup {
           "pricetotal": accomodations[i].pricetotal,
           "rating": accomodations[i].rating,
           "ratetotal": accomodations[i].ratetotal,
-          "maplocation": accomodations[i].maplocation
+          "maplocation": accomodations[i].maplocation,
         },
       );
     }

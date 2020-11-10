@@ -82,7 +82,7 @@ PreferredSize buildAppBar({
         style: TextStyle(
           color: color,
           fontSize: 14,
-          fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+          fontFamily: 'Kantumruy',
         ),
       ),
       actions: [
@@ -125,7 +125,7 @@ Container sectionTitle({
       style: TextStyle(
         fontSize: 14,
         color: Palette.bgdark.withOpacity(0.8),
-        fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+        fontFamily: 'Kantumruy',
       ),
     ),
   );

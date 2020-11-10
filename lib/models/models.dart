@@ -25,8 +25,14 @@ class CardModel {
   final int ratetotal;
   final double rating, pricefrom, pricetotal;
   final GeoPoint maplocation;
+  final List<dynamic> images;
+  final List<dynamic> articles;
+  final String authur;
+  final List<FoodMenu> foodmenu;
 
   CardModel({
+    this.images,
+    this.articles,
     this.pricefrom,
     this.pricetotal,
     this.id,
@@ -38,6 +44,8 @@ class CardModel {
     this.maplocation,
     this.thumbnail,
     this.refpath,
+    this.authur,
+    this.foodmenu,
   });
 }
 
@@ -90,13 +98,11 @@ class CommentModel {
   });
 }
 
-
 class WhyTourPackage {
   final String imageLocation, title, des, link;
 
   WhyTourPackage({this.imageLocation, this.title, this.des, this.link});
 }
-
 
 class UsefulPackParent {
   final String path, title;

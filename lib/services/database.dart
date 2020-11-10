@@ -5,26 +5,28 @@ class Database {
   static FirebaseFirestore instance = FirebaseFirestore.instance;
   final CollectionReference packages = instance.collection('packages');
 
+  //stream package data
   Stream<List<PackageModel>> get packagesData {
     return packages.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         print(doc.reference.path);
         return PackageModel(
-          thumbnail: doc.data()['thumbnail'],
-          totalspace: doc.data()['totalspace'],
-          bookedspace: doc.data()['bookedspace'],
-          title: doc.data()['title'],
-          location: doc.data()['location'],
-          date: doc.data()['date'],
-          price: doc.data()['price'].toDouble(),
-          refpath: doc.reference.path,
-          maplocation: doc.data()['maplocation'],
-          buslocation: doc.data()['buslocation'],
+          thumbnail: doc.data()['thumbnail'] ?? null,
+          totalspace: doc.data()['totalspace'] ?? null,
+          bookedspace: doc.data()['bookedspace'] ?? null,
+          title: doc.data()['title'] ?? null,
+          location: doc.data()['location'] ?? null,
+          date: doc.data()['date'] ?? null,
+          price: doc.data()['price'].toDouble() ?? null,
+          refpath: doc.reference.path ?? null,
+          maplocation: doc.data()['maplocation'] ?? null,
+          buslocation: doc.data()['buslocation'] ?? null,
         );
       }).toList();
     });
   }
 
+  //stream province data
   List<List<CardModel>> _provinceFromSnapshot(String province) {
     List<String> _pages = [
       'places',
@@ -43,6 +45,22 @@ class Database {
           .snapshots()
           .forEach((element) {
         element.docs.forEach((element) {
+          List<FoodMenu> foodMenu = List();
+          if (_page == "restaurants") {
+            List<dynamic> parentMap = element.data()['foodmenu'];
+            parentMap.forEach((element) {
+              print(element['title']);
+              print(element['thumbnail']);
+              foodMenu.add(
+                FoodMenu(
+                  title: element['title'],
+                  thumbnail: element['thumbnail'],
+                  price: element['price'].toString(),
+                ),
+              );
+            });
+          }
+          
           _pagesCard[i].add(CardModel(
             title: element.data()['title'] ?? "No title provided.",
             location: element.data()['location'] ?? "No location provided.",
@@ -58,35 +76,41 @@ class Database {
             ratetotal: element.data()['ratetotal'] ?? null,
             maplocation: element.data()['maplocation'] ?? null,
             refpath: element.reference.path,
+            images: element.data()['images'],
+            articles: element.data()['articles'],
+            foodmenu: foodMenu.length > 0 ? foodMenu : null,
           ));
         });
       });
     }
-
     return _pagesCard;
   }
 
+  //stream data for kompot
   Stream<List<List<CardModel>>> get kompotData {
     print('kompotData');
     List<List<CardModel>> _pagesCard = _provinceFromSnapshot('kompot');
     return instance.collection('kompot').snapshots().map((_) => _pagesCard);
   }
 
+  //stream data for kompot
   Stream<List<List<CardModel>>> get kohkongData {
     print('kohkongData');
     List<List<CardModel>> _pagesCard = _provinceFromSnapshot('kohkong');
     return instance.collection('kohkong').snapshots().map((_) => _pagesCard);
   }
 
+  //stream data for kompot
   Stream<List<List<CardModel>>> get kebData {
     print('kebData');
     List<List<CardModel>> _pagesCard = _provinceFromSnapshot('keb');
     return instance.collection('keb').snapshots().map((_) => _pagesCard);
   }
 
+  //stream data for kompot
   Stream<List<List<CardModel>>> get sihaknoukData {
     print('sihaknoukData');
-    List<List<CardModel>> _pagesCard = _provinceFromSnapshot('sihanouk');
-    return instance.collection('sihanouk').snapshots().map((_) => _pagesCard);
+    List<List<CardModel>> _pagesCard = _provinceFromSnapshot('preahsihanouk');
+    return instance.collection('preahsihanouk').snapshots().map((_) => _pagesCard);
   }
 }

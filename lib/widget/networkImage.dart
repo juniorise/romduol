@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:romduol/configs/palette.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class NetworkImageLoader extends StatelessWidget {
   final String imagelocation;
@@ -20,39 +21,19 @@ class NetworkImageLoader extends StatelessWidget {
       width: width,
       height: height,
       color: Palette.bg,
-      child: Image.network(
-        imagelocation,
+      child: CachedNetworkImage(
         width: width,
         height: height,
+        imageUrl: imagelocation,
         fit: BoxFit.cover,
-        frameBuilder: (
-          BuildContext context,
-          Widget child,
-          int frame,
-          bool wasSynchronouslyLoaded,
-        ) {
-          return wasSynchronouslyLoaded
-              ? child
-              : AnimatedOpacity(
-                  child: child,
-                  opacity: frame == null ? 0 : 1,
-                  duration: const Duration(seconds: 1),
-                  curve: Curves.easeIn,
-                );
-        },
-        errorBuilder:
-            (BuildContext context, Object exception, StackTrace stackTrace) {
-          print(exception);
-          return FlatButton(
-            height: height,
-            minWidth: width,
-            color: Palette.bg,
-            onPressed: onPressed,
-            child: Icon(Icons.error, color: Palette.red),
-          );
-        },
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child;
+        errorWidget: (context, url, error) => FlatButton(
+          height: height,
+          minWidth: width,
+          color: Palette.bg,
+          onPressed: onPressed,
+          child: Icon(Icons.error, color: Palette.red),
+        ),
+        progressIndicatorBuilder: (context, url, progress) {
           return Container(
             width: width,
             height: height,
@@ -63,9 +44,8 @@ class NetworkImageLoader extends StatelessWidget {
               height: 15,
               child: CircularProgressIndicator(
                 strokeWidth: 3.0,
-                value: progress.expectedTotalBytes != null
-                    ? progress.cumulativeBytesLoaded /
-                        progress.expectedTotalBytes
+                value: progress.downloaded != null && progress.totalSize != null
+                    ? (progress.downloaded / progress.totalSize).toDouble()
                     : null,
               ),
             ),

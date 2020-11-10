@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Lang {
   Map<String, String> kh = {
-    'hello': 'សួរស្តី​',
+    'hello': 'សួស្តី​',
     'title': "រំដួល",
     'changelang': "ផ្លាស់ប្តូរជាភាសាអង់គ្លេស",
     'setting': "ការកំណត់",
@@ -24,6 +24,8 @@ class Lang {
     'bookingheader': "សូមបំពេញព័ត៏មានដើម្បីកក់",
     'restuarantexpire': "ការកក់នឹងត្រូវបានផុតកំណត់ក្នុងរយ:ពេល ២ម៉ោង",
     'confirm': "បញ្ជាក់",
+    'draft': "ព្រាង", 
+    'addinfo': "បន្ថែមទិន្នន័យ"
   };
 
   Map<String, String> en = {
@@ -48,6 +50,8 @@ class Lang {
     'bookingheader': "Please fill the form to book",
     'restuarantexpire': "Booking will be expired within 2 hours from booking",
     'confirm': "Confirm",
+    'draft': "Draft", 
+    'addinfo': 'Add data'
   };
 
   String of({String key, bool isKH = true}) {

@@ -56,7 +56,7 @@ class DatePickerCard extends StatelessWidget {
               child: FlatButton(
                 onPressed: onPressed,
                 highlightColor: Palette.sky.withOpacity(0.1),
-                splashColor: Palette.sky.withOpacity(0.1),
+                splashColor: Colors.transparent,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -72,8 +72,7 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
           child: FlatButton(
             height: double.infinity,
             minWidth: 130,
-            splashColor: Palette.bggrey.withOpacity(0.08),
-            highlightColor: Palette.bggrey.withOpacity(0.01),
+            splashColor: Colors.transparent,
             onPressed: () {
               widget.onTap(i);
               setState(() {
@@ -93,7 +92,7 @@ class _AnimatedTabBarState extends State<AnimatedTabBar> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: widget.isKH ? 12 : 13,
-                fontFamily: widget.isKH ? 'Kantumruy' : 'Open Sans',
+                fontFamily: 'Kantumruy',
                 color: !_isSelected ? Palette.sky : Colors.white,
                 height: widget.isKH ? 2.0 : 1.0
               ),

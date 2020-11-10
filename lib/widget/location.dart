@@ -20,8 +20,8 @@ class LocationText extends StatelessWidget {
         Text(
           khNum(location, isKH),
           style: TextStyle(
-            fontSize: isKH ? 12 : 13,
-            fontFamily: isKH ? "Kantumruy" : "Open Sans",
+            fontSize: 12,
+            fontFamily: 'Kantumruy',
             color: Palette.text.withOpacity(0.8),
           ),
         )

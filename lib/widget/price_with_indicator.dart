@@ -13,7 +13,7 @@ class TextWithIndicator extends StatelessWidget {
     @required this.isKH,
   }) : super(key: key);
 
-  final List<String> imageList;
+  final List<dynamic> imageList;
   final int currentImage;
   final String text;
   final double pricefrom, pricetotal;

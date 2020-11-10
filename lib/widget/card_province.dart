@@ -36,7 +36,7 @@ class CardOnProvince extends StatelessWidget {
           Stack(
             children: [
               Hero(
-                tag: "thumnail" + data.thumbnail,
+                tag: "thumnail" + data.thumbnail + data.id, 
                 child: NetworkImageLoader(
                   onPressed: () {},
                   width: width - 15 - 15,
@@ -121,7 +121,7 @@ class CardOnProvince extends StatelessWidget {
                                 : 104.0 + 10
                             : 104.0 + 17,
                         child: FlatButton.icon(
-                          splashColor: Colors.white.withOpacity(0.2),
+                          splashColor: Colors.transparent,
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)),
@@ -146,7 +146,7 @@ class CardOnProvince extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
-                              fontFamily: isKH ? 'Kantumruy' : 'Open Sans',
+                              fontFamily: 'Kantumruy',
                             ),
                           ),
                         ),

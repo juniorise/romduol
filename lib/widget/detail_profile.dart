@@ -38,8 +38,9 @@ class DetailProfile extends StatelessWidget {
     bool isShowPrice = pricefrom != null;
     print(maplocation.latitude);
     double heightTOTAL = 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10;
+    double totalheight = rate != null ? heightTOTAL + 45 : heightTOTAL;
     return Container(
-      height: rate != null ? heightTOTAL + 45 : heightTOTAL,
+      height: totalheight,
       width: width,
       decoration: buildBoxDecoration(),
       padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
@@ -54,7 +55,7 @@ class DetailProfile extends StatelessWidget {
                   title,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: isKH ? 14 : 15,
+                    fontSize: 14,
                     color: Palette.bgdark.withOpacity(0.8),
                   ),
                 ),
@@ -64,7 +65,6 @@ class DetailProfile extends StatelessWidget {
                   : SizedBox(),
             ],
           ),
-          SizedBox(height: isKH ? 0 : 5.0),
           LocationText(
             location: location,
             isKH: isKH,
@@ -109,6 +109,7 @@ class DetailProfile extends StatelessWidget {
                 child: FlatButton(
                   height: 48,
                   highlightColor: Palette.sky.withOpacity(0.2),
+                  splashColor: Colors.transparent,
                   onPressed: () {
                     print(maplocation.longitude + maplocation.latitude);
                     Navigator.push(
@@ -161,6 +162,7 @@ class DetailProfile extends StatelessWidget {
                         height: 50,
                         onPressed: onBookPressed,
                         highlightColor: Colors.amber.withOpacity(0.5),
+                        splashColor: Colors.transparent,
                         child: Row(
                           children: [
                             SizedBox(width: 5.0),

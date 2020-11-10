@@ -8,13 +8,14 @@ class ImageViewer extends StatelessWidget {
     @required this.imageList,
     @required this.width,
     @required this.currentImage,
+    @required this.id,
     this.thumnail,
     this.onPageChanged,
   }) : super(key: key);
 
   final PageController pageController;
-  final List<String> imageList;
-  final String thumnail;
+  final List<dynamic> imageList;
+  final String thumnail, id;
   final double width;
   final int currentImage;
   final Function onPageChanged;
@@ -29,7 +30,7 @@ class ImageViewer extends StatelessWidget {
         buildImage(
           index: 0,
           child: Hero(
-            tag: "thumnail" + thumnail,
+            tag: "thumnail" + thumnail + id,
             child: NetworkImageLoader(
               imagelocation: thumnail,
               onPressed: () {},
@@ -57,8 +58,8 @@ class ImageViewer extends StatelessWidget {
           Positioned.fill(child: child),
           Positioned.fill(
             child: FlatButton(
-              highlightColor: Colors.white.withOpacity(0.2),
-              splashColor: Colors.black.withOpacity(0.2),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               onPressed: () {
                 print(index);
                 print(imageList.length);
