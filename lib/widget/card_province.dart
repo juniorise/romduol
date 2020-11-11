@@ -43,7 +43,7 @@ class _CardOnProvinceState extends State<CardOnProvince> {
           Stack(
             children: [
               Hero(
-                tag: "thumnail" + widget.data.thumbnail + widget.data.id,
+                tag: "thumnail" + widget.data.thumbnail,
                 child: NetworkImageLoader(
                   onPressed: () {},
                   width: width - 15 - 15,
