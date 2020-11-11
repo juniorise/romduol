@@ -83,8 +83,6 @@ class _AdminProvinceState extends State<AdminProvince> {
 
                   List<String> provinces = List(), categories = List();
                   snapshot.data.docs.forEach((element) {
-                    print(element.reference.path);
-
                     categories.add(element.data()['category'] ?? "places");
                     provinces.add(element.data()['province'] ?? "kep");
 

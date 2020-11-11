@@ -233,7 +233,6 @@ class _HomePageState extends State<HomePage> {
                                                       .snapshots(),
                                                   builder: (context, snapshot) {
                                                     int view = 0;
-                                                    print(data.id);
                                                     if (snapshot.hasData) {
                                                       view = snapshot
                                                           .data.docs.length;
@@ -253,8 +252,6 @@ class _HomePageState extends State<HomePage> {
                                                             data.imagelocation,
                                                         onPressed: () {
                                                           if (user != null) {
-                                                            print("HERE" +
-                                                                user.uid);
                                                             Timestamp now =
                                                                 Timestamp.now();
                                                             FirebaseFirestore
@@ -332,8 +329,6 @@ class _HomePageState extends State<HomePage> {
                                                           packages.length,
                                                       itemBuilder: (context, i,
                                                           animation) {
-                                                        print(
-                                                            "heere is ${packages.length}");
                                                         return packages != null
                                                             ? FadeTransition(
                                                                 opacity: Tween<

@@ -19,7 +19,6 @@ class PageRouteTransition<T> extends PageRouteBuilder<T> {
               parent: animation,
               curve: Curves.linear,
             );
-            print(animation.value);
             return Container(
                 child: FadeTransition(opacity: animation, child: child));
           },

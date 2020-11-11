@@ -9,7 +9,6 @@ class Database {
   Stream<List<PackageModel>> get packagesData {
     return packages.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        print(doc.reference.path);
         return PackageModel(
           thumbnail: doc.data()['thumbnail'] ?? null,
           totalspace: doc.data()['totalspace'] ?? null,
@@ -36,7 +35,10 @@ class Database {
     ];
     List<List<CardModel>> _pagesCard = [[], [], [], []];
 
+    _pagesCard.removeRange(0, _pagesCard.length);
+    
     for (int i = 0; i < _pages.length; i++) {
+      _pagesCard.add([]);
       String _page = _pages[i];
       instance
           .collection('$province/$_page/default_data')
@@ -47,8 +49,6 @@ class Database {
           if (_page == "restaurants" && element.data()['foodmenu'] != null) {
             List<dynamic> parentMap = element.data()['foodmenu'];
             parentMap.forEach((element) {
-              print(element['title']);
-              print(element['thumbnail']);
               foodMenu.add(
                 FoodMenu(
                   title: element['title'],
@@ -64,7 +64,6 @@ class Database {
           if (element.data()['comments'] != null) {
             List<dynamic> parentComment = element.data()['comments'];
             parentComment.forEach((element) {
-              print("HERE IS " + element['uid']);
               comments.add(CommentModel(
                 uid: element['uid'],
                 name: "Anonymous",
@@ -76,14 +75,16 @@ class Database {
               ratetotal += element['rate'];
             });
           }
-          double lastrate = (((ratetotal / comments.length) * 100).roundToDouble()) / 100;
+          double lastrate =
+              (((ratetotal / comments.length) * 100).roundToDouble()) / 100;
 
-          for(double i=0; i<5; i+= 0.5){
-            if(lastrate < i){
-              lastrate = i - 0.5;
-              i = 5;
+          for (double k = 0; k < 5; k += 0.5) {
+            if (lastrate < i) {
+              lastrate = k - 0.5;
+              k = 5;
             }
           }
+
           _pagesCard[i].add(CardModel(
             title: element.data()['title'] ?? "No title provided.",
             location: element.data()['location'] ?? "No location provided.",
@@ -95,9 +96,7 @@ class Database {
             pricetotal: element.data()['pricetotal'] != null
                 ? element.data()['pricetotal'].toDouble()
                 : null ?? null,
-            ratingaverage: !(ratetotal / 5).isNaN
-                ? lastrate
-                : 0,
+            ratingaverage: !(ratetotal / 5).isNaN ? lastrate : 0,
             ratetotal: comments != null ? comments.length : 0,
             maplocation: element.data()['maplocation'] ?? null,
             refpath: element.reference.path,

@@ -21,16 +21,13 @@ class _CommentPageState extends State<CommentPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
-    
-    return Scaffold(
-      appBar: buildAppBar(context, widget.isKH ? "មតិយោបល់" : "Recommends"),
-      body: ListView(
-        children: [
-          for (int index = 0; index < widget.comments.length; index++)
-            buildComment(width, index),
-          SizedBox(height: 10),
-        ],
-      ),
+
+    return ListView(
+      physics: ClampingScrollPhysics(),
+      children: [
+        for (int index = 0; index < widget.comments.length; index++)
+          buildComment(width, index),
+      ],
     );
   }
 
@@ -114,50 +111,6 @@ class _CommentPageState extends State<CommentPage> {
                     )
                   ],
                 ),
-                // SizedBox(height: 10),
-                // Container(
-                //   height: 20,
-                //   child: Row(
-                //     crossAxisAlignment: CrossAxisAlignment.end,
-                //     mainAxisAlignment: MainAxisAlignment.end,
-                //     children: [
-                //       Container(
-                //         child: FlatButton.icon(
-                //           onPressed: () {},
-                //           icon: Icon(
-                //             Icons.thumb_up,
-                //             color: Palette.sky,
-                //             size: 16,
-                //           ),
-                //           label: Text(
-                //             isKH ? "មានប្រយោជន៍" : "Useful",
-                //             style: TextStyle(
-                //               color: Palette.text,
-                //               fontSize: 12,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //       Container(
-                //         child: FlatButton.icon(
-                //           onPressed: () {},
-                //           icon: Icon(
-                //             Icons.thumb_down_outlined,
-                //             color: Palette.red,
-                //             size: 16,
-                //           ),
-                //           label: Text(
-                //             isKH ? "មិនផ្តល់ប្រយោជន៍" : "Not correct",
-                //             style: TextStyle(
-                //               color: Palette.text,
-                //               fontSize: 12,
-                //             ),
-                //           ),
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // )
               ],
             ),
           );

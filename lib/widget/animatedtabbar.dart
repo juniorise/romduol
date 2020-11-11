@@ -1,10 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/lang/lang.dart';
 
 class AnimatedTabBar extends StatefulWidget {
-  final PageController pageController;
+  final PreloadPageController pageController;
   final int currentPage;
   final ScrollController scrollController;
   final Function onTap;

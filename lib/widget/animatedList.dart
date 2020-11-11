@@ -11,12 +11,14 @@ class AnimatedLists extends StatefulWidget {
       this.isAnimated = false,
       @required this.isKH,
       this.onEditPressed,
-      this.isIgnoring = false})
+      this.isIgnoring = false,
+      this.onPop})
       : super(key: key);
 
   final List<CardModel> data;
   final bool isAnimated, isKH, isIgnoring;
   final List<Function> onEditPressed;
+  final Function onPop;
   @override
   _AnimatedListsState createState() => _AnimatedListsState();
 }
@@ -24,6 +26,7 @@ class AnimatedLists extends StatefulWidget {
 class _AnimatedListsState extends State<AnimatedLists> {
   @override
   Widget build(BuildContext context) {
+
     Size size = MediaQuery.of(context).size;
     double width = size.width;
     if (widget.data.length < 1)
@@ -59,6 +62,7 @@ class _AnimatedListsState extends State<AnimatedLists> {
                 CardOnProvince(
                   data: data,
                   isKH: widget.isKH,
+                  onPop: widget.onPop,
                 ),
                 widget.onEditPressed != null
                     ? Positioned(

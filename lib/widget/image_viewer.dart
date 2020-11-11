@@ -61,8 +61,6 @@ class ImageViewer extends StatelessWidget {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onPressed: () {
-                print(index);
-                print(imageList.length);
                 if (index == imageList.length) {
                   pageController.animateToPage(
                     0,

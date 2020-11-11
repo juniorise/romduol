@@ -12,6 +12,7 @@ import 'package:romduol/widget/animatedtabbar.dart';
 import 'package:romduol/widget/fadeinout.dart';
 import 'package:romduol/services/database.dart';
 import 'package:romduol/widget/theme.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 
 class Province extends StatefulWidget {
   final String province, enprovince;
@@ -29,7 +30,7 @@ class Province extends StatefulWidget {
 }
 
 class _ProvinceState extends State<Province> {
-  PageController _pageController;
+  PreloadPageController _pageController;
   ScrollController _scrollController = ScrollController();
   bool isSearching = false;
   bool isSearched = false;
@@ -41,8 +42,7 @@ class _ProvinceState extends State<Province> {
   @override
   void initState() {
     super.initState();
-    print(widget.isKH);
-    _pageController = PageController(initialPage: currentPage);
+    _pageController = PreloadPageController(initialPage: currentPage);
     _pageController.addListener(pageControllerListener);
   }
 
@@ -63,7 +63,7 @@ class _ProvinceState extends State<Province> {
     return StreamProvider<List<List<CardModel>>>.value(
       value: _checkProvince(),
       builder: (context, snapshot) {
-        final List<List<CardModel>> pagesCard =
+        List<List<CardModel>> pagesCard =
             Provider.of<List<List<CardModel>>>(context) ?? [[]];
 
         for (int i = 0; i < pagesCard.length; i++) {
@@ -112,7 +112,7 @@ class _ProvinceState extends State<Province> {
                 ),
               ),
             ),
-            body: PageView(
+            body: PreloadPageView(
               physics: BouncingScrollPhysics(),
               controller: _pageController,
               onPageChanged: (page) {
@@ -128,11 +128,18 @@ class _ProvinceState extends State<Province> {
                   FadeInOut(
                     index: i,
                     child: AnimatedLists(
-                      data: !isSearched ? pagesCard[i] : data,
-                      isAnimated: isAnimated[i],
-                      isKH: widget.isKH,
-                      onEditPressed: isEditable() ? onTaps[i] : null,
-                    ),
+                        data: !isSearched ? pagesCard[i] : data,
+                        isAnimated: isAnimated[i],
+                        isKH: widget.isKH,
+                        onEditPressed: isEditable() ? onTaps[i] : null,
+                        onPop: () {
+                          setState(() {
+                            pagesCard.removeRange(0, pagesCard.length);
+                            pagesCard =
+                                Provider.of<List<List<CardModel>>>(context, listen: false) ??
+                                    [[]];
+                          });
+                        }),
                   ),
               ],
             ),
@@ -236,15 +243,12 @@ class _ProvinceState extends State<Province> {
         'restaurants/default_data',
       ];
       String _ref = refpath + _path[pageCurrent];
-      print(_ref);
       if (data != null) data.removeRange(0, data.length);
       FirebaseFirestore.instance
           .collection(_ref)
           .snapshots()
           .forEach((element) {
         element.docs.forEach((element) {
-          print(element['title']);
-          print("រង្វង់".contains(value));
           setState(() => isSearched = true);
           if (element['title'].contains(value))
             data.add(CardModel(
@@ -292,8 +296,8 @@ class _ProvinceState extends State<Province> {
   }
 
   bool isEditable() {
-    if(widget.user != null){
-      if(widget.user.role == "Admin"){
+    if (widget.user != null) {
+      if (widget.user.role == "Admin") {
         return true;
       }
     }

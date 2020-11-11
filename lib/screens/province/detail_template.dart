@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
+import 'package:romduol/screens/auth/login.dart';
 import 'package:romduol/screens/booking/b_accomodation.dart';
 import 'package:romduol/screens/booking/b_bike.dart';
 import 'package:romduol/screens/booking/b_boat.dart';
@@ -38,10 +39,11 @@ class _DetailTemplateState extends State<DetailTemplate> {
   TextEditingController _recommenedController = TextEditingController();
 
   bool isVisible = false, validate = true, loading = false;
-  String error = "HAHAH";
+  String error = "";
   double rate = 0;
 
   double rateTOTAL = 10;
+  dynamic result;
 
   @override
   void dispose() {
@@ -55,39 +57,44 @@ class _DetailTemplateState extends State<DetailTemplate> {
     double rate,
     UserData userData,
   }) async {
-    FirebaseFirestore.instance
-        .doc(widget.data.refpath)
-        .snapshots()
-        .forEach((element) {
-      print("I AM COLLECTION SNAPHSPTOOT");
+    if (userData != null) {
+      FirebaseFirestore.instance
+          .doc(widget.data.refpath)
+          .snapshots()
+          .forEach((element) {
 
-      List<String> uids = List();
-      element.data()['comments'].forEach((element) {
-        uids.add(element['uid']);
-      });
-
-      if (!uids.contains(userData.uid)) {
-        try {
-          WriteData().uploadRecommend(
-            text: text,
-            rate: rate,
-            ref: widget.data.refpath,
-            uid: userData.uid,
-          );
-          setState(() => loading = false);
-        } catch (e) {
-          error = e.toString();
-          validate = false;
-          setState(() => loading = false);
+        List<String> uids = List();
+        if (element.data()['comments'] != null) {
+          element.data()['comments'].forEach((element) {
+            uids.add(element['uid']);
+          });
         }
-      } else {
-        setState(() {
+
+        if (!uids.contains(userData.uid)) {
+          try {
+            result = WriteData().uploadRecommend(
+              text: text,
+              rate: rate,
+              ref: widget.data.refpath,
+              uid: userData.uid,
+            );
+            if (result != null) setState(() => loading = false);
+          } catch (e) {
+            error = e.toString();
+            validate = false;
+            setState(() => loading = false);
+          }
+        } else {
           error = "You have recommended!";
           validate = false;
           setState(() => loading = false);
-        });
-      }
-    });
+        }
+      });
+    } else {
+      error = "Please sign in first!";
+      validate = false;
+      setState(() => loading = false);
+    }
   }
 
   @override
@@ -95,7 +102,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
     final user = Provider.of<CustomUser>(context);
 
     double width = MediaQuery.of(context).size.width;
-    // double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
     return StreamBuilder<UserData>(
         stream: UserDatabase(uid: user.uid).userData,
         builder: (context, snapshot) {
@@ -168,7 +175,6 @@ class _DetailTemplateState extends State<DetailTemplate> {
                       location: widget.data.location,
                       onBookPressed: () {
                         Widget screen;
-                        print(widget.data.refpath);
 
                         if (widget.data.refpath.contains('accomodations'))
                           screen = BookingAccomodation(isKH: widget.isKH);
@@ -191,10 +197,9 @@ class _DetailTemplateState extends State<DetailTemplate> {
                       },
                       ratingaverage: widget.data.ratingaverage,
                       ratetotal: widget.data.ratetotal,
-                      isBookAble: widget.data.pricefrom != null ||
-                              widget.data.pricetotal != null
-                          ? true
-                          : false,
+                      isBookAble: widget.data.pricefrom != null &&
+                          widget.data.pricefrom > 0 &&
+                          widget.data.pricetotal > 0,
                       maplocation: widget.data.maplocation,
                       isKH: widget.isKH,
                     ),
@@ -236,125 +241,186 @@ class _DetailTemplateState extends State<DetailTemplate> {
                               ],
                             ),
                             SizedBox(height: 10),
-                            userData != null
-                                ? Container(
-                                    width: width,
-                                    constraints:
-                                        BoxConstraints(minHeight: 201.0),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    decoration: buildBoxDecoration(),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          widget.isKH
-                                              ? "បញ្ចេញមតិយោបល់"
-                                              : "Recommend",
-                                          style: TextStyle(
-                                              fontFamily: 'Kantumruy'),
+                            Container(
+                              decoration: buildBoxDecoration(),
+                              width: width,
+                              constraints: BoxConstraints(minHeight: 201.0),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    widget.isKH
+                                        ? "បញ្ចេញមតិយោបល់"
+                                        : "Recommend",
+                                    style: TextStyle(fontFamily: 'Kantumruy'),
+                                  ),
+                                  SizedBox(height: 5),
+                                  StarRating(
+                                    size: 30,
+                                    rating: rate,
+                                    onRatingChanged: (double _rate) {
+                                      setState(() => rate = _rate);
+                                    },
+                                  ),
+                                  SizedBox(height: 15),
+                                  TextField(
+                                    maxLines: null,
+                                    controller: _recommenedController,
+                                    style: TextStyle(fontSize: 13),
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 5,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: const BorderRadius.all(
+                                          const Radius.circular(5.0),
                                         ),
-                                        SizedBox(height: 5),
-                                        StarRating(
-                                          size: 30,
-                                          rating: rate,
-                                          onRatingChanged: (double _rate) {
-                                            setState(() => rate = _rate);
-                                          },
-                                        ),
-                                        SizedBox(height: 15),
-                                        TextField(
-                                          maxLines: null,
-                                          controller: _recommenedController,
-                                          style: TextStyle(fontSize: 13),
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 10.0,
-                                                    vertical: 5),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                const Radius.circular(5.0),
-                                              ),
-                                              borderSide: BorderSide.none,
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      hintText: widget.isKH
+                                          ? "មតិយោបល់"
+                                          : "Write your recommendation...",
+                                      fillColor:
+                                          Palette.bggrey.withOpacity(0.3),
+                                      filled: true,
+                                    ),
+                                  ),
+                                  SizedBox(height: error.isNotEmpty ? 5.0 : 0),
+                                  error.isNotEmpty
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 5.0,
                                             ),
-                                            errorText: validate ? "" : error,
-                                            errorStyle:
-                                                TextStyle(color: Palette.red),
-                                            hintText: widget.isKH
-                                                ? "មតិយោបល់"
-                                                : "Write your recommendation...",
-                                            fillColor:
-                                                Palette.bggrey.withOpacity(0.3),
-                                            filled: true,
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        FlatButton(
-                                          onPressed: () {
-                                            if (_recommenedController
-                                                .text.isEmpty) {
-                                              setState(() {
-                                                error = "Empty";
-                                                validate = false;
-                                              });
-                                            } else if (rate == 0) {
-                                              setState(() {
-                                                error = "Rate can't be zero";
-                                                validate = false;
-                                              });
-                                            } else {
-                                              setState(() => loading = true);
-                                              writeRecommendToFirebase(
-                                                text:
-                                                    _recommenedController.text,
-                                                rate: rate,
-                                                userData: userData,
-                                              );
-                                            }
-                                          },
-                                          color: Palette.sky,
-                                          splashColor: Colors.transparent,
-                                          child: !loading
-                                              ? Text(
-                                                  widget.isKH
-                                                      ? "បង្ហោះជាសាធារណះ"
-                                                      : "Publish",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13,
-                                                  ),
-                                                )
-                                              : Center(
-                                                  heightFactor: 1,
-                                                  child: Container(
-                                                    width: 30,
-                                                    height: 30,
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  ),
-                                                ),
+                                            Text(
+                                              error,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Palette.red,
+                                              ),
+                                            ),
+                                            SizedBox(width: 5.0),
+                                            userData == null &&
+                                                    error ==
+                                                        "Please sign in first!"
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              LoginScreen(
+                                                            isKH: widget.isKH,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Sign in",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Palette.sky,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : SizedBox()
+                                          ],
                                         )
-                                      ],
+                                      : SizedBox(),
+                                  SizedBox(height: 10),
+                                  AnimatedContainer(
+                                    width: 160,
+                                    duration: Duration(milliseconds: 100),
+                                    child: FlatButton(
+                                      onPressed: () {
+                                        if (_recommenedController
+                                            .text.isEmpty) {
+                                          setState(() {
+                                            error = "Empty string";
+                                            validate = false;
+                                          });
+                                        } else if (rate == 0) {
+                                          setState(() {
+                                            error = "Rate can't be zero";
+                                            validate = false;
+                                          });
+                                        } else {
+                                          setState(() => loading = true);
+                                          writeRecommendToFirebase(
+                                            text: _recommenedController.text,
+                                            rate: rate,
+                                            userData: userData,
+                                          );
+                                        }
+                                      },
+                                      color: Palette.sky,
+                                      splashColor: Colors.transparent,
+                                      child: !loading
+                                          ? Text(
+                                              widget.isKH
+                                                  ? result == null
+                                                      ? "បង្ហោះជាសាធារណះ"
+                                                      : "បានបង្ហោះ"
+                                                  : result == null
+                                                      ? "Publish"
+                                                      : "Publised",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13,
+                                              ),
+                                            )
+                                          : Center(
+                                              heightFactor: 1,
+                                              child: Container(
+                                                width: 10,
+                                                height: 10,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(Colors.white),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   )
-                                : SizedBox(),
+                                ],
+                              ),
+                            ),
                             Builder(builder: (context) {
                               return FlatButton(
                                 onPressed: () {
                                   final snackBar = SnackBar(
-                                      content: Text('No comments'),
-                                      backgroundColor: Palette.sky);
+                                    content: Text('No comments'),
+                                    backgroundColor: Palette.sky,
+                                  );
                                   if (widget.data.comments != null) {
                                     if (widget.data.comments.length > 0) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CommentPage(
-                                            comments: widget.data.comments,
-                                            isKH: widget.isKH,
+                                      showBottomSheet(
+                                        context: context,
+                                        builder: (context) => Container(
+                                          height: height - (150 + 48.0 + 24),
+                                          decoration: buildBoxDecoration(),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                height: height -
+                                                    201 -
+                                                    (150 + 48.0 + 24),
+                                                child: CommentPage(
+                                                  comments:
+                                                      widget.data.comments,
+                                                  isKH: widget.isKH,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       );
@@ -375,7 +441,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                                   textAlign: TextAlign.left,
                                 ),
                               );
-                            })
+                            }),
                           ],
                         ),
                       ),

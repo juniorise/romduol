@@ -86,7 +86,7 @@ class _AddToProvinceState extends State<AddToProvince> {
         location: location != '' ? location.trim() : "No location provided.",
         thumbnail: thumbnail != 'no'
             ? thumbnail.trim()
-            : 'https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/commons%2Feror404.jpg?alt=media&token=7797e47e-a775-4c32-ba96-393b985436ee',
+            : 'https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/commons%2Ferror-image-generic.png?alt=media&token=4fdd9d9b-04f6-4228-8b13-cd19a27fd44f',
         id: id ?? "No id provided.",
         pricefrom: !isPlace ? fpricefrom : 0,
         pricetotal: !isPlace ? fpricetotal : 0,
@@ -95,6 +95,7 @@ class _AddToProvinceState extends State<AddToProvince> {
         maplocation: GeoPoint(flatitude, flongtitude),
         images: images,
         articles: paragraphs,
+        comments: widget.data.comments,
       );
 
       try {
@@ -104,11 +105,11 @@ class _AddToProvinceState extends State<AddToProvince> {
           category: selectedCategory,
           uid: uid,
         );
-        setState(() => loading = false);
       } catch (e) {
         error = e.toString();
-        setState(() => loading = false);
       }
+
+      setState(() => loading = false);
     }
   }
 

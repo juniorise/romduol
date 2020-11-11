@@ -23,13 +23,25 @@ class WriteData {
     };
 
     var list = [inputcomment];
-    instance.doc(ref).update({
+    dynamic res = instance.doc(ref).update({
       "comments": FieldValue.arrayUnion(list),
     });
+
+    return res;
   }
 
   Future<void> uploadToProvince(
       {CardModel data, String province, String category, String uid}) async {
+    
+    var comments = data.comments
+        .map((e) => {
+              'comment': e.comment,
+              'rate': e.rating,
+              "date": e.date,
+              "uid": e.uid,
+            })
+        .toList();
+
     instance.doc('$province/$category/default_data/${data.id}/').set({
       "province": province,
       "category": category,
@@ -43,6 +55,7 @@ class WriteData {
       "images": FieldValue.arrayUnion(data.images),
       "articles": FieldValue.arrayUnion(data.articles),
       "authur": uid,
+      "comments": comments != null ? FieldValue.arrayUnion(comments) : null,
     });
   }
 
@@ -52,6 +65,14 @@ class WriteData {
     String category,
     String uid,
   }) async {
+    var comments = data.comments
+        .map((e) => {
+              'comment': e.comment,
+              'rate': e.rating,
+              "date": e.date,
+              "uid": e.uid,
+            })
+        .toList();
     await instance.collection("userData/$uid/provincedraft").doc(data.id).set(
       {
         "province": province,
@@ -66,6 +87,7 @@ class WriteData {
         "images": FieldValue.arrayUnion(data.images),
         "articles": FieldValue.arrayUnion(data.articles),
         "authur": uid,
+        "comments": FieldValue.arrayUnion(comments),
       },
     );
   }

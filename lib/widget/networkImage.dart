@@ -24,7 +24,7 @@ class NetworkImageLoader extends StatelessWidget {
       child: CachedNetworkImage(
         width: width,
         height: height,
-        imageUrl: imagelocation,
+        imageUrl: imagelocation != null || imagelocation.isNotEmpty ? imagelocation : "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/commons%2Ferror-image-generic.png?alt=media&token=4fdd9d9b-04f6-4228-8b13-cd19a27fd44f",
         fit: BoxFit.cover,
         errorWidget: (context, url, error) => FlatButton(
           height: height,

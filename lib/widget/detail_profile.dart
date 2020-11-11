@@ -36,7 +36,6 @@ class DetailProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isShowPrice = pricefrom != null;
-    print(maplocation.latitude);
     double heightTOTAL = 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10;
     double totalheight = ratingaverage != null ? heightTOTAL + 45 : heightTOTAL;
     return Container(
@@ -111,7 +110,6 @@ class DetailProfile extends StatelessWidget {
                   highlightColor: Palette.sky.withOpacity(0.2),
                   splashColor: Colors.transparent,
                   onPressed: () {
-                    print(maplocation.longitude + maplocation.latitude);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

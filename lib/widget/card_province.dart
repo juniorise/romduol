@@ -7,18 +7,23 @@ import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
 import 'package:romduol/widget/theme.dart';
 
-class CardOnProvince extends StatelessWidget {
+class CardOnProvince extends StatefulWidget {
   final CardModel data;
   final bool isKH;
-  const CardOnProvince({Key key, @required this.data, @required this.isKH})
+  final Function onPop;
+  const CardOnProvince(
+      {Key key, @required this.data, @required this.isKH, this.onPop})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+  _CardOnProvinceState createState() => _CardOnProvinceState();
+}
 
-    print("HEHEIEIE IS MY AVERAGE");
-    print(data.ratingaverage);
+class _CardOnProvinceState extends State<CardOnProvince> {
+  @override
+  Widget build(BuildContext context) {
+
+    Size size = MediaQuery.of(context).size;
     double width = size.width;
     // double height = size.height;
     return Container(
@@ -38,15 +43,17 @@ class CardOnProvince extends StatelessWidget {
           Stack(
             children: [
               Hero(
-                tag: "thumnail" + data.thumbnail + data.id,
+                tag: "thumnail" + widget.data.thumbnail + widget.data.id,
                 child: NetworkImageLoader(
                   onPressed: () {},
                   width: width - 15 - 15,
                   height: 90,
-                  imagelocation: data.thumbnail,
+                  imagelocation: widget.data.thumbnail,
                 ),
               ),
-              data.pricefrom != null && data.pricefrom > 0 && data.pricetotal > 0
+              widget.data.pricefrom != null &&
+                      widget.data.pricefrom > 0 &&
+                      widget.data.pricetotal > 0
                   ? Positioned(
                       top: 10,
                       left: 0,
@@ -58,9 +65,9 @@ class CardOnProvince extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         child: Text(
                           khNum(
-                            (isKH ? "ចាប់ពី​ " : "") +
-                                "${data.pricefrom}\$ - ${data.pricetotal}\$",
-                            isKH,
+                            (widget.isKH ? "ចាប់ពី​ " : "") +
+                                "${widget.data.pricefrom}\$ - ${widget.data.pricetotal}\$",
+                            widget.isKH,
                           ),
                           style: TextStyle(fontSize: 12, color: Palette.text),
                         ),
@@ -77,12 +84,12 @@ class CardOnProvince extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data.title,
+                  widget.data.title,
                   style: TextStyle(color: Palette.bgdark.withOpacity(0.8)),
                 ),
                 LocationText(
-                  location: data.location,
-                  isKH: isKH,
+                  location: widget.data.location,
+                  isKH: widget.isKH,
                 ),
                 Container(
                   height: 32,
@@ -91,20 +98,20 @@ class CardOnProvince extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      data.ratingaverage != null
+                      widget.data.ratingaverage != null
                           ? Row(
                               children: [
                                 StarRating(
-                                    rating: data.ratingaverage.isNaN
+                                    rating: widget.data.ratingaverage.isNaN
                                         ? 0
-                                        : data.ratingaverage),
+                                        : widget.data.ratingaverage),
                                 SizedBox(width: 5),
                                 Text(
                                   khNum(
-                                      !data.ratingaverage.isNaN
-                                          ? data.ratingaverage.toString()
+                                      !widget.data.ratingaverage.isNaN
+                                          ? widget.data.ratingaverage.toString()
                                           : 0.toString(),
-                                      isKH),
+                                      widget.isKH),
                                   style: TextStyle(
                                     color: Palette.text,
                                     fontSize: 14,
@@ -112,7 +119,8 @@ class CardOnProvince extends StatelessWidget {
                                 ),
                                 Text(
                                   "(" +
-                                      khNum(data.ratetotal.toString(), isKH) +
+                                      khNum(widget.data.ratetotal.toString(),
+                                          widget.isKH) +
                                       ")",
                                   style: TextStyle(
                                     color: Palette.bggrey,
@@ -123,8 +131,10 @@ class CardOnProvince extends StatelessWidget {
                             )
                           : SizedBox(),
                       Container(
-                        width: data.pricefrom == null
-                            ? isKH
+                        width: !(widget.data.pricefrom != null &&
+                                widget.data.pricefrom > 0 &&
+                                widget.data.pricetotal > 0)
+                            ? widget.isKH
                                 ? 104
                                 : 104.0 + 10
                             : 104.0 + 17,
@@ -133,22 +143,25 @@ class CardOnProvince extends StatelessWidget {
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)),
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailTemplate(data: data, isKH: isKH),
+                                builder: (context) => DetailTemplate(
+                                    data: widget.data, isKH: widget.isKH),
                               ),
                             );
+                            widget.onPop();
                           },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),
                           label: Text(
-                            data.pricefrom == null
-                                ? isKH
+                            !(widget.data.pricefrom != null &&
+                                    widget.data.pricefrom > 0 &&
+                                    widget.data.pricetotal > 0)
+                                ? widget.isKH
                                     ? "អានបន្ថែម"
                                     : "Read more"
-                                : isKH
+                                : widget.isKH
                                     ? "ព័ត៏មានបន្ថែម"
                                     : "More info",
                             style: TextStyle(
