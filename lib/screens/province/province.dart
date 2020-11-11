@@ -128,18 +128,20 @@ class _ProvinceState extends State<Province> {
                   FadeInOut(
                     index: i,
                     child: AnimatedLists(
-                        data: !isSearched ? pagesCard[i] : data,
-                        isAnimated: isAnimated[i],
-                        isKH: widget.isKH,
-                        onEditPressed: isEditable() ? onTaps[i] : null,
-                        onPop: () {
-                          setState(() {
-                            pagesCard.removeRange(0, pagesCard.length);
-                            pagesCard =
-                                Provider.of<List<List<CardModel>>>(context, listen: false) ??
-                                    [[]];
-                          });
-                        }),
+                      data: !isSearched ? pagesCard[i] : data,
+                      isAnimated: isAnimated[i],
+                      isKH: widget.isKH,
+                      onEditPressed: isEditable() ? onTaps[i] : null,
+                      onPop: () {
+                        setState(() {
+                          pagesCard.removeRange(0, pagesCard.length);
+                          pagesCard = Provider.of<List<List<CardModel>>>(
+                                  context,
+                                  listen: false) ??
+                              [[]];
+                        });
+                      },
+                    ),
                   ),
               ],
             ),

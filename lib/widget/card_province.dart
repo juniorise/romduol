@@ -22,7 +22,6 @@ class CardOnProvince extends StatefulWidget {
 class _CardOnProvinceState extends State<CardOnProvince> {
   @override
   Widget build(BuildContext context) {
-
     Size size = MediaQuery.of(context).size;
     double width = size.width;
     // double height = size.height;
@@ -43,7 +42,9 @@ class _CardOnProvinceState extends State<CardOnProvince> {
           Stack(
             children: [
               Hero(
-                tag: "thumnail" + widget.data.thumbnail,
+                tag: widget.data.id != null
+                    ? widget.data.id
+                    : widget.data.thumbnail,
                 child: NetworkImageLoader(
                   onPressed: () {},
                   width: width - 15 - 15,
@@ -145,12 +146,11 @@ class _CardOnProvinceState extends State<CardOnProvince> {
                               borderRadius: BorderRadius.circular(18)),
                           onPressed: () async {
                             await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailTemplate(
-                                    data: widget.data, isKH: widget.isKH),
-                              ),
-                            );
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailTemplate(
+                                      data: widget.data, isKH: widget.isKH),
+                                ));
                             widget.onPop();
                           },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),

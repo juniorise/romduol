@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
@@ -112,9 +113,11 @@ class _HomePageState extends State<HomePage> {
                             onTab: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      NotificationScreen(isKH: isKH),
+                                PageTransition(
+                                  child: NotificationScreen(isKH: isKH),
+                                  type: PageTransitionType.fade,
+                                  curve: Curves.ease,
+                                  duration: Duration(milliseconds: 150)
                                 ),
                               );
                             },
@@ -128,8 +131,15 @@ class _HomePageState extends State<HomePage> {
                       onLangTab: () => setState(() {
                         isKH = !isKH;
                         Lang().setLang(isKH);
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => MyApp()));
+
+                        Navigator.pushReplacement(
+                          context,
+                          PageTransition(
+                              child: MyApp(),
+                              type: PageTransitionType.fade,
+                              curve: Curves.ease,
+                              duration: Duration(milliseconds: 150)),
+                        );
                       }),
                       onWillPop: _onWillPop,
                       isKH: isKH,
@@ -259,27 +269,33 @@ class _HomePageState extends State<HomePage> {
                                                                 .doc(collectionPath +
                                                                     "${user.uid}")
                                                                 .set(({
-                                                                  'uid': user
-                                                                      .uid,
+                                                                  'uid':
+                                                                      user.uid,
                                                                   'date': now,
                                                                 }));
                                                           }
 
                                                           Navigator.push(
                                                             context,
-                                                            MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      Province(
-                                                                province: data
-                                                                    .province,
-                                                                enprovince: data
-                                                                    .enprovince,
-                                                                isKH: isKH,
-                                                                user: usnapshot
-                                                                    .data,
-                                                              ),
-                                                            ),
+                                                            PageTransition(
+                                                                child: Province(
+                                                                  province: data
+                                                                      .province,
+                                                                  enprovince: data
+                                                                      .enprovince,
+                                                                  isKH: isKH,
+                                                                  user:
+                                                                      usnapshot
+                                                                          .data,
+                                                                ),
+                                                                type:
+                                                                    PageTransitionType
+                                                                        .fade,
+                                                                curve:
+                                                                    Curves.ease,
+                                                                duration: Duration(
+                                                                    milliseconds:
+                                                                        150)),
                                                           );
                                                         },
                                                       ),
@@ -400,11 +416,14 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => PackageDetail(
+            PageTransition(
+              child: PackageDetail(
                 package: package,
                 isKH: isKH,
               ),
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 150),
+              type: PageTransitionType.fade,
             ),
           );
         },
@@ -420,7 +439,7 @@ class _HomePageState extends State<HomePage> {
                   height: 60,
                   alignment: Alignment.center,
                   child: Hero(
-                    tag: "thumnail" + package.thumbnail,
+                    tag: package.id != null ? package.id : package.thumbnail,
                     child: NetworkImageLoader(
                       onPressed: onErrorPressed,
                       imagelocation: package.thumbnail,

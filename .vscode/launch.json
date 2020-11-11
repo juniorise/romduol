@@ -22,6 +22,12 @@
             "name": "romduol",
             "request": "launch",
             "type": "dart"
+        },
+        {
+            "name": "Flutter",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
         }
     ]
 }
