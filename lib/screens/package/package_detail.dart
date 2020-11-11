@@ -60,6 +60,7 @@ class _PackageDetailState extends State<PackageDetail> {
                       return noData();
                     else if (snapshot.hasData) {
                       snapshot.data.docs.forEach((element) {
+                        print(element['image']);
                         try {
                           images.add(element['image']);
                         } catch (e) {

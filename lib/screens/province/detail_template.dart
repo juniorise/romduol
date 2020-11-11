@@ -36,9 +36,11 @@ class _DetailTemplateState extends State<DetailTemplate> {
   bool scrollEnabled = true;
   final bool isHasPrice = false;
   bool isZoom = false;
+  ScrollController scrollController = ScrollController();
   TextEditingController _recommenedController = TextEditingController();
 
-  bool isVisible = false, validate = true, loading = false;
+  bool isVisible = false, validate = true, loading = false, _isVisible = true;
+
   String error = "";
   double rate = 0;
 
@@ -46,8 +48,26 @@ class _DetailTemplateState extends State<DetailTemplate> {
   dynamic result;
 
   @override
+  void initState() {
+    scrollController.addListener(() {
+      if (scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_isVisible) setState(() => _isVisible = false);
+      } else if (scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_isVisible &&
+            scrollController.offset <
+                scrollController.position.maxScrollExtent - 40 - 10 - 200 - 10)
+          setState(() => _isVisible = true);
+      }
+    });
+    super.initState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
+    scrollController.dispose();
     _recommenedController.dispose();
     _imageController.dispose();
   }
@@ -62,7 +82,6 @@ class _DetailTemplateState extends State<DetailTemplate> {
           .doc(widget.data.refpath)
           .snapshots()
           .forEach((element) {
-
         List<String> uids = List();
         if (element.data()['comments'] != null) {
           element.data()['comments'].forEach((element) {
@@ -102,7 +121,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
     final user = Provider.of<CustomUser>(context);
 
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    // double height = MediaQuery.of(context).size.height;
     return StreamBuilder<UserData>(
         stream: UserDatabase(uid: user.uid).userData,
         builder: (context, snapshot) {
@@ -113,6 +132,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
           return Scaffold(
             backgroundColor: Palette.bg,
             body: CustomScrollView(
+              controller: scrollController,
               slivers: [
                 SliverAppBar(
                   titleSpacing: 0.0,
@@ -244,7 +264,7 @@ class _DetailTemplateState extends State<DetailTemplate> {
                             Container(
                               decoration: buildBoxDecoration(),
                               width: width,
-                              constraints: BoxConstraints(minHeight: 201.0),
+                              constraints: BoxConstraints(minHeight: 200.0),
                               padding: EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 20),
                               child: Column(
@@ -392,66 +412,67 @@ class _DetailTemplateState extends State<DetailTemplate> {
                                 ],
                               ),
                             ),
-                            Builder(builder: (context) {
-                              return FlatButton(
-                                onPressed: () {
-                                  final snackBar = SnackBar(
-                                    content: Text('No comments'),
-                                    backgroundColor: Palette.sky,
-                                  );
-                                  if (widget.data.comments != null) {
-                                    if (widget.data.comments.length > 0) {
-                                      showBottomSheet(
-                                        context: context,
-                                        builder: (context) => Container(
-                                          height: height - (150 + 48.0 + 24),
-                                          decoration: buildBoxDecoration(),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                height: height -
-                                                    201 -
-                                                    (150 + 48.0 + 24),
-                                                child: CommentPage(
-                                                  comments:
-                                                      widget.data.comments,
-                                                  isKH: widget.isKH,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  } else
-                                    Scaffold.of(context).showSnackBar(snackBar);
-                                },
-                                highlightColor: Colors.white,
-                                splashColor: Colors.white,
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(
-                                  widget.isKH
-                                      ? "មតិយោបល់ (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})"
-                                      : "Comments (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})",
-                                  style: TextStyle(
-                                    color: Palette.sky,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              );
-                            }),
+                            SizedBox(height: 10),
+                            showCommentsButton(context, !_isVisible),
                           ],
                         ),
                       ),
+                      
                     ],
                   ),
                 )
               ],
             ),
+            bottomNavigationBar: Builder(builder: (context) {
+              return showCommentsButton(context, _isVisible);
+            }),
           );
         });
+  }
+
+  AnimatedContainer showCommentsButton(BuildContext context, bool isVisible) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      height: isVisible ? 48.0 : 0.0,
+      padding: EdgeInsets.only(top: isVisible ? 0.0 : 18.0,),
+      width: MediaQuery.of(context).size.width,
+      decoration: buildBoxDecoration(),
+      child: FlatButton(
+        onPressed: () {
+          scrollController.animateTo(100,
+              duration: Duration(milliseconds: 100), curve: Curves.bounceIn);
+          final snackBar = SnackBar(
+            content: Text('No comments'),
+            backgroundColor: Palette.sky,
+          );
+          if (widget.data.comments != null) {
+            if (widget.data.comments.length > 0) {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => Center(
+                  child: Container(
+                    decoration:
+                        buildBoxDecoration().copyWith(color: Palette.bg),
+                    child: CommentPage(
+                      comments: widget.data.comments,
+                      isKH: widget.isKH,
+                    ),
+                  ),
+                ),
+              );
+            }
+          } else
+            Scaffold.of(context).showSnackBar(snackBar);
+        },
+        child: Text(
+          widget.isKH
+              ? "មតិយោបល់ (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})"
+              : "Comments (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})",
+          style: TextStyle(color: Palette.sky),
+          textAlign: TextAlign.left,
+        ),
+      ),
+    );
   }
 }
 

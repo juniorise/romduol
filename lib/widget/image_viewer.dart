@@ -30,7 +30,7 @@ class ImageViewer extends StatelessWidget {
         buildImage(
           index: 0,
           child: Hero(
-            tag: "thumnail" + thumnail + id,
+            tag: "thumnail" + thumnail,
             child: NetworkImageLoader(
               imagelocation: thumnail,
               onPressed: () {},
