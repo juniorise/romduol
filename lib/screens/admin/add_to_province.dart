@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
-import 'package:romduol/screens/package/aboutpack.dart';
 import 'package:romduol/services/auth.dart';
 import 'package:romduol/services/validation.dart';
 import 'package:romduol/services/write_data.dart';
@@ -49,7 +48,7 @@ class _AddToProvinceState extends State<AddToProvince> {
       ratetotal,
       rating;
 
-  var flatitude, flongtitude, fpricefrom, fpricetotal, frating, fratetotal;
+  var flatitude, flongtitude, fpricefrom, fpricetotal;
 
   List<dynamic> images = [''];
   List<dynamic> paragraphs = [''];
@@ -62,17 +61,20 @@ class _AddToProvinceState extends State<AddToProvince> {
   final _formKey = GlobalKey<FormState>();
 
   void toNumber() {
-    flatitude = double.parse(latitude.trim());
-    flongtitude = double.parse(longtitude.trim());
-    if (!isPlace) {
-      fratetotal = int.parse(ratetotal.trim());
-      frating = double.parse(rating.trim());
-      fpricefrom = double.parse(pricefrom.trim());
-      fpricetotal = double.parse(pricetotal.trim());
+    if (flatitude != null && flongtitude != null) {
+      try {
+        flatitude = double.parse(latitude.trim());
+        flongtitude = double.parse(longtitude.trim());
+      } catch (e) {}
 
-      print("$fpricefrom, $fpricetotal, $frating, $fratetotal, ");
+      print("$flatitude, $flongtitude");
     }
-    print("$flatitude, $flongtitude");
+    if (!isPlace) {
+      try {
+        fpricefrom = double.parse(pricefrom.trim());
+        fpricetotal = double.parse(pricetotal.trim());
+      } catch (e) {}
+    }
   }
 
   CardModel data;
@@ -82,20 +84,20 @@ class _AddToProvinceState extends State<AddToProvince> {
       toNumber();
 
       data = CardModel(
-        title: name != '' ? name : "No title provided.",
+        title: name != '' ? name.trim() : "No title provided.",
         location: location != '' ? location.trim() : "No location provided.",
         thumbnail: thumbnail != 'no'
             ? thumbnail.trim()
             : 'https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/commons%2Ferror-image-generic.png?alt=media&token=4fdd9d9b-04f6-4228-8b13-cd19a27fd44f',
-        id: id ?? "No id provided.",
+        id: id.trim() ?? "No id provided.",
         pricefrom: !isPlace ? fpricefrom : 0,
         pricetotal: !isPlace ? fpricetotal : 0,
-        ratingaverage: !isPlace ? frating : 0,
-        ratetotal: !isPlace ? fratetotal : 0,
-        maplocation: GeoPoint(flatitude, flongtitude),
+        maplocation: flatitude != null && flongtitude != null
+            ? GeoPoint(flatitude, flongtitude)
+            : GeoPoint(0, 0),
         images: images,
         articles: paragraphs,
-        comments: widget.data.comments,
+        comments: widget.data != null ? widget.data.comments : List(),
       );
 
       try {
@@ -118,9 +120,9 @@ class _AddToProvinceState extends State<AddToProvince> {
       savedraft(uid, context);
       await WriteData().uploadToProvince(
         data: data,
-        province: selectedProvince,
-        category: selectedCategory,
-        uid: uid,
+        province: selectedProvince.trim(),
+        category: selectedCategory.trim(),
+        uid: uid.trim(),
       );
     }
   }
@@ -229,7 +231,9 @@ class _AddToProvinceState extends State<AddToProvince> {
                         IgnorePointer(
                           ignoring: !isInit,
                           child: BuildDropdown(
-                            header: "Data will be added to:",
+                            header: isInit
+                                ? "Province can't be changed next time"
+                                : "Province can't be changed",
                             items: provinces,
                             onChanged: (value) {
                               setState(() => selectedProvince = value);
@@ -241,7 +245,9 @@ class _AddToProvinceState extends State<AddToProvince> {
                         IgnorePointer(
                           ignoring: !isInit,
                           child: BuildDropdown(
-                            header: "Category:",
+                            header: isInit
+                                ? "Category can't be changed next time"
+                                : "Category can't be changed",
                             items: categories,
                             onChanged: (value) {
                               setState(() => selectedCategory = value);
@@ -254,11 +260,22 @@ class _AddToProvinceState extends State<AddToProvince> {
                           ignoring: !isInit,
                           child: BuildInput(
                             header: isInit
-                                ? "ID (id) must be unique"
+                                ? "ID (id) must be unique & cannot change"
                                 : "ID can't be changed",
-                            hint: "eg. res_genesha",
+                            hint: "",
                             onFinished: (val) => setState(() => id = val),
                             value: id,
+                          ),
+                        ),
+                        IgnorePointer(
+                          ignoring: true,
+                          child: BuildInput(
+                            header: null,
+                            hint:
+                                "Define a new ID to avoid future errors: \nFor restaurant, place & accomodation:\nExample:\n✓ res_genesha (Restaurant)\n✓ place_turen (Place)\n✓ acc_eden (Accomdodation)\n\nFor biking must include 'act_biking':\nExample:\n✓ act_biking_at_beach\n\nFor biking must include 'act_boating':\nEample:\n✓ act_boating_to_kohrong",
+                            onFinished: () {},
+                            value:
+                                "Define a new ID to avoid future errors: \nFor restaurant, place & accomodation:\nExample:\n✓ res_genesha (Restaurant)\n✓ place_turen (Place)\n✓ acc_eden (Accomdodation)\n\nFor biking must include 'act_biking':\nExample:\n✓ act_biking_at_beach\n\nFor biking must include 'act_boating':\nEample:\n✓ act_boating_to_kohrong",
                           ),
                         ),
                         BuildInput(
@@ -289,7 +306,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                         ),
                         BuildInput(
                           header: "Latitude, Longtitude (maplocation)",
-                          hint: "Latitude...",
+                          hint: "Latitude from -90 to 90",
                           onFinished: (val) => setState(() => latitude = val),
                           value: latitude,
                           validator: (e) {
@@ -298,7 +315,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                         ),
                         BuildInput(
                           header: null,
-                          hint: "Longitude...",
+                          hint: "Longitude from -180 to 180",
                           onFinished: (val) => setState(() => longtitude = val),
                           value: longtitude,
                           validator: (e) {
@@ -322,7 +339,8 @@ class _AddToProvinceState extends State<AddToProvince> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   BuildInput(
-                                    header: "Price, eg. 15\$ - 30\$",
+                                    header:
+                                        "Price eg. 15\$ - 30\$ (only put number)",
                                     hint: "From",
                                     onFinished: (val) =>
                                         setState(() => pricefrom = val),
@@ -362,7 +380,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Images",
+                          "Images (click ✔️ on keyboard to save)",
                           style: TextStyle(
                             color: Palette.sky,
                           ),
@@ -401,7 +419,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                             style: TextStyle(color: Palette.sky),
                           ),
                           onPressed: () {
-                            if (image.length < 10) {
+                            if (images.length < 10) {
                               setState(() {
                                 images.add("");
                               });
@@ -422,7 +440,7 @@ class _AddToProvinceState extends State<AddToProvince> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Paragraph",
+                          "Paragraph (click ✔️ on keyboard to save)",
                           style: TextStyle(
                             color: Palette.sky,
                           ),
@@ -498,8 +516,12 @@ class _AddToProvinceState extends State<AddToProvince> {
     );
   }
 
-  Container buildButton(
-      {double width, String label, Function onPressed, bool isUpload = false}) {
+  Container buildButton({
+    double width,
+    String label,
+    Function onPressed,
+    bool isUpload = false,
+  }) {
     return Container(
       height: 50,
       width: width / 2 - 20 - 5,
@@ -586,7 +608,12 @@ class _BuildInputState extends State<BuildInput> {
                   : MediaQuery.of(context).size.width - 45,
               child: Focus(
                 onFocusChange: (isFocus) {
-                  if (!isFocus) widget.onFinished(_value);
+                  if (!isFocus) {
+                    if (_value.isNotEmpty)
+                      widget.onFinished(_value);
+                    else
+                      widget.onFinished(_textController.value.text);
+                  }
                   print(_value);
                 },
                 child: TextFormField(

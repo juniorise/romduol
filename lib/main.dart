@@ -19,29 +19,30 @@ class InitAuth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<CustomUser>.value(
-        value: AuthService().user,
-        builder: (context, snapshot) {
-          return MaterialApp(
-            theme: ThemeData(
-              fontFamily: 'Kantumruy',
-              backgroundColor: Palette.background,
-              primaryColor: Palette.appbar,
-              canvasColor: Palette.background,
-              errorColor: Palette.sky,
-              primaryTextTheme: TextTheme(
-                headline6: TextStyle(color: Palette.sky, fontSize: 14),
-              ),
-              splashColor: Colors.transparent,
-              highlightColor: Palette.text.withOpacity(0.1),
-              appBarTheme: AppBarTheme(
-                centerTitle: false,
-                elevation: 0.0,
-                iconTheme: IconThemeData(color: Palette.sky),
-              ),
+      value: AuthService().user,
+      builder: (context, snapshot) {
+        return MaterialApp(
+          theme: ThemeData(
+            fontFamily: 'Kantumruy',
+            backgroundColor: Palette.background,
+            primaryColor: Palette.appbar,
+            canvasColor: Palette.background,
+            errorColor: Palette.sky,
+            primaryTextTheme: TextTheme(
+              headline6: TextStyle(color: Palette.sky, fontSize: 14),
             ),
-            debugShowCheckedModeBanner: false,
-            home: MyApp(),
-          );
-        });
+            splashColor: Colors.transparent,
+            highlightColor: Palette.text.withOpacity(0.1),
+            appBarTheme: AppBarTheme(
+              centerTitle: false,
+              elevation: 0.0,
+              iconTheme: IconThemeData(color: Palette.sky),
+            ),
+          ),
+          debugShowCheckedModeBanner: false,
+          home: MyApp(),
+        );
+      },
+    );
   }
 }

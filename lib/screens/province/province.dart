@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +28,8 @@ class Province extends StatefulWidget {
   _ProvinceState createState() => _ProvinceState();
 }
 
-class _ProvinceState extends State<Province> {
+class _ProvinceState extends State<Province>
+    with SingleTickerProviderStateMixin {
   PreloadPageController _pageController;
   ScrollController _scrollController = ScrollController();
   bool isSearching = false;
@@ -38,20 +38,34 @@ class _ProvinceState extends State<Province> {
   String refpath;
   TextEditingController _textEditingController = TextEditingController();
   List<CardModel> data = List();
+  AnimationController _animationController;
+  double opacity = 0;
 
   @override
   void initState() {
-    super.initState();
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    _animationController.forward();
+    setState(() => opacity = 1);
+
     _pageController = PreloadPageController(initialPage: currentPage);
     _pageController.addListener(pageControllerListener);
+    super.initState();
+  }
+
+  Future<void> onPop() async {
+    setState(() => opacity = 0);
+    _animationController.reverse();
+    Navigator.pop(context);
   }
 
   @override
   void dispose() {
-    super.dispose();
     _pageController.dispose();
     _scrollController.dispose();
     _textEditingController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   List<List<Function>> onTaps = List();
@@ -60,94 +74,111 @@ class _ProvinceState extends State<Province> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<List<CardModel>>>.value(
-      value: _checkProvince(),
-      builder: (context, snapshot) {
-        List<List<CardModel>> pagesCard =
-            Provider.of<List<List<CardModel>>>(context) ?? [[]];
+    return WillPopScope(
+      onWillPop: () => onPop(),
+      child: StreamProvider<List<List<CardModel>>>.value(
+        value: _checkProvince(),
+        builder: (context, snapshot) {
+          List<List<CardModel>> pagesCard =
+              Provider.of<List<List<CardModel>>>(context) ?? [[]];
 
-        for (int i = 0; i < pagesCard.length; i++) {
-          List<Function> _onTapsTMP = List();
-          for (int j = 0; j < pagesCard[i].length; j++) {
-            _onTapsTMP.add(() {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddToProvince(
-                    isKH: widget.isKH,
-                    data: pagesCard[i][j],
-                  ),
-                ),
+          for (int i = 0; i < pagesCard.length; i++) {
+            List<Function> _onTapsTMP = List();
+            for (int j = 0; j < pagesCard[i].length; j++) {
+              _onTapsTMP.add(
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddToProvince(
+                        isKH: widget.isKH,
+                        data: pagesCard[i][j],
+                      ),
+                    ),
+                  );
+                },
               );
-            });
+            }
+            onTaps.insert(i, _onTapsTMP);
           }
-          onTaps.insert(i, _onTapsTMP);
-        }
-        return ChangeNotifierProvider(
-          create: (e) => PageViewNotifier(_pageController),
-          child: Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(48.0 + 46.0),
-              child: AppBar(
-                titleSpacing: 0.0,
-                elevation: 0.5,
-                actions: [
-                  IconButton(
-                    icon: Icon(isSearching ? Icons.clear : Icons.search),
-                    onPressed: onSearchPressed,
-                  )
-                ],
-                title: isSearching
-                    ? _buildSearchField(currentPage, pagesCard)
-                    : buildTitle(),
-                bottom: PreferredSize(
-                  child: AnimatedTabBar(
-                    pageController: _pageController,
-                    currentPage: currentPage,
-                    scrollController: _scrollController,
-                    onTap: (index) => removeAnimated(index),
-                    isKH: widget.isKH,
+          return ChangeNotifierProvider(
+            create: (e) => PageViewNotifier(_pageController),
+            child: Scaffold(
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(48.0 + 48.0),
+                child: AppBar(
+                  titleSpacing: 0.0,
+                  elevation: 0.5,
+                  actions: [
+                    IconButton(
+                      icon: Icon(isSearching ? Icons.clear : Icons.search),
+                      onPressed: onSearchPressed,
+                    )
+                  ],
+                  leading: IconButton(
+                    icon: AnimatedOpacity(
+                      opacity: opacity,
+                      duration: Duration(milliseconds: 350),
+                      child: AnimatedIcon(
+                        icon: AnimatedIcons.menu_arrow,
+                        progress: _animationController,
+                      ),
+                    ),
+                    onPressed: onPop,
                   ),
-                  preferredSize: Size.fromHeight(46),
+                  title: isSearching
+                      ? _buildSearchField(currentPage, pagesCard)
+                      : buildTitle(),
+                  bottom: PreferredSize(
+                    child: AnimatedTabBar(
+                      pageController: _pageController,
+                      currentPage: currentPage,
+                      scrollController: _scrollController,
+                      onTap: (index) => removeAnimated(index),
+                      isKH: widget.isKH,
+                    ),
+                    preferredSize: Size.fromHeight(46),
+                  ),
                 ),
               ),
-            ),
-            body: PreloadPageView(
-              physics: BouncingScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: (page) {
-                itsAnimated(currentPage);
-                if (isSearched && _textEditingController.text != null)
-                  onSubmitted(_textEditingController.text, pagesCard[page]);
-                setState(
-                  () => currentPage = page,
-                );
-              },
-              children: <Widget>[
-                for (int i = 0; i < pagesCard.length; i++)
-                  FadeInOut(
-                    index: i,
-                    child: AnimatedLists(
-                      data: !isSearched ? pagesCard[i] : data,
-                      isAnimated: isAnimated[i],
-                      isKH: widget.isKH,
-                      onEditPressed: isEditable() ? onTaps[i] : null,
-                      onPop: () {
-                        setState(() {
-                          pagesCard.removeRange(0, pagesCard.length);
+              body: PreloadPageView(
+                physics: BouncingScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: (page) {
+                  itsAnimated(currentPage);
+                  if (isSearched && _textEditingController.text != null)
+                    onSubmitted(_textEditingController.text, pagesCard[page]);
+                  setState(
+                    () => currentPage = page,
+                  );
+                },
+                children: <Widget>[
+                  for (int i = 0; i < pagesCard.length; i++)
+                    FadeInOut(
+                      index: i,
+                      child: AnimatedLists(
+                        data: !isSearched ? pagesCard[i] : data,
+                        isAnimated: isAnimated[i],
+                        isKH: widget.isKH,
+                        onEditPressed: isEditable() ? onTaps[i] : null,
+                        onPop: () {
+                          for (int i = 0; i < 4; i++) pagesCard.add([]);
+
+                          pagesCard.removeRange(0, pagesCard.length - 4);
                           pagesCard = Provider.of<List<List<CardModel>>>(
                                   context,
                                   listen: false) ??
-                              [[]];
-                        });
-                      },
+                              List();
+                          setState(() {});
+                        },
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -231,46 +262,6 @@ class _ProvinceState extends State<Province> {
     }
   }
 
-  //this may use in future
-  void searchViaFirebase(String value, int pageCurrent) {
-    value = value.trim();
-    for (int i = 0; i < value.length; i++) print(value[i]);
-    if (value == "")
-      setState(() => isSearched = false);
-    else {
-      List<String> _path = [
-        'places/default_data',
-        'accomodations/default_data',
-        'activities/default_data',
-        'restaurants/default_data',
-      ];
-      String _ref = refpath + _path[pageCurrent];
-      if (data != null) data.removeRange(0, data.length);
-      FirebaseFirestore.instance
-          .collection(_ref)
-          .snapshots()
-          .forEach((element) {
-        element.docs.forEach((element) {
-          setState(() => isSearched = true);
-          if (element['title'].contains(value))
-            data.add(CardModel(
-              title: element['title'] ?? "No title provided.",
-              location: element['location'] ?? "No location provided.",
-              thumbnail: element['thumbnail'] ?? null,
-              id: element['id'] ?? "No id provided.",
-              pricefrom: element['pricefrom'] ?? null,
-              pricetotal: element['pricetotal'] ?? null,
-              ratingaverage: element['rating'] ?? null,
-              ratetotal: element['ratetotal'] ?? null,
-              maplocation: element['maplocation'] ?? null,
-              refpath: element.reference.path,
-            ));
-        });
-      });
-      setState(() => isSearched = true);
-    }
-  }
-
   void onSearchPressed() => setState(() {
         isSearching = !isSearching;
         isSearched = false;
@@ -298,11 +289,48 @@ class _ProvinceState extends State<Province> {
   }
 
   bool isEditable() {
-    if (widget.user != null) {
-      if (widget.user.role == "Admin") {
-        return true;
-      }
-    }
+    if (widget.user != null && widget.user.role == "Admin") return true;
+
     return false;
   }
+
+  // //this may use in future
+  // void searchViaFirebase(String value, int pageCurrent) {
+  //   value = value.trim();
+  //   for (int i = 0; i < value.length; i++) print(value[i]);
+  //   if (value == "")
+  //     setState(() => isSearched = false);
+  //   else {
+  //     List<String> _path = [
+  //       'places/default_data',
+  //       'accomodations/default_data',
+  //       'activities/default_data',
+  //       'restaurants/default_data',
+  //     ];
+  //     String _ref = refpath + _path[pageCurrent];
+  //     if (data != null) data.removeRange(0, data.length);
+  //     FirebaseFirestore.instance
+  //         .collection(_ref)
+  //         .snapshots()
+  //         .forEach((element) {
+  //       element.docs.forEach((element) {
+  //         setState(() => isSearched = true);
+  //         if (element['title'].contains(value))
+  //           data.add(CardModel(
+  //             title: element['title'] ?? "No title provided.",
+  //             location: element['location'] ?? "No location provided.",
+  //             thumbnail: element['thumbnail'] ?? null,
+  //             id: element['id'] ?? "No id provided.",
+  //             pricefrom: element['pricefrom'] ?? null,
+  //             pricetotal: element['pricetotal'] ?? null,
+  //             ratingaverage: element['rating'] ?? null,
+  //             ratetotal: element['ratetotal'] ?? null,
+  //             maplocation: element['maplocation'] ?? null,
+  //             refpath: element.reference.path,
+  //           ));
+  //       });
+  //     });
+  //     setState(() => isSearched = true);
+  //   }
+  // }
 }

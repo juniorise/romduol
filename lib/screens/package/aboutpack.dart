@@ -12,13 +12,6 @@ class AboutTourPackage extends StatefulWidget {
   _AboutTourPackageState createState() => _AboutTourPackageState();
 }
 
-List<String> image = [
-  'assets/graphics/bicycle.png',
-  'assets/graphics/family.png',
-  'assets/graphics/piggy-bank.png',
-  'assets/graphics/planet-earth.png',
-];
-
 class _AboutTourPackageState extends State<AboutTourPackage> {
   @override
   Widget build(BuildContext context) {
@@ -95,6 +88,7 @@ class _AboutTourPackageState extends State<AboutTourPackage> {
                           margin: EdgeInsets.only(bottom: 20),
                           child: Stack(
                             alignment: Alignment.topCenter,
+                            fit: StackFit.passthrough,
                             children: [
                               Container(
                                 margin: EdgeInsets.only(top: 15),
@@ -142,19 +136,23 @@ class _AboutTourPackageState extends State<AboutTourPackage> {
                                       return noData();
                                     }),
                               ),
-                              Container(
-                                height: 30,
-                                width: 130,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Palette.red,
-                                ),
-                                child: Text(
-                                  useful[i].title,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
+                              Positioned(
+                                top: 0,
+                                child: Container(
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: Palette.red,
+                                  ),
+                                  child: Text(
+                                    useful[i].title,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],

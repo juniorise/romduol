@@ -22,10 +22,12 @@ import 'package:romduol/widget/star_rating.dart';
 import 'package:romduol/widget/theme.dart';
 
 class DetailTemplate extends StatefulWidget {
-  const DetailTemplate({Key key, this.data, @required this.isKH})
+  const DetailTemplate(
+      {Key key, this.data, @required this.index, @required this.isKH})
       : super(key: key);
   final CardModel data;
   final bool isKH;
+  final int index;
   @override
   _DetailTemplateState createState() => _DetailTemplateState();
 }
@@ -38,8 +40,9 @@ class _DetailTemplateState extends State<DetailTemplate> {
   bool isZoom = false;
   ScrollController scrollController = ScrollController();
   TextEditingController _recommenedController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  bool isVisible = false, validate = true, loading = false, _isVisible = true;
+  bool validate = true, loading = false, _isVisible = true, isEdited = false;
 
   String error = "";
   double rate = 0;
@@ -47,9 +50,16 @@ class _DetailTemplateState extends State<DetailTemplate> {
   double rateTOTAL = 10;
   dynamic result;
 
+  Future<void> onPop(BuildContext context) async {
+    return Navigator.of(context).pop(isEdited);
+  }
+
   @override
   void initState() {
     scrollController.addListener(() {
+      if (scrollController.position.isScrollingNotifier.value)
+        _scaffoldKey.currentState.hideCurrentSnackBar();
+
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         if (_isVisible) setState(() => _isVisible = false);
@@ -97,7 +107,12 @@ class _DetailTemplateState extends State<DetailTemplate> {
               ref: widget.data.refpath,
               uid: userData.uid,
             );
-            if (result != null) setState(() => loading = false);
+            if (result != null) {
+              setState(() {
+                isEdited = true;
+                loading = false;
+              });
+            }
           } catch (e) {
             error = e.toString();
             validate = false;
@@ -120,359 +135,414 @@ class _DetailTemplateState extends State<DetailTemplate> {
   Widget build(BuildContext context) {
     final user = Provider.of<CustomUser>(context);
 
+    double statusbar = MediaQuery.of(context).padding.top;
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
-    return StreamBuilder<UserData>(
-        stream: UserDatabase(uid: user.uid).userData,
-        builder: (context, snapshot) {
-          UserData userData;
-          if (snapshot.hasData) {
-            userData = snapshot.data;
-          }
-          return Scaffold(
-            backgroundColor: Palette.bg,
-            body: CustomScrollView(
-              controller: scrollController,
-              slivers: [
-                SliverAppBar(
-                  titleSpacing: 0.0,
-                  toolbarHeight: 48,
-                  elevation: 1,
-                  expandedHeight: 150 + 48.0,
-                  forceElevated: true,
-                  backgroundColor: Palette.sky,
-                  pinned: true,
-                  iconTheme: IconThemeData(color: Colors.white),
-                  title: Text(
-                    widget.isKH ? "អំពីរទីកន្លែង" : "About place",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.text_fields),
+    return WillPopScope(
+      onWillPop: () {
+        return onPop(context);
+      },
+      child: StreamBuilder<UserData>(
+          stream: UserDatabase(uid: user != null ? user.uid : null).userData,
+          builder: (context, snapshot) {
+            UserData userData;
+            if (snapshot.hasData) {
+              userData = snapshot.data;
+            }
+            return Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: Palette.bg,
+              body: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  SliverAppBar(
+                    titleSpacing: 0.0,
+                    toolbarHeight: 48,
+                    elevation: 1,
+                    expandedHeight: 150 + 48.0,
+                    forceElevated: true,
+                    backgroundColor: Palette.sky,
+                    pinned: true,
+                    iconTheme: IconThemeData(color: Colors.white),
+                    title: Text(
+                      widget.isKH ? "អំពីរទីកន្លែង" : "About place",
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back),
                       onPressed: () {
-                        setState(() {
-                          isZoom = !isZoom;
-                        });
+                        onPop(context);
                       },
-                    )
-                  ],
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                      width: width,
-                      height: 150 + 48.0,
-                      child: Stack(
-                        children: [
-                          ImageViewer(
-                            thumnail: widget.data.thumbnail,
-                            pageController: _imageController,
-                            imageList: widget.data.images ?? [''],
-                            width: width,
-                            currentImage: currentImage,
-                            onPageChanged: (index) => setState(
-                              () => currentImage = index,
-                            ),
-                            id: widget.data.id,
-                          ),
-                          TextWithIndicator(
-                            currentImage: currentImage,
-                            imageList: widget.data.images ?? [''],
-                            pricefrom: widget.data.pricefrom,
-                            pricetotal: widget.data.pricetotal,
-                            isKH: widget.isKH,
-                          ),
-                        ],
-                      ),
                     ),
-                  ),
-                ),
-                SliverPersistentHeader(
-                  floating: true,
-                  delegate: SliverCardDelegate(
-                    child: DetailProfile(
-                      title: widget.data.title,
-                      width: width,
-                      location: widget.data.location,
-                      onBookPressed: () {
-                        Widget screen;
-
-                        if (widget.data.refpath.contains('accomodations'))
-                          screen = BookingAccomodation(isKH: widget.isKH);
-                        if (widget.data.refpath
-                            .contains('activities/default_data/act_biking'))
-                          screen = BookingBike(isKH: widget.isKH);
-                        if (widget.data.refpath.contains('restaurants/'))
-                          screen = BookingRestaurant(isKH: widget.isKH);
-
-                        if (widget.data.refpath
-                            .contains('activities/default_data/act_boating'))
-                          screen = BookingBoat(isKH: widget.isKH);
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => screen,
-                          ),
-                        );
-                      },
-                      ratingaverage: widget.data.ratingaverage,
-                      ratetotal: widget.data.ratetotal,
-                      isBookAble: widget.data.pricefrom != null &&
-                          widget.data.pricefrom > 0 &&
-                          widget.data.pricetotal > 0,
-                      maplocation: widget.data.maplocation,
-                      isKH: widget.isKH,
-                    ),
-                    height: widget.data.ratetotal == null
-                        ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
-                        : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
-                  ),
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Container(
-                        color: Palette.bg,
+                    actions: [
+                      IconButton(
+                        icon: Icon(Icons.text_fields),
+                        onPressed: () {
+                          setState(() {
+                            isZoom = !isZoom;
+                          });
+                        },
+                      )
+                    ],
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
                         width: width,
-                        constraints: BoxConstraints(minHeight: 0),
-                        child: Column(
+                        height: 150 + 48.0,
+                        child: Stack(
                           children: [
-                            Column(
-                              children: [
-                                SizedBox(height: 10),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  decoration: buildBoxDecoration(),
-                                  child: ArticleDetail(
-                                    widget: widget,
-                                    width: width,
-                                    isZoom: isZoom,
-                                    articles: widget.data.articles,
-                                  ),
-                                ),
-                                widget.data.refpath
-                                        .contains('restaurants/default_data/')
-                                    ? FoodMenuDetail(
-                                        foods: widget.data.foodmenu,
-                                        isKH: widget.isKH,
-                                      )
-                                    : SizedBox(),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              decoration: buildBoxDecoration(),
+                            ImageViewer(
+                              thumnail: widget.data.thumbnail,
+                              pageController: _imageController,
+                              imageList: widget.data.images ?? [''],
                               width: width,
-                              constraints: BoxConstraints(minHeight: 200.0),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    widget.isKH
-                                        ? "បញ្ចេញមតិយោបល់"
-                                        : "Recommend",
-                                    style: TextStyle(fontFamily: 'Kantumruy'),
-                                  ),
-                                  SizedBox(height: 5),
-                                  StarRating(
-                                    size: 30,
-                                    rating: rate,
-                                    onRatingChanged: (double _rate) {
-                                      setState(() => rate = _rate);
-                                    },
-                                  ),
-                                  SizedBox(height: 15),
-                                  TextField(
-                                    maxLines: null,
-                                    controller: _recommenedController,
-                                    style: TextStyle(fontSize: 13),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 5,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: const BorderRadius.all(
-                                          const Radius.circular(5.0),
-                                        ),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      hintText: widget.isKH
-                                          ? "មតិយោបល់"
-                                          : "Write your recommendation...",
-                                      fillColor:
-                                          Palette.bggrey.withOpacity(0.3),
-                                      filled: true,
-                                    ),
-                                  ),
-                                  SizedBox(height: error.isNotEmpty ? 5.0 : 0),
-                                  error.isNotEmpty
-                                      ? Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 5.0,
-                                            ),
-                                            Text(
-                                              error,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Palette.red,
-                                              ),
-                                            ),
-                                            SizedBox(width: 5.0),
-                                            userData == null &&
-                                                    error ==
-                                                        "Please sign in first!"
-                                                ? InkWell(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              LoginScreen(
-                                                            isKH: widget.isKH,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Text(
-                                                      "Sign in",
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Palette.sky,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : SizedBox()
-                                          ],
-                                        )
-                                      : SizedBox(),
-                                  SizedBox(height: 10),
-                                  AnimatedContainer(
-                                    width: 160,
-                                    duration: Duration(milliseconds: 100),
-                                    child: FlatButton(
-                                      onPressed: () {
-                                        if (_recommenedController
-                                            .text.isEmpty) {
-                                          setState(() {
-                                            error = "Empty string";
-                                            validate = false;
-                                          });
-                                        } else if (rate == 0) {
-                                          setState(() {
-                                            error = "Rate can't be zero";
-                                            validate = false;
-                                          });
-                                        } else {
-                                          setState(() => loading = true);
-                                          writeRecommendToFirebase(
-                                            text: _recommenedController.text,
-                                            rate: rate,
-                                            userData: userData,
-                                          );
-                                        }
-                                      },
-                                      color: Palette.sky,
-                                      splashColor: Colors.transparent,
-                                      child: !loading
-                                          ? Text(
-                                              widget.isKH
-                                                  ? result == null
-                                                      ? "បង្ហោះជាសាធារណះ"
-                                                      : "បានបង្ហោះ"
-                                                  : result == null
-                                                      ? "Publish"
-                                                      : "Publised",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 13,
-                                              ),
-                                            )
-                                          : Center(
-                                              heightFactor: 1,
-                                              child: Container(
-                                                width: 10,
-                                                height: 10,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                    ),
-                                  )
-                                ],
+                              currentImage: currentImage,
+                              onPageChanged: (index) => setState(
+                                () => currentImage = index,
                               ),
+                              id: widget.data.id,
+                              index: widget.index,
                             ),
-                            SizedBox(height: 10),
-                            showCommentsButton(context, !_isVisible),
+                            TextWithIndicator(
+                              currentImage: currentImage,
+                              imageList: widget.data.images ?? [''],
+                              pricefrom: widget.data.pricefrom,
+                              pricetotal: widget.data.pricetotal,
+                              isKH: widget.isKH,
+                            ),
                           ],
                         ),
                       ),
-                      
-                    ],
-                  ),
-                )
-              ],
-            ),
-            bottomNavigationBar: Builder(builder: (context) {
-              return showCommentsButton(context, _isVisible);
-            }),
-          );
-        });
-  }
-
-  AnimatedContainer showCommentsButton(BuildContext context, bool isVisible) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
-      height: isVisible ? 48.0 : 0.0,
-      padding: EdgeInsets.only(top: isVisible ? 0.0 : 18.0,),
-      width: MediaQuery.of(context).size.width,
-      decoration: buildBoxDecoration(),
-      child: FlatButton(
-        onPressed: () {
-          scrollController.animateTo(100,
-              duration: Duration(milliseconds: 100), curve: Curves.bounceIn);
-          final snackBar = SnackBar(
-            content: Text('No comments'),
-            backgroundColor: Palette.sky,
-          );
-          if (widget.data.comments != null) {
-            if (widget.data.comments.length > 0) {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => Center(
-                  child: Container(
-                    decoration:
-                        buildBoxDecoration().copyWith(color: Palette.bg),
-                    child: CommentPage(
-                      comments: widget.data.comments,
-                      isKH: widget.isKH,
                     ),
                   ),
+                  SliverPersistentHeader(
+                    floating: true,
+                    delegate: SliverCardDelegate(
+                      child: Builder(
+                        builder: (context) => DetailProfile(
+                          title: widget.data.title,
+                          width: width,
+                          location: widget.data.location,
+                          onBookPressed: () {
+                            Widget screen;
+
+                            if (widget.data.refpath.contains('accomodations'))
+                              screen = BookingAccomodation(isKH: widget.isKH);
+                            if (widget.data.refpath
+                                .contains('activities/default_data/act_biking'))
+                              screen = BookingBike(isKH: widget.isKH);
+                            if (widget.data.refpath.contains('restaurants/'))
+                              screen = BookingRestaurant(isKH: widget.isKH);
+
+                            if (widget.data.refpath.contains(
+                                'activities/default_data/act_boating'))
+                              screen = BookingBoat(isKH: widget.isKH);
+
+                            if (screen != null)
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => screen,
+                                ),
+                              );
+                            else
+                              _scaffoldKey.currentState
+                                  .showSnackBar(
+                                    SnackBar(
+                                      elevation: 1,
+                                      backgroundColor: Palette.sky,
+                                      content: Text(
+                                        'No screen found!',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  )
+                                  .closed
+                                  .then((value) {
+                                _scaffoldKey.currentState.hideCurrentSnackBar();
+                              });
+                          },
+                          ratingaverage: widget.data.ratingaverage,
+                          ratetotal: widget.data.ratetotal,
+                          isBookAble: widget.data.pricefrom != null &&
+                              widget.data.pricefrom > 0 &&
+                              widget.data.pricetotal > 0,
+                          maplocation: widget.data.maplocation,
+                          isKH: widget.isKH,
+                        ),
+                      ),
+                      height: widget.data.ratetotal == null
+                          ? 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10
+                          : 20.0 + 20 + 14 + 16 + 15 + 48 + 17 - 10 + 25,
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        Container(
+                          color: Palette.bg,
+                          width: width,
+                          child: Column(
+                            children: [
+                              Column(
+                                children: [
+                                  SizedBox(height: 10),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 20),
+                                    decoration: buildBoxDecoration(),
+                                    child: ArticleDetail(
+                                      widget: widget,
+                                      width: width,
+                                      isZoom: isZoom,
+                                      articles: widget.data.articles,
+                                    ),
+                                  ),
+                                  widget.data.refpath
+                                          .contains('restaurants/default_data/')
+                                      ? FoodMenuDetail(
+                                          foods: widget.data.foodmenu,
+                                          isKH: widget.isKH,
+                                        )
+                                      : SizedBox(),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                decoration: buildBoxDecoration(),
+                                width: width,
+                                constraints: BoxConstraints(minHeight: 200.0),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      widget.isKH
+                                          ? "បញ្ចេញមតិយោបល់"
+                                          : "Recommend",
+                                      style: TextStyle(fontFamily: 'Kantumruy'),
+                                    ),
+                                    SizedBox(height: 5),
+                                    StarRating(
+                                      size: 30,
+                                      rating: rate,
+                                      onRatingChanged: (double _rate) {
+                                        setState(() => rate = _rate);
+                                      },
+                                    ),
+                                    SizedBox(height: 15),
+                                    TextField(
+                                      maxLines: null,
+                                      controller: _recommenedController,
+                                      style: TextStyle(fontSize: 13),
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 10.0,
+                                          vertical: 5,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                            const Radius.circular(5.0),
+                                          ),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        hintText: widget.isKH
+                                            ? "មតិយោបល់"
+                                            : "Write your recommendation...",
+                                        fillColor:
+                                            Palette.bggrey.withOpacity(0.3),
+                                        filled: true,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        height: error.isNotEmpty ? 5.0 : 0),
+                                    error.isNotEmpty
+                                        ? Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 5.0,
+                                              ),
+                                              Text(
+                                                error,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Palette.red,
+                                                ),
+                                              ),
+                                              SizedBox(width: 5.0),
+                                              userData == null &&
+                                                      error ==
+                                                          "Please sign in first!"
+                                                  ? InkWell(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    LoginScreen(
+                                                              isKH: widget.isKH,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Text(
+                                                        "Sign in",
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Palette.sky,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox()
+                                            ],
+                                          )
+                                        : SizedBox(),
+                                    SizedBox(height: 10),
+                                    AnimatedContainer(
+                                      width: 160,
+                                      duration: Duration(milliseconds: 100),
+                                      child: FlatButton(
+                                        onPressed: () {
+                                          if (_recommenedController
+                                              .text.isEmpty) {
+                                            setState(() {
+                                              error = "Empty string";
+                                              validate = false;
+                                            });
+                                          } else if (rate == 0) {
+                                            setState(() {
+                                              error = "Rate can't be zero";
+                                              validate = false;
+                                            });
+                                          } else {
+                                            setState(() => loading = true);
+                                            writeRecommendToFirebase(
+                                              text: _recommenedController.text,
+                                              rate: rate,
+                                              userData: userData,
+                                            );
+                                          }
+                                        },
+                                        color: Palette.sky,
+                                        splashColor: Colors.transparent,
+                                        child: !loading
+                                            ? Text(
+                                                widget.isKH
+                                                    ? result == null
+                                                        ? "បង្ហោះជាសាធារណះ"
+                                                        : "បានបង្ហោះ"
+                                                    : result == null
+                                                        ? "Publish"
+                                                        : "Publised",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13,
+                                                ),
+                                              )
+                                            : Center(
+                                                heightFactor: 1,
+                                                child: Container(
+                                                  width: 10,
+                                                  height: 10,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              showCommentsButton(
+                                  !_isVisible,
+                                  statusbar /
+                                      MediaQuery.of(context).size.height)
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              bottomNavigationBar: showCommentsButton(
+                  _isVisible, statusbar / MediaQuery.of(context).size.height),
+            );
+          }),
+    );
+  }
+
+  Builder showCommentsButton(bool isVisible, double statusbar) {
+    return Builder(builder: (context) {
+      return AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        height: isVisible ? 48.0 : 0.0,
+        padding: EdgeInsets.only(
+          top: isVisible ? 0.0 : 18.0,
+        ),
+        width: MediaQuery.of(context).size.width,
+        decoration: buildBoxDecoration(),
+        child: FlatButton(
+          onPressed: () {
+            final snackBar = SnackBar(
+              content: Text('No comments'),
+              elevation: 10,
+              backgroundColor: Palette.sky,
+            );
+            if (widget.data.comments != null &&
+                widget.data.comments.length > 0) {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (context) => Center(
+                  child: DraggableScrollableSheet(
+                      maxChildSize: 1 - statusbar,
+                      builder: (context, scrollController) {
+                        return Container(
+                          decoration: buildBoxDecoration().copyWith(
+                            color: Palette.bg,
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(10)),
+                          ),
+                          child: CommentPage(
+                            scrollController: scrollController,
+                            comments: widget.data.comments,
+                            isKH: widget.isKH,
+                          ),
+                        );
+                      }),
                 ),
               );
+            } else {
+              _scaffoldKey.currentState
+                  .showSnackBar(snackBar)
+                  .closed
+                  .then((reason) {
+                _scaffoldKey.currentState.hideCurrentSnackBar();
+              });
             }
-          } else
-            Scaffold.of(context).showSnackBar(snackBar);
-        },
-        child: Text(
-          widget.isKH
-              ? "មតិយោបល់ (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})"
-              : "Comments (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})",
-          style: TextStyle(color: Palette.sky),
-          textAlign: TextAlign.left,
+          },
+          child: Text(
+            widget.isKH
+                ? "មតិយោបល់ (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})"
+                : "Comments (${khNum(widget.data.comments != null ? widget.data.comments.length.toString() : 0.toString(), widget.isKH)})",
+            style: TextStyle(color: Palette.sky),
+            textAlign: TextAlign.left,
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

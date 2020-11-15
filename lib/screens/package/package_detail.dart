@@ -10,23 +10,59 @@ import 'package:romduol/widget/sliver_card_delegate.dart';
 import 'package:romduol/widget/theme.dart';
 
 class PackageDetail extends StatefulWidget {
-  const PackageDetail({Key key, @required this.package, @required this.isKH})
-      : super(key: key);
+  const PackageDetail({
+    Key key,
+    @required this.package,
+    @required this.index,
+    @required this.isKH,
+  }) : super(key: key);
 
   final PackageModel package;
   final bool isKH;
+  final int index;
   @override
   _PackageDetailState createState() => _PackageDetailState();
 }
 
-class _PackageDetailState extends State<PackageDetail> {
+class _PackageDetailState extends State<PackageDetail>
+    with SingleTickerProviderStateMixin {
   int currentImage = 0;
   PageController _pageController = PageController(initialPage: 0);
+  AnimationController _animationController;
+  double opacity = 0;
+
+  @override
+  void initState() {
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    _animationController.forward();
+    setState(() {
+      opacity = 1;
+    });
+
+    _pageController = PageController(initialPage: 0);
+    super.initState();
+  }
+
+  Future<void> onPop() async {
+    setState(() {
+      opacity = 0;
+    });
+    _animationController.reverse();
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    // double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Palette.bg,
       body: CustomScrollView(
@@ -44,6 +80,19 @@ class _PackageDetailState extends State<PackageDetail> {
             title: Text(
               "ដំណើរកំសាន្ត",
               style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+            leading: IconButton(
+              icon: AnimatedOpacity(
+                opacity: opacity,
+                duration: Duration(milliseconds: 350),
+                child: AnimatedIcon(
+                  icon: AnimatedIcons.menu_arrow,
+                  progress: _animationController,
+                ),
+              ),
+              onPressed: () {
+                onPop();
+              },
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
@@ -71,6 +120,7 @@ class _PackageDetailState extends State<PackageDetail> {
                         children: [
                           ImageViewer(
                             thumnail: widget.package.thumbnail,
+                            index: widget.index,
                             pageController: _pageController,
                             imageList: images,
                             width: width,
@@ -125,7 +175,6 @@ class _PackageDetailState extends State<PackageDetail> {
                 Container(
                   color: Palette.bg,
                   width: width,
-                  constraints: BoxConstraints(minHeight: height - 75),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,13 +199,11 @@ class _PackageDetailState extends State<PackageDetail> {
                                       article.add(ArticleModal(
                                         header:
                                             element.data()['header'] ?? null,
-                                        paragraph:
-                                            element['paragraph'] ?? null,
+                                        paragraph: element['paragraph'] ?? null,
                                       ));
                                     } catch (e) {
                                       article.add(ArticleModal(
-                                        paragraph:
-                                            element['paragraph'] ?? null,
+                                        paragraph: element['paragraph'] ?? null,
                                       ));
                                     }
                                   });
@@ -165,9 +212,7 @@ class _PackageDetailState extends State<PackageDetail> {
                                     width: width,
                                     child: Wrap(
                                       children: [
-                                        for (int i = 0;
-                                            i < article.length;
-                                            i++)
+                                        for (int i = 0; i < article.length; i++)
                                           buildArticle(article, i),
                                       ],
                                     ),
@@ -187,8 +232,7 @@ class _PackageDetailState extends State<PackageDetail> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "សំណួរគេសួរញឹកញាប់ | FAQ",
@@ -239,19 +283,7 @@ class _PackageDetailState extends State<PackageDetail> {
                           )
                         ],
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            "Term of Service | Privacy",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Palette.text,
-                              fontSize: 12,
-                            ),
-                          ),
-                          SizedBox(height: 10.0),
-                        ],
-                      )
+                      SizedBox(height: 10.0),
                     ],
                   ),
                 )

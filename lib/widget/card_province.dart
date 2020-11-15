@@ -11,8 +11,13 @@ class CardOnProvince extends StatefulWidget {
   final CardModel data;
   final bool isKH;
   final Function onPop;
+  final int index;
   const CardOnProvince(
-      {Key key, @required this.data, @required this.isKH, this.onPop})
+      {Key key,
+      @required this.data,
+      @required this.isKH,
+      this.onPop,
+      this.index})
       : super(key: key);
 
   @override
@@ -43,8 +48,8 @@ class _CardOnProvinceState extends State<CardOnProvince> {
             children: [
               Hero(
                 tag: widget.data.id != null
-                    ? widget.data.id
-                    : widget.data.thumbnail,
+                    ? widget.data.id + widget.index.toString()
+                    : widget.data.thumbnail + widget.index.toString(),
                 child: NetworkImageLoader(
                   onPressed: () {},
                   width: width - 15 - 15,
@@ -52,7 +57,7 @@ class _CardOnProvinceState extends State<CardOnProvince> {
                   imagelocation: widget.data.thumbnail,
                 ),
               ),
-              widget.data.pricefrom != null &&
+              widget.data.pricefrom.isNaN &&
                       widget.data.pricefrom > 0 &&
                       widget.data.pricetotal > 0
                   ? Positioned(
@@ -103,9 +108,10 @@ class _CardOnProvinceState extends State<CardOnProvince> {
                           ? Row(
                               children: [
                                 StarRating(
-                                    rating: widget.data.ratingaverage.isNaN
-                                        ? 0
-                                        : widget.data.ratingaverage),
+                                  rating: widget.data.ratingaverage.isNaN
+                                      ? 0
+                                      : widget.data.ratingaverage,
+                                ),
                                 SizedBox(width: 5),
                                 Text(
                                   khNum(
@@ -132,26 +138,23 @@ class _CardOnProvinceState extends State<CardOnProvince> {
                             )
                           : SizedBox(),
                       Container(
-                        width: !(widget.data.pricefrom != null &&
-                                widget.data.pricefrom > 0 &&
-                                widget.data.pricetotal > 0)
-                            ? widget.isKH
-                                ? 104
-                                : 104.0 + 10
-                            : 104.0 + 17,
                         child: FlatButton.icon(
                           splashColor: Colors.transparent,
                           color: Palette.sky,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)),
                           onPressed: () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailTemplate(
-                                      data: widget.data, isKH: widget.isKH),
-                                ));
-                            widget.onPop();
+                            bool isEdited = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailTemplate(
+                                  index: widget.index,
+                                  data: widget.data,
+                                  isKH: widget.isKH,
+                                ),
+                              ),
+                            );
+                            if (isEdited) widget.onPop();
                           },
                           icon: Icon(Icons.info, color: Colors.white, size: 16),
                           label: Text(

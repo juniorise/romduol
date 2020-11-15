@@ -11,13 +11,14 @@ class ImageViewer extends StatelessWidget {
     @required this.id,
     this.thumnail,
     this.onPageChanged,
+    @required this.index,
   }) : super(key: key);
 
   final PageController pageController;
   final List<dynamic> imageList;
   final String thumnail, id;
   final double width;
-  final int currentImage;
+  final int currentImage, index;
   final Function onPageChanged;
 
   @override
@@ -30,7 +31,9 @@ class ImageViewer extends StatelessWidget {
         buildImage(
           index: 0,
           child: Hero(
-            tag: id != null ? id : thumnail,
+            tag: id != null
+                ? id + index.toString()
+                : thumnail + index.toString(),
             child: NetworkImageLoader(
               imagelocation: thumnail,
               onPressed: () {},

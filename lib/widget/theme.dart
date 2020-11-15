@@ -64,6 +64,7 @@ Container noData() {
 PreferredSize buildAppBar({
   @required String title,
   Function onTab,
+  Widget leading,
   bool isBlue = false,
   double elevation = 0.5,
   @required bool isKH,
@@ -85,6 +86,7 @@ PreferredSize buildAppBar({
           fontFamily: 'Kantumruy',
         ),
       ),
+      leading: leading != null ? leading : null,
       actions: [
         onTab != null
             ? IconButton(

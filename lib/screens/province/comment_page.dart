@@ -7,13 +7,26 @@ import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/star_rating.dart';
 
 class CommentPage extends StatefulWidget {
-  const CommentPage({Key key, @required this.comments, @required this.isKH})
+  const CommentPage(
+      {Key key,
+      @required this.comments,
+      @required this.isKH,
+      @required this.scrollController})
       : super(key: key);
   final bool isKH;
+  final ScrollController scrollController;
   final List<CommentModel> comments;
 
   @override
   _CommentPageState createState() => _CommentPageState();
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
 }
 
 class _CommentPageState extends State<CommentPage> {
@@ -22,12 +35,15 @@ class _CommentPageState extends State<CommentPage> {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
 
-    return ListView(
-      physics: ClampingScrollPhysics(),
-      children: [
-        for (int index = 0; index < widget.comments.length; index++)
-          buildComment(width, index),
-      ],
+    return ScrollConfiguration(
+      behavior: MyBehavior(),
+      child: ListView(
+        controller: widget.scrollController,
+        children: [
+          for (int index = 0; index < widget.comments.length; index++)
+            buildComment(width, index),
+        ],
+      ),
     );
   }
 
@@ -49,7 +65,10 @@ class _CommentPageState extends State<CommentPage> {
           return Container(
             width: width,
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            margin: EdgeInsets.only(bottom: 10, top: index == 0 ? 10 : 0),
+            margin: EdgeInsets.only(
+              bottom: index == widget.comments.length - 1 ? 10 : 0,
+              top: index == 0 ? 10 : 0,
+            ),
             child: Column(
               children: [
                 Row(
@@ -75,7 +94,9 @@ class _CommentPageState extends State<CommentPage> {
                     ),
                     SizedBox(width: 10.0),
                     Container(
-                      decoration: buildBoxDecoration(),
+                      decoration: buildBoxDecoration().copyWith(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       width: width - 35 - 10 - 20 - 15,

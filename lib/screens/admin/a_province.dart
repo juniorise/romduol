@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/models/models.dart';
 import 'package:romduol/screens/admin/a_package.dart';
 import 'package:romduol/screens/admin/add_to_province.dart';
-import 'package:romduol/services/auth.dart';
 import 'package:romduol/widget/animatedList.dart';
 import 'package:romduol/widget/pageroutetransition.dart';
 import 'package:romduol/widget/theme.dart';
@@ -19,9 +18,9 @@ class AdminProvince extends StatefulWidget {
 }
 
 class _AdminProvinceState extends State<AdminProvince> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<CustomUser>(context);
 
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -39,9 +38,10 @@ class _AdminProvinceState extends State<AdminProvince> {
         },
         child: Icon(Icons.switch_left),
       ),
-      body: ListView(
+      body: Column(
         children: [
-          SizedBox(height: 10),
+
+          SizedBox(height: 6),
           Container(
             width: width,
             height: 48,
@@ -69,11 +69,10 @@ class _AdminProvinceState extends State<AdminProvince> {
               },
             ),
           ),
-          SizedBox(height: 10),
           StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("userData")
-                  .doc(user.uid)
+                  .doc(_auth.currentUser.uid)
                   .collection("provincedraft")
                   .snapshots(),
               builder: (context, snapshot) {
@@ -105,6 +104,7 @@ class _AdminProvinceState extends State<AdminProvince> {
                       images: element.data()['images'] ?? [''],
                       articles: element.data()['articles'] ?? [''],
                       authur: element.data()['authur'] ?? null,
+                      comments: List(),
                     ));
                   });
 

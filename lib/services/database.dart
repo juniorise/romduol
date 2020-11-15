@@ -104,8 +104,8 @@ class Database {
               refpath: element.reference.path,
               images: element.data()['images'],
               articles: element.data()['articles'],
-              foodmenu: foodMenu.length > 0 ? foodMenu : null,
-              comments: comments.length > 0 ? comments : null,
+              foodmenu: foodMenu.length > 0 ? foodMenu : List(),
+              comments: comments.length > 0 ? comments : List(),
             ));
           });
       });

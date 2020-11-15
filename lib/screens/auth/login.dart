@@ -13,9 +13,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String email = '',
-      password = '',
-      error = '';
+  String email = '', password = '', error = '';
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -24,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: buildAppBar(title: "Login", isKH: widget.isKH),
       body: loading
           ? Container(
@@ -93,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   setState(() {
                                     loading = false;
                                     error =
-                                        'could not sign in with those credentials';
+                                        'Could not sign in with those credentials!';
                                   });
                                 } else if (result != null) {
                                   print("Here is result" + result.toString());
@@ -115,10 +114,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 8.0),
                   Text(
                     '$error',
-                    style: TextStyle(color: Colors.red, fontSize: 14),
+                    style: TextStyle(color: Palette.red, fontSize: 14),
                   )
                 ],
               ),

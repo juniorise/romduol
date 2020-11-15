@@ -27,10 +27,12 @@ class AuthService {
       String email, String password) async {
     try {
       UserCredential res = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       User user = res.user;
       return _userFromFirebaseUser(user);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       print("SIGN IN WITH EMAIL " + e.toString());
       return null;
     }
@@ -42,14 +44,15 @@ class AuthService {
       UserCredential res = await _auth.signInAnonymously();
       User user = res.user;
       return _userFromFirebaseUser(user);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       print("SIGN IN ANON " + e.toString());
       return null;
     }
   }
 
   //register
-  Future registerWithEmailAndPasswrod(String email, String password, String name) async {
+  Future registerWithEmailAndPasswrod(
+      String email, String password, String name) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -61,7 +64,7 @@ class AuthService {
       await UserDatabase(uid: user.uid).updateUserData("");
 
       return _userFromFirebaseUser(user);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       print(e.toString());
       print('registering error!');
       return null;
@@ -71,7 +74,7 @@ class AuthService {
   Future signOut() async {
     try {
       return await _auth.signOut();
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       print(e.toString());
       print('signing out error');
       return null;

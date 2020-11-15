@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
@@ -23,12 +24,11 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<CustomUser>(context);
-
-    final AuthService _auth = AuthService();
-
     return SafeArea(
       child: Container(
         height: MediaQuery.of(context).size.height,
@@ -37,9 +37,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
         constraints: BoxConstraints(maxWidth: 280),
         child: Column(
           children: <Widget>[
-            user != null
+            _auth != null
                 ? StreamBuilder<UserData>(
-                    stream: UserDatabase(uid: user.uid).userData,
+                    stream: UserDatabase(uid: _auth.currentUser != null ? _auth.currentUser.uid : null).userData,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         UserData userData = snapshot.data;
@@ -91,9 +91,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
               },
               context: context,
             ),
-            user != null
+            _auth != null && user != null
                 ? StreamBuilder<UserData>(
-                    stream: UserDatabase(uid: user.uid).userData,
+                    stream: UserDatabase(uid: _auth.currentUser != null ? _auth.currentUser.uid : null)
+                        .userData,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         UserData userData = snapshot.data;
@@ -143,16 +144,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
               onTap: () {},
               context: context,
             ),
-            user != null
+            _auth.currentUser != null || user != null
                 ? _createDrawerItem(
                     icon: Icons.logout,
                     text: Lang().of(key: 'exitapp', isKH: widget.isKH),
-                    onTap: () {
+                    onTap: () async {
+                      await _auth.signOut();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => MyApp()),
                       );
-                      _auth.signOut();
                     },
                     context: context,
                   )

@@ -21,14 +21,23 @@ class TextWithIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String price;
+    String price = "";
     String start = isKH ? "ចាប់ពី" : "";
-    if (pricetotal != null && pricefrom != null) {
-      price = pricetotal != null && pricefrom != null
-          ? "$start ${khNum(pricefrom.toString(), isKH)}\$ - ${khNum(pricetotal.toString(), isKH)}\$"
-          : pricetotal != null && pricefrom == null
-              ? "$start ${khNum(pricefrom.toString(), isKH)}\$"
-              : "${khNum(pricetotal.toString(), isKH)}\$";
+    if (pricefrom != null && pricetotal != null && !pricetotal.isNaN && !pricefrom.isNaN) {
+      if (pricetotal == 0 && pricefrom > 0) {
+        price = start + " " + khNum(pricefrom.toString(), isKH);
+      }
+      if (pricetotal > 0 && pricefrom == 0) {
+        price = start + " " + khNum(pricetotal.toString(), isKH);
+      }
+      if (pricetotal > 0 && pricefrom > 0) {
+        price = start +
+            " " +
+            khNum(pricefrom.toString(), isKH) +
+            "\$ - " +
+            khNum(pricetotal.toString(), isKH) +
+            "\$";
+      }
     }
     return Positioned(
       right: 20,
@@ -49,7 +58,7 @@ class TextWithIndicator extends StatelessWidget {
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   )
-                : pricefrom != null || pricetotal != null
+                : price != ""
                     ? Container(
                         height: 36,
                         alignment: Alignment.center,
