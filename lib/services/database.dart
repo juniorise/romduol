@@ -102,7 +102,7 @@ class Database {
               ratetotal: comments != null ? comments.length : 0,
               maplocation: element.data()['maplocation'] ?? null,
               refpath: element.reference.path,
-              images: element.data()['images'],
+              images: element.data()['images'] ?? "https://firebasestorage.googleapis.com/v0/b/romduoltravel.appspot.com/o/commons%2Ferror-image-generic.png?alt=media&token=4fdd9d9b-04f6-4228-8b13-cd19a27fd44f",
               articles: element.data()['articles'],
               foodmenu: foodMenu.length > 0 ? foodMenu : List(),
               comments: comments.length > 0 ? comments : List(),

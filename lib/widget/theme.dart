@@ -119,13 +119,13 @@ Container sectionTitle({
   @required bool isKH,
 }) {
   return Container(
-    padding: EdgeInsets.all(padding),
+    padding: EdgeInsets.symmetric(vertical: padding, horizontal: 2),
     width: MediaQuery.of(context).size.width,
     child: Text(
       title,
       textAlign: TextAlign.start,
       style: TextStyle(
-        fontSize: 14,
+        fontSize: 15,
         color: Palette.bgdark.withOpacity(0.8),
         fontFamily: 'Kantumruy',
       ),

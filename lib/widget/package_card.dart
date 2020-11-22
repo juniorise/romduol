@@ -7,7 +7,6 @@ import 'package:romduol/widget/location.dart';
 import 'package:romduol/widget/networkImage.dart';
 import 'package:romduol/widget/theme.dart';
 
-
 class PackageCard extends StatelessWidget {
   const PackageCard({
     Key key,
@@ -29,6 +28,23 @@ class PackageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Function onTab = () async {
+      _animationController.forward();
+      await Navigator.push(
+        context,
+        PageTransition(
+          child: PackageDetail(
+            package: package,
+            isKH: isKH,
+            index: index,
+          ),
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 150),
+          type: PageTransitionType.fade,
+        ),
+      );
+      _animationController.reverse();
+    };
     return Container(
       height: null,
       //package container
@@ -44,23 +60,7 @@ class PackageCard extends StatelessWidget {
       child: FlatButton(
         splashColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        onPressed: () async {
-          _animationController.forward();
-          await Navigator.push(
-            context,
-            PageTransition(
-              child: PackageDetail(
-                package: package,
-                isKH: isKH,
-                index: index,
-              ),
-              curve: Curves.ease,
-              duration: Duration(milliseconds: 150),
-              type: PageTransitionType.fade,
-            ),
-          );
-          _animationController.reverse();
-        },
+        onPressed: onTab,
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,

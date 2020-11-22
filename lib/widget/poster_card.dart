@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:romduol/configs/palette.dart';
 import 'package:romduol/configs/scrollnotifer.dart';
 import 'package:romduol/lang/lang.dart';
-import 'package:romduol/screens/admin/a_why_tour.dart';
 import 'package:romduol/screens/package/aboutpack.dart';
 
 class PosterCard extends StatelessWidget {
@@ -16,6 +15,14 @@ class PosterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Function onTab = () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AboutTourPackage(isKH: isKH),
+        ),
+      );
+    };
     return Consumer<ScrollNotifier>(
       builder: (context, notifier, child) {
         return Container(
@@ -41,13 +48,8 @@ class PosterCard extends StatelessWidget {
               child: Container(color: Palette.sky.withOpacity(0.35)),
             ),
             FlatButton(
-              splashColor: Palette.bg.withOpacity(0.1),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AboutTourPackage(isKH: isKH),
-                ),
-              ),
+              splashColor: Colors.transparent,
+              onPressed: onTab,
               padding: EdgeInsets.zero,
               child: Container(
                 height: 150,
@@ -81,35 +83,35 @@ class PosterCard extends StatelessWidget {
                 ),
               ),
             ),
-            isEditable
-                ? Positioned(
-                    left: 10,
-                    bottom: 10,
-                    child: ClipOval(
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        child: RaisedButton(
-                          padding: EdgeInsets.zero,
-                          child: Icon(
-                            Icons.edit,
-                            color: Palette.bgdark.withOpacity(1),
-                          ),
-                          highlightColor: Palette.bgdark.withOpacity(0.2),
-                          color: Colors.white,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AdminWhyTourPackage(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  )
-                : SizedBox(),
+            // isEditable
+            //     ? Positioned(
+            //         left: 10,
+            //         bottom: 10,
+            //         child: ClipOval(
+            //           child: Container(
+            //             width: 40,
+            //             height: 40,
+            //             child: RaisedButton(
+            //               padding: EdgeInsets.zero,
+            //               child: Icon(
+            //                 Icons.edit,
+            //                 color: Palette.bgdark.withOpacity(1),
+            //               ),
+            //               highlightColor: Palette.bgdark.withOpacity(0.2),
+            //               color: Colors.white,
+            //               onPressed: () {
+            //                 Navigator.push(
+            //                   context,
+            //                   MaterialPageRoute(
+            //                     builder: (context) => AdminWhyTourPackage(),
+            //                   ),
+            //                 );
+            //               },
+            //             ),
+            //           ),
+            //         ),
+            //       )
+            //     : SizedBox(),
             Positioned(
               bottom: 5,
               right: 10,

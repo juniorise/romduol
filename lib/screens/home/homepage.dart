@@ -168,220 +168,227 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             onWillPop: _onWillPop,
             isKH: isKH,
           ),
-          body: GestureDetector(
-            onHorizontalDragEnd: (e) {
-              if (e.velocity.pixelsPerSecond.direction > 0 &&
-                  e.velocity.pixelsPerSecond.dx > 0)
-                scaffoldKey.currentState.openDrawer();
+          body: RefreshIndicator(
+            onRefresh: () async {
+              return changeTextValue();
             },
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Positioned(
-                  top: -80 - 30.0,
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: height * 0.85,
-                        constraints: const BoxConstraints(minHeight: 620),
-                        width: width,
-                        child: Consumer<ScrollNotifier>(
-                          builder: (context, notifier, child) {
-                            return Transform.translate(
-                              offset: Offset(0, notifier.offset * 0.2),
-                              child: child,
-                            );
-                          },
-                          child: Image.asset(
-                            "assets/home/background.jpg",
-                            fit: BoxFit.cover,
+            child: GestureDetector(
+              onHorizontalDragEnd: (e) {
+                if (e.velocity.pixelsPerSecond.direction > 0 &&
+                    e.velocity.pixelsPerSecond.dx > 0)
+                  scaffoldKey.currentState.openDrawer();
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Positioned(
+                    top: -80 - 30.0,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: height * 0.85,
+                          constraints: const BoxConstraints(minHeight: 620),
+                          width: width,
+                          child: Consumer<ScrollNotifier>(
+                            builder: (context, notifier, child) {
+                              return Transform.translate(
+                                offset: Offset(0, notifier.offset * 0.2),
+                                child: child,
+                              );
+                            },
+                            child: Image.asset(
+                              "assets/home/background.jpg",
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned.fill(
-                        child: Container(
-                          color: Palette.sky.withOpacity(0.3),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                StreamBuilder<UserData>(
-                  stream: UserDatabase(uid: user != null ? user.uid : null)
-                      .userData,
-                  builder: (context, usnapshot) {
-                    if (usnapshot == null) _auth.signInAnonymously();
-                    return ListView(
-                      controller: _scrollController,
-                      physics: RangeMaintainingScrollPhysics(),
-                      children: [
-                        //HELLO TITLE
-                        HomeWecomeText(
-                          isKH: isKH,
-                          isQuestionChanging: isQuestionChanging,
-                          width: width,
-                          question: question[qindex],
-                          name: usnapshot.hasData
-                              ? " " + usnapshot.data.fname
-                              : "! ស្វាគមន៍មកកាន់រំដួល",
-                        ),
-
-                        Container(
-                          color: Palette.bg,
-                          child: Column(
-                            children: [
-                              //PROVINCES
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 15),
-                                width: width,
-                                decoration: buildBoxDecoration(),
-                                child: Column(
-                                  children: [
-                                    sectionTitle(
-                                      context: context,
-                                      isKH: isKH,
-                                      title: Lang().of(
-                                        key: 'chooseaprovince',
-                                        isKH: isKH,
-                                      ),
-                                    ),
-                                    Container(
-                                      height: width > 360 ? 155 : 290,
-                                      child: LiveGrid.options(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        options: options,
-                                        itemCount: 4,
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount:
-                                              width > 360 * 2 ? 4 : 2,
-                                          crossAxisSpacing: 0,
-                                          mainAxisSpacing: 0,
-                                          childAspectRatio: 8 / 7,
-                                        ),
-                                        itemBuilder: (context, i, animation) {
-                                          dynamic data = provinces[i];
-
-                                          String collectionPath =
-                                              "${data.id}/viewer/default_data/";
-
-                                          return StreamBuilder<QuerySnapshot>(
-                                            stream: FirebaseFirestore.instance
-                                                .collection(collectionPath)
-                                                .snapshots(),
-                                            builder: (context, snapshot) {
-                                              int view = 0;
-                                              if (snapshot.hasData)
-                                                view = snapshot.data.size;
-
-                                              return FadeTransition(
-                                                opacity: Tween<double>(
-                                                  begin: !isInit ? 0 : 1,
-                                                  end: 1,
-                                                ).animate(animation),
-                                                child: ProvinceCard(
-                                                  isKH: isKH,
-                                                  views: view,
-                                                  province: isKH
-                                                      ? data.province
-                                                      : data.enprovince,
-                                                  imagelocation:
-                                                      data.imagelocation,
-                                                  onPressed: () =>
-                                                      onProvincePressed(
-                                                    user: user,
-                                                    collectionPath:
-                                                        collectionPath,
-                                                    data: data,
-                                                    usnapshot: usnapshot,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 20.0),
-
-                              //ECO TRAVEL PACKAGE
-                              Container(
-                                decoration: buildBoxDecoration(),
-                                padding: const EdgeInsets.all(15),
-                                width: width,
-                                child: Column(
-                                  children: [
-                                    PosterCard(
-                                      isKH: isKH,
-                                      width: width,
-                                      isEditable: usnapshot != null && usnapshot.data != null &&
-                                              usnapshot.data.role == "Admin"
-                                          ? true
-                                          : false,
-                                    ),
-                                    const SizedBox(height: 5),
-                                    sectionTitle(
-                                      context: context,
-                                      title: Lang()
-                                          .of(key: 'joinwithus', isKH: isKH),
-                                      isKH: isKH,
-                                    ),
-                                    packages.length > 0
-                                        ? LiveList.options(
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            options: options,
-                                            itemCount: packages.length,
-                                            itemBuilder: (context, i, anim) {
-                                              return packages != null
-                                                  ? FadeTransition(
-                                                      opacity: Tween<double>(
-                                                        begin: 0,
-                                                        end: 1,
-                                                      ).animate(anim),
-                                                      child: PackageCard(
-                                                        animationController:
-                                                            _animationController,
-                                                        isKH: isKH,
-                                                        width: width,
-                                                        package: packages[i],
-                                                        onErrorPressed: () {},
-                                                        index: i,
-                                                      ),
-                                                    )
-                                                  : loading();
-                                            },
-                                          )
-                                        : noData(),
-                                  ],
-                                ),
-                              ),
-                            ],
+                        Positioned.fill(
+                          child: Container(
+                            color: Palette.sky.withOpacity(0.3),
                           ),
                         ),
                       ],
-                    );
-                  },
-                ),
-
-                //animation on navigate to province page
-                Positioned(
-                  top: 0,
-                  child: ValueListenableBuilder(
-                    valueListenable: sizeNotifier,
-                    builder: (_, value, __) => Container(
-                      height: value,
-                      width: width,
-                      color: Colors.white,
                     ),
                   ),
-                ),
-              ],
+                  StreamBuilder<UserData>(
+                    stream: UserDatabase(uid: user != null ? user.uid : null)
+                        .userData,
+                    builder: (context, usnapshot) {
+                      if (usnapshot == null) _auth.signInAnonymously();
+                      return ListView(
+                        controller: _scrollController,
+                        physics: RangeMaintainingScrollPhysics(),
+                        children: [
+                          //HELLO TITLE
+                          HomeWecomeText(
+                            isKH: isKH,
+                            isQuestionChanging: isQuestionChanging,
+                            width: width,
+                            question: question[qindex],
+                            name: usnapshot.hasData
+                                ? " " + usnapshot.data.fname
+                                : "! ស្វាគមន៍មកកាន់រំដួល",
+                          ),
+
+                          Container(
+                            color: Palette.bg,
+                            child: Column(
+                              children: [
+                                //PROVINCES
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 15),
+                                  width: width,
+                                  decoration: buildBoxDecoration(),
+                                  child: Column(
+                                    children: [
+                                      sectionTitle(
+                                        context: context,
+                                        isKH: isKH,
+                                        title: Lang().of(
+                                          key: 'chooseaprovince',
+                                          isKH: isKH,
+                                        ),
+                                      ),
+                                      Container(
+                                        height: width > 360 ? 155 : 290,
+                                        child: LiveGrid.options(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          options: options,
+                                          itemCount: 4,
+                                          gridDelegate:
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                width > 360 * 2 ? 4 : 2,
+                                            crossAxisSpacing: 0,
+                                            mainAxisSpacing: 0,
+                                            childAspectRatio: 8 / 7,
+                                          ),
+                                          itemBuilder: (context, i, animation) {
+                                            dynamic data = provinces[i];
+
+                                            String collectionPath =
+                                                "${data.id}/viewer/default_data/";
+
+                                            return StreamBuilder<QuerySnapshot>(
+                                              stream: FirebaseFirestore.instance
+                                                  .collection(collectionPath)
+                                                  .snapshots(),
+                                              builder: (context, snapshot) {
+                                                int view = 0;
+                                                if (snapshot.hasData)
+                                                  view = snapshot.data.size;
+
+                                                return FadeTransition(
+                                                  opacity: Tween<double>(
+                                                    begin: !isInit ? 0 : 1,
+                                                    end: 1,
+                                                  ).animate(animation),
+                                                  child: ProvinceCard(
+                                                    isKH: isKH,
+                                                    views: view,
+                                                    province: isKH
+                                                        ? data.province
+                                                        : data.enprovince,
+                                                    imagelocation:
+                                                        data.imagelocation,
+                                                    onPressed: () =>
+                                                        onProvincePressed(
+                                                      user: user,
+                                                      collectionPath:
+                                                          collectionPath,
+                                                      data: data,
+                                                      usnapshot: usnapshot,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 20.0),
+
+                                //ECO TRAVEL PACKAGE
+                                Container(
+                                  decoration: buildBoxDecoration(),
+                                  padding: const EdgeInsets.all(15),
+                                  width: width,
+                                  child: Column(
+                                    children: [
+                                      PosterCard(
+                                        isKH: isKH,
+                                        width: width,
+                                        isEditable: usnapshot != null &&
+                                                usnapshot.data != null &&
+                                                usnapshot.data.role == "Admin"
+                                            ? true
+                                            : false,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      sectionTitle(
+                                        context: context,
+                                        title: Lang()
+                                            .of(key: 'joinwithus', isKH: isKH),
+                                        isKH: isKH,
+                                      ),
+                                      packages.length > 0
+                                          ? LiveList.options(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              options: options,
+                                              itemCount: packages.length,
+                                              itemBuilder: (context, i, anim) {
+                                                return packages != null
+                                                    ? FadeTransition(
+                                                        opacity: Tween<double>(
+                                                          begin: 0,
+                                                          end: 1,
+                                                        ).animate(anim),
+                                                        child: PackageCard(
+                                                          animationController:
+                                                              _animationController,
+                                                          isKH: isKH,
+                                                          width: width,
+                                                          package: packages[i],
+                                                          onErrorPressed: () {},
+                                                          index: i,
+                                                        ),
+                                                      )
+                                                    : loading();
+                                              },
+                                            )
+                                          : noData(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+
+                  //animation on navigate to province page
+                  Positioned(
+                    top: 0,
+                    child: ValueListenableBuilder(
+                      valueListenable: sizeNotifier,
+                      builder: (_, value, __) => Container(
+                        height: value,
+                        width: width,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -8,15 +8,15 @@ import 'package:romduol/widget/card_province.dart';
 import 'package:romduol/widget/theme.dart';
 
 class AnimatedLists extends StatefulWidget {
-  const AnimatedLists(
-      {Key key,
-      this.data,
-      this.isAnimated = false,
-      @required this.isKH,
-      this.onEditPressed,
-      this.isIgnoring = false,
-      this.onPop})
-      : super(key: key);
+  const AnimatedLists({
+    Key key,
+    this.data,
+    this.isAnimated = false,
+    @required this.isKH,
+    this.onEditPressed,
+    this.isIgnoring = false,
+    this.onPop,
+  }) : super(key: key);
 
   final List<CardModel> data;
   final bool isAnimated, isKH, isIgnoring;
